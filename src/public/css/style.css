@@ -1,0 +1,102 @@
+:root{
+
+    --primary:#2563eb;
+    --primary-dark:#1d4ed8;
+
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#dc2626;
+
+    --background:#f5f7fb;
+
+    --card:#ffffff;
+
+    --text:#1e293b;
+
+    --radius:18px;
+
+}
+
+body{
+
+    background:var(--background);
+
+    color:var(--text);
+
+    font-family:
+    "Segoe UI",
+    sans-serif;
+
+}
+
+.navbar{
+
+    background:linear-gradient(
+        90deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+
+    box-shadow:0 5px 20px rgba(0,0,0,.12);
+
+}
+
+.hero{
+
+    padding:90px 0;
+
+}
+
+.hero h1{
+
+    font-size:3rem;
+
+    font-weight:700;
+
+}
+
+.hero p{
+
+    color:#64748b;
+
+    font-size:1.2rem;
+
+}
+
+.feature-card{
+
+    border:none;
+
+    border-radius:var(--radius);
+
+    transition:.25s;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+
+}
+
+.feature-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.btn-openwo{
+
+    background:var(--primary);
+
+    color:white;
+
+    border-radius:12px;
+
+    padding:12px 25px;
+
+}
+
+.btn-openwo:hover{
+
+    background:var(--primary-dark);
+
+    color:white;
+
+}

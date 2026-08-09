@@ -1,0 +1,23 @@
+<%
+const inputLabel = typeof label !== "undefined" ? label : "";
+const inputName = typeof name !== "undefined" ? name : "";
+const inputType = typeof type !== "undefined" ? type : "text";
+const inputPlaceholder = typeof placeholder !== "undefined" ? placeholder : "";
+const inputValue = typeof value !== "undefined" ? value : "";
+%>
+
+<div class="form-field">
+
+    <label class="form-label">
+        <%= inputLabel %>
+    </label>
+
+    <input
+        class="form-input"
+        type="<%= inputType %>"
+        name="<%= inputName %>"
+        placeholder="<%= inputPlaceholder %>"
+        value="<%= inputValue %>"
+    >
+
+</div>

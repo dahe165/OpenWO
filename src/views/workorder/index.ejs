@@ -1,0 +1,121 @@
+<div class="container py-4">    
+
+        <div class="mb-4">
+
+        <h1 class="page-title">
+            Work Order Saya
+        </h1>
+
+        <p class="page-subtitle">
+            Pantau semua laporan yang pernah Anda buat.
+        </p>
+
+        </div>
+
+        <div class="search-box">
+
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="🔍 Cari nomor WO atau judul..."
+        >
+
+        </div>
+
+        <div class="filter-group">
+
+        <button class="filter-btn active" data-filter="Semua">Semua</button>
+        <button class="filter-btn" data-filter="Menunggu">Menunggu</button>
+        <button class="filter-btn" data-filter="Ditugaskan">Ditugaskan</button>
+        <button class="filter-btn" data-filter="Diproses">Diproses</button>
+        <button class="filter-btn" data-filter="Selesai">Selesai</button>
+
+        </div>
+    <div id="workorder-content">
+        <% workorders.forEach((wo) => { %>
+
+            <div class="wo-card <%= wo.id === activeId ? 'wo-detail' : 'wo-summary' %>" data-id="<%= wo.id %>" data-search="<%= (wo.nomor + ' ' + wo.judul).toLowerCase() %>" data-status="<%= wo.status %>">
+
+            <div class="wo-title">
+                <%= wo.judul %>
+            </div>
+
+            <div class="wo-number">
+                <%= wo.nomor %>
+            </div>
+
+            <% if (wo.id === activeId) { %>
+
+            <div class="timeline">
+
+            <div class="step done">
+                <span>Dibuat</span>
+                <div class="dot"></div>
+            </div>
+
+            <div class="step done">
+                <span>Verifikasi</span>
+                <div class="dot"></div>
+            </div>
+
+            <div class="step active">
+                <span><%= wo.status %></span>
+                <div class="dot"></div>
+            </div>
+
+            <div class="step">
+                <span>Diproses</span>
+                <div class="dot"></div>
+            </div>
+
+            <div class="step">
+                <span>Selesai</span>
+                <div class="dot"></div>
+            </div>
+
+            </div>
+
+            <div class="wo-footer">
+
+            <div>
+
+                👨 <%= wo.pelapor %>
+
+            </div>
+
+            <div>
+
+                <%= wo.update %>
+
+            </div>
+
+            </div>
+
+            <% } else { %>
+
+            <div class="wo-footer">
+
+                <div>
+
+                    Status :
+                    <strong><%= wo.status %></strong>
+
+                </div>
+
+                <div>
+
+                    <%= wo.update %>
+
+                </div>
+
+            </div>
+
+            <a href="/workorder?id=<%= wo.id %>" class="btn-open" data-id="<%= wo.id %>"> Lihat Detail → </a>
+
+            <% } %>
+
+            </div>
+
+        <% }) %>
+    </div>
+</div>

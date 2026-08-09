@@ -1,0 +1,11 @@
+<%
+const buttonText = typeof text !== "undefined" ? text : "Button";
+const buttonType = typeof type !== "undefined" ? type : "submit";
+%>
+
+<button
+    type="<%= buttonType %>"
+    class="form-button form-button-primary"
+>
+    <%= buttonText %>
+</button>

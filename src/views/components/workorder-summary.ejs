@@ -1,0 +1,63 @@
+<div class="workorder-summary">
+
+    <div class="summary-header">
+
+        <div>
+            <h3>Ringkasan Work Order</h3>
+
+            <p>
+                Status Work Order Anda saat ini
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <span class="summary-number">
+                <%= workorders.filter(wo => wo.status === "Menunggu").length %>
+            </span>
+
+            <span class="summary-label">
+                Menunggu
+            </span>
+        </div>
+
+
+        <div class="summary-card">
+            <span class="summary-number">
+                <%= workorders.filter(wo => wo.status === "Ditugaskan").length %>
+            </span>
+
+            <span class="summary-label">
+                Ditugaskan
+            </span>
+        </div>
+
+
+        <div class="summary-card">
+            <span class="summary-number">
+                <%= workorders.filter(wo => wo.status === "Diproses").length %>
+            </span>
+
+            <span class="summary-label">
+                Diproses
+            </span>
+        </div>
+
+
+        <div class="summary-card">
+            <span class="summary-number">
+                <%= workorders.filter(wo => wo.status === "Selesai").length %>
+            </span>
+
+            <span class="summary-label">
+                Selesai
+            </span>
+        </div>
+
+    </div>
+
+</div>

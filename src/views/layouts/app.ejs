@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><%= title || "OpenWO" %></title>
+
+    <!-- App Layout -->
+    <link
+        rel="stylesheet"
+        href="/css/app.css"
+    >
+
+    <!-- Work Order -->
+    <link
+        rel="stylesheet"
+        href="/css/workorder.css"
+    >
+
+</head>
+
+<body>
+
+    <div class="app-shell">
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <%- include("../partials/sidebar") %>
+
+
+        <!-- =========================
+             MAIN AREA
+        ========================== -->
+
+        <div class="app-main">
+
+            <!-- TOPBAR -->
+
+            <header class="app-topbar">
+
+                <button
+                    type="button"
+                    class="sidebar-toggle"
+                    id="sidebarToggle"
+                    aria-label="Buka menu"
+                >
+                    ☰
+                </button>
+
+
+                <div class="topbar-brand">
+
+                    <span class="brand-icon">
+                        🚀
+                    </span>
+
+                    <strong>
+                        OpenWO
+                    </strong>
+
+                </div>
+
+
+                <div class="topbar-user">
+
+                    <div class="user-avatar">
+                        DU
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            Dahe Ugi
+                        </strong>
+
+                        <small>
+                            Pengguna
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- PAGE CONTENT -->
+
+            <main class="app-content">
+
+                <%- body %>
+
+            </main>
+
+
+            <!-- FOOTER -->
+
+            <%- include("../partials/footer") %>
+
+        </div>
+
+    </div>
+
+
+    <!-- MOBILE OVERLAY -->
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+    ></div>
+
+
+    <script>
+
+        const sidebar =
+            document.querySelector(".app-sidebar");
+
+        const sidebarToggle =
+            document.getElementById("sidebarToggle");
+
+        const sidebarOverlay =
+            document.getElementById("sidebarOverlay");
+
+
+        function openSidebar() {
+
+            sidebar.classList.add("open");
+
+            sidebarOverlay.classList.add("show");
+
+            document.body.classList.add("sidebar-open");
+
+        }
+
+
+        function closeSidebar() {
+
+            sidebar.classList.remove("open");
+
+            sidebarOverlay.classList.remove("show");
+
+            document.body.classList.remove("sidebar-open");
+
+        }
+
+
+        sidebarToggle.addEventListener(
+            "click",
+            openSidebar
+        );
+
+
+        sidebarOverlay.addEventListener(
+            "click",
+            closeSidebar
+        );
+
+
+        document
+            .querySelectorAll(".app-sidebar a")
+            .forEach(link => {
+
+                link.addEventListener(
+                    "click",
+                    () => {
+
+                        if (
+                            window.innerWidth <= 768
+                        ) {
+                            closeSidebar();
+                        }
+
+                    }
+                );
+
+            });
+
+    </script>
+
+
+    <script src="/js/workorder.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+<form action="/workorder" method="POST">
+
+    <%- include("../components/form/input", {
+
+        label: "Judul Work Order",
+
+        name: "title",
+
+        placeholder: "Contoh : Internet Kantor Mati"
+
+    }) %>
+
+    <%- include("../components/form/textarea", {
+
+        label: "Deskripsi",
+
+        name: "description",
+
+        placeholder: "Jelaskan permasalahan..."
+
+    }) %>
+
+    <%- include("../components/button/primary", {
+
+        text: "Simpan Work Order"
+
+    }) %>
+
+</form>

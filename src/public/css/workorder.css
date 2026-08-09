@@ -1,0 +1,1526 @@
+/* ===========================
+   OpenWO - Work Order Saya
+=========================== */
+
+:root {
+    --primary: #2563eb;
+    --success: #16a34a;
+    --gray: #d1d5db;
+    --text: #1f2937;
+    --bg: #f5f7fb;
+    --card: #ffffff;
+}
+
+body{
+    background: var(--bg);
+    font-family: "Segoe UI", sans-serif;
+    color: var(--text);
+}
+
+.page-title{
+    font-size:32px;
+    font-weight:700;
+    margin-bottom:5px;
+}
+
+.page-subtitle{
+    color:#6b7280;
+    margin-bottom:30px;
+}
+
+.search-box{
+    background:#fff;
+    border-radius:16px;
+    padding:15px 20px;
+    box-shadow:0 8px 25px rgba(0,0,0,.05);
+    margin-bottom:20px;
+}
+
+.search-box input{
+    border:none;
+    width:100%;
+    outline:none;
+    font-size:16px;
+}
+
+.filter-group{
+    display:flex;
+    gap:10px;
+    margin-bottom:30px;
+    flex-wrap:wrap;
+}
+
+.filter-btn{
+    border:none;
+    background:#fff;
+    padding:10px 20px;
+    border-radius:999px;
+    transition:.25s;
+    cursor:pointer;
+    box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.filter-btn.active{
+    background:var(--primary);
+    color:#fff;
+}
+
+.wo-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    box-shadow:0 12px 35px rgba(0,0,0,.06);
+
+    transition:.3s;
+
+    cursor:pointer;
+
+    margin-bottom:25px;
+
+}
+
+.wo-card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.wo-title{
+
+    font-size:22px;
+
+    font-weight:700;
+
+}
+
+.wo-number{
+
+    color:#6b7280;
+
+    margin-bottom:25px;
+
+}
+
+/* Timeline */
+
+/* ==========================================
+   Timeline - OpenWO
+========================================== */
+
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin: 28px 0;
+}
+
+/* Garis utama */
+.timeline::before {
+    content: "";
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: 34px;
+
+    height: 2px;
+
+    background: #d9dee7;
+
+    z-index: 0;
+}
+
+/* Setiap status */
+.step {
+    position: relative;
+
+    width: 20%;
+
+    text-align: center;
+
+    z-index: 1;
+}
+
+/* Nama status */
+.step span {
+    display: block;
+
+    margin-bottom: 10px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #374151;
+
+    white-space: nowrap;
+}
+
+/* Indikator */
+.dot {
+    width: 12px;
+    height: 12px;
+
+    margin: 0 auto;
+
+    border-radius: 50%;
+
+    background: #cfd4dc;
+
+    border: 2px solid #ffffff;
+
+    box-sizing: content-box;
+
+    box-shadow:
+        0 0 0 1px #cfd4dc;
+
+    position: relative;
+
+    z-index: 2;
+}
+
+/* Status yang sudah dilewati */
+.step.done .dot {
+    background: var(--success);
+
+    box-shadow:
+        0 0 0 1px var(--success),
+        0 0 0 5px rgba(22, 163, 74, 0.10);
+}
+
+/* Status aktif */
+.step.active .dot {
+    background: var(--primary);
+
+    box-shadow:
+        0 0 0 1px var(--primary),
+        0 0 0 5px rgba(37, 99, 235, 0.12);
+
+    animation: pulse 1.8s infinite;
+}
+
+/* Pulse lembut */
+@keyframes pulse {
+
+    0% {
+        box-shadow:
+            0 0 0 1px var(--primary),
+            0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    70% {
+        box-shadow:
+            0 0 0 1px var(--primary),
+            0 0 0 8px rgba(37, 99, 235, 0);
+    }
+
+    100% {
+        box-shadow:
+            0 0 0 1px var(--primary),
+            0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+}
+
+.wo-footer{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-top:20px;
+
+color:#6b7280;
+
+font-size:14px;
+
+}
+
+.wo-summary{
+
+    padding:18px 25px;
+
+    cursor:pointer;
+
+}
+
+.wo-summary .wo-title{
+
+    font-size:18px;
+
+    margin-bottom:6px;
+
+}
+
+.wo-summary:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.btn-open{
+
+    margin-top:12px;
+
+    border:none;
+
+    background:none;
+
+    color:#2563eb;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.btn-open:hover{
+
+    transform:translateX(6px);
+
+}
+
+#workorder-content{
+
+    transition:opacity .18s ease,
+               transform .18s ease;
+
+}
+
+.page-leave{
+
+    opacity:.15;
+
+    transform:translateY(10px);
+
+}
+
+.page-enter{
+
+    opacity:1;
+
+    transform:translateY(0);
+
+}
+
+/* ==========================================
+   Detail Card Animation
+========================================== */
+
+.wo-detail{
+
+    transition:
+        transform .22s ease,
+        opacity .22s ease,
+        box-shadow .22s ease;
+
+}
+
+.card-leave{
+
+    opacity:.35;
+
+    transform:scale(.985);
+
+}
+
+.card-enter{
+
+    opacity:.35;
+
+    transform:scale(1.015);
+
+}
+
+/* ==========================================
+   Dashboard - Welcome Card
+========================================== */
+
+.welcome-card {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 28px 30px;
+
+    background: var(--card);
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+
+    margin-bottom: 20px;
+}
+
+.welcome-content {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.welcome-icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    background: rgba(37, 99, 235, 0.10);
+
+    font-size: 26px;
+}
+
+.welcome-card h2 {
+    margin: 0 0 4px;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    color: var(--text);
+}
+
+.welcome-name {
+    margin: 0 0 6px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    color: var(--primary);
+}
+
+.welcome-description {
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    color: #6b7280;
+}
+
+@media (max-width: 600px) {
+
+    .welcome-card {
+        padding: 22px;
+        border-radius: 14px;
+    }
+
+    .welcome-content {
+        align-items: flex-start;
+    }
+
+    .welcome-icon {
+        width: 44px;
+        height: 44px;
+
+        font-size: 22px;
+    }
+
+    .welcome-card h2 {
+        font-size: 19px;
+    }
+
+    .welcome-name {
+        font-size: 15px;
+    }
+
+    .welcome-description {
+        font-size: 13px;
+    }
+
+}
+
+/* ==========================================
+   Dashboard - Quick Action
+========================================== */
+
+.quick-action {
+    display: flex;
+    gap: 12px;
+
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.quick-action a {
+    border: 0;
+    font-family: inherit;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.quick-action-main,
+.quick-action-create {
+    box-sizing: border-box;
+}
+
+/* Work Order Saya */
+
+.quick-action-main {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 18px 20px;
+
+    background: var(--card);
+
+    border: 1px solid #e5e7eb !important;
+    border-radius: 14px;
+
+    text-align: left;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.quick-action-main:hover {
+    transform: translateY(-2px);
+
+    border-color: var(--primary) !important;
+
+    box-shadow:
+        0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.quick-action-icon {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: rgba(37, 99, 235, 0.10);
+
+    font-size: 21px;
+}
+
+.quick-action-text {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.quick-action-text strong {
+    font-size: 15px;
+
+    color: var(--text);
+}
+
+.quick-action-text small {
+    font-size: 12px;
+
+    color: #6b7280;
+}
+
+.quick-action-arrow {
+    margin-left: auto;
+
+    font-size: 20px;
+
+    color: #9ca3af;
+
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+.quick-action-main:hover .quick-action-arrow {
+    transform: translateX(4px);
+
+    color: var(--primary);
+}
+
+/* Tombol tambah */
+
+.quick-action-create {
+    width: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--primary);
+
+    color: #ffffff;
+
+    border-radius: 14px;
+
+    font-size: 28px;
+
+    box-shadow:
+        0 6px 14px rgba(37, 99, 235, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.quick-action-create:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 9px 20px rgba(37, 99, 235, 0.28);
+}
+
+@media (max-width: 600px) {
+
+    .quick-action {
+        gap: 10px;
+    }
+
+    .quick-action-main {
+        padding: 15px;
+    }
+
+    .quick-action-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .quick-action-text strong {
+        font-size: 14px;
+    }
+
+    .quick-action-text small {
+        font-size: 11px;
+    }
+
+    .quick-action-create {
+        width: 54px;
+    }
+
+}
+
+/* ==========================================
+   Dashboard - Work Order Summary
+========================================== */
+
+.workorder-summary {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 24px;
+
+    margin-bottom: 20px;
+
+    background: var(--card);
+
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+
+    box-shadow:
+        0 6px 18px rgba(15, 23, 42, 0.05);
+}
+
+.summary-header {
+    margin-bottom: 18px;
+}
+
+.summary-header h3 {
+    margin: 0 0 4px;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: var(--text);
+}
+
+.summary-header p {
+    margin: 0;
+
+    font-size: 13px;
+
+    color: #6b7280;
+}
+
+.summary-grid {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 12px;
+}
+
+.summary-card {
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    border: 1px solid #eef0f3;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 14px rgba(15, 23, 42, 0.06);
+}
+
+.summary-number {
+    font-size: 26px;
+    font-weight: 700;
+
+    color: var(--primary);
+}
+
+.summary-label {
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #6b7280;
+}
+
+@media (max-width: 600px) {
+
+    .workorder-summary {
+        padding: 20px;
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .summary-card {
+        padding: 15px;
+    }
+
+    .summary-number {
+        font-size: 23px;
+    }
+
+}
+
+/* ==========================================
+   Work Order - Create
+========================================== */
+
+.wo-create-page {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.wo-create-card {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 30px;
+
+    background: var(--card);
+
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+
+    box-shadow:
+        0 6px 18px rgba(15, 23, 42, 0.05);
+}
+
+.wo-create-header {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    margin-bottom: 28px;
+}
+
+.wo-create-icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    background: rgba(37, 99, 235, 0.10);
+
+    font-size: 25px;
+}
+
+.wo-create-header h1 {
+    margin: 0 0 5px;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    color: var(--text);
+}
+
+.wo-create-header p {
+    margin: 0;
+
+    font-size: 14px;
+
+    color: #6b7280;
+}
+
+.wo-create-form {
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+
+    .wo-create-card {
+        padding: 22px;
+
+        border-radius: 14px;
+    }
+
+    .wo-create-header {
+        gap: 12px;
+
+        margin-bottom: 22px;
+    }
+
+    .wo-create-icon {
+        width: 44px;
+        height: 44px;
+
+        font-size: 21px;
+    }
+
+    .wo-create-header h1 {
+        font-size: 19px;
+    }
+
+    .wo-create-header p {
+        font-size: 13px;
+    }
+
+}
+
+/* ==========================================
+   Reusable Form Components
+========================================== */
+
+.form-field {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: var(--text);
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    box-sizing: border-box;
+
+    border: 1px solid #dfe3e8;
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.form-input {
+    height: 46px;
+
+    padding: 0 14px;
+}
+
+.form-textarea {
+    min-height: 130px;
+
+    padding: 12px 14px;
+
+    line-height: 1.5;
+
+    resize: vertical;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: #a1a8b3;
+}
+
+.form-input:hover,
+.form-textarea:hover {
+    border-color: #c8ced6;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+
+    background: #ffffff;
+}
+
+@media (max-width: 600px) {
+
+    .form-input {
+        height: 44px;
+    }
+
+    .form-textarea {
+        min-height: 120px;
+    }
+
+}
+
+/* ==========================================
+   Reusable Form Button
+========================================== */
+
+.form-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 20px;
+
+    border: 0;
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.form-button-primary {
+    background: var(--primary);
+    color: #ffffff;
+
+    box-shadow:
+        0 4px 10px rgba(37, 99, 235, 0.18);
+}
+
+.form-button-primary:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 14px rgba(37, 99, 235, 0.22);
+}
+
+.form-button-primary:active {
+    transform: translateY(0);
+
+    box-shadow:
+        0 2px 6px rgba(37, 99, 235, 0.16);
+}
+
+.form-button:focus-visible {
+    outline: none;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* ==========================================
+   Analytical Dashboard
+========================================== */
+
+.dashboard-kpi {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 16px;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.kpi-card {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 20px;
+
+    background: var(--card);
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.kpi-icon {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #f3f4f6;
+
+    font-size: 20px;
+}
+
+.kpi-label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 12px;
+
+    color: #6b7280;
+}
+
+.kpi-card strong {
+    display: block;
+
+    font-size: 24px;
+
+    color: var(--text);
+}
+
+
+.dashboard-panel {
+    margin-top: 20px;
+
+    padding: 24px;
+
+    background: var(--card);
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 24px;
+}
+
+.panel-header h2 {
+    margin: 0 0 5px;
+
+    font-size: 17px;
+
+    color: var(--text);
+}
+
+.panel-header p {
+    margin: 0;
+
+    font-size: 13px;
+
+    color: #6b7280;
+}
+
+/* Technician */
+
+.technician-load {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+.technician-row {
+    display: grid;
+
+    grid-template-columns: 70px 1fr 50px;
+
+    align-items: center;
+
+    gap: 14px;
+
+    font-size: 13px;
+}
+
+.load-bar {
+    height: 9px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #eef0f3;
+}
+
+.load-bar div {
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: var(--primary);
+}
+
+.technician-row strong {
+    text-align: right;
+
+    font-size: 12px;
+
+    color: #6b7280;
+}
+
+@media (max-width: 900px) {
+
+    .dashboard-kpi {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .dashboard-kpi {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-panel {
+        padding: 18px;
+    }
+
+    .chart-bars {
+        gap: 7px;
+    }
+
+    .chart-bars div {
+        width: 30px;
+    }
+
+    .technician-row {
+        grid-template-columns: 60px 1fr 45px;
+        gap: 10px;
+    }
+
+}
+
+/* Chart */
+
+.chart-placeholder {
+    height: 220px;
+
+    display: flex;
+    align-items: flex-end;
+
+    padding: 10px 10px 0;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.chart-bars {
+    width: 100%;
+    height: 190px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+
+    gap: 14px;
+}
+
+.chart-bars .chart-bar {
+    position: relative;
+
+    width: 42px;
+    min-height: 25px;
+
+    border-radius: 8px 8px 0 0;
+
+    background: var(--primary);
+
+    transition: height 0.3s ease;
+}
+
+.chart-bars .chart-bar span {
+    position: absolute;
+
+    bottom: -24px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.chart-bars .chart-bar strong {
+    position: absolute;
+
+    top: -22px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    font-size: 11px;
+    color: var(--text);
+
+    font-weight: 600;
+}
+
+
+/* Tooltip */
+
+.chart-tooltip {
+    position: fixed;
+
+    background: #1f2937;
+    color: white;
+
+    padding: 8px 12px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    z-index: 9999;
+
+    transform: translate(-50%, -100%);
+
+    transition: opacity 0.15s ease;
+}
+
+.chart-tooltip.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.chart-tooltip b {
+    display: block;
+}
+
+.chart-tooltip small {
+    display: block;
+
+    margin-top: 3px;
+
+    opacity: 0.8;
+}
+/*Status Work Order*/
+.status-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.status-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 40px;
+    align-items: center;
+    gap: 14px;
+}
+
+.status-info {
+    display: contents;
+}
+
+.status-info span {
+    font-size: 13px;
+    color: var(--text);
+}
+
+.status-info strong {
+    font-size: 13px;
+    text-align: right;
+    color: var(--text);
+}
+
+.status-track {
+    height: 10px;
+
+    background: #eef0f3;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.status-bar {
+    height: 100%;
+
+    border-radius: inherit;
+
+    transition: width 0.4s ease;
+}
+
+.status-menunggu {
+    background: #eab308;
+}
+
+.status-ditugaskan {
+    background: #8b5cf6;
+}
+
+.status-diproses {
+    background: #3b82f6;
+}
+
+.status-selesai {
+    background: #22c55e;
+}
+
+/*tren kategori*/
+.category-chart {
+    height: 220px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+
+    gap: 30px;
+
+    padding: 10px 20px 30px;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.category-bar-wrapper {
+    height: 190px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: flex-end;
+    align-items: center;
+
+    min-width: 70px;
+}
+
+.category-bar {
+    width: 55px;
+
+    min-height: 8px;
+
+    border-radius: 8px 8px 0 0;
+
+    background: var(--primary);
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+
+    transition: height 0.3s ease;
+}
+
+.category-bar strong {
+    margin-top: -22px;
+
+    font-size: 11px;
+
+    color: var(--text);
+}
+
+.category-bar-wrapper > span {
+    margin-top: 10px;
+
+    font-size: 12px;
+
+    color: #6b7280;
+
+    text-align: center;
+}
+
+.category-bar {
+    cursor: pointer;
+}
+
+.subcategory-chart {
+    margin-top: 24px;
+    padding-top: 24px;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+.subcategory-back {
+    border: 0;
+
+    background: #f3f4f6;
+
+    color: var(--text);
+
+    padding: 7px 12px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.subcategory-bars {
+    height: 200px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    gap: 40px;
+
+    padding: 20px;
+}
+
+.subcategory-bar-wrapper {
+    height: 170px;
+
+    min-width: 70px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-end;
+
+    align-items: center;
+}
+
+.subcategory-bar {
+    width: 55px;
+
+    min-height: 8px;
+
+    border-radius: 8px 8px 0 0;
+
+    background: var(--primary);
+
+    display: flex;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition: height 0.3s ease;
+}
+
+.subcategory-bar strong {
+    margin-top: -22px;
+
+    font-size: 11px;
+
+    color: var(--text);
+}
+
+.subcategory-bar-wrapper span {
+    margin-top: 10px;
+
+    font-size: 12px;
+
+    color: #6b7280;
+
+    text-align: center;
+}
+
+.technician-workorders {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.technician-wo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 14px 16px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    background: #fff;
+}
+
+.technician-wo-item strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.technician-wo-item div div {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.wo-status {
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    background: #eef2ff;
+}

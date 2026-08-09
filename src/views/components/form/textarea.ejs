@@ -1,0 +1,20 @@
+<%
+const inputLabel = typeof label !== "undefined" ? label : "";
+const inputName = typeof name !== "undefined" ? name : "";
+const inputPlaceholder = typeof placeholder !== "undefined" ? placeholder : "";
+const inputValue = typeof value !== "undefined" ? value : "";
+%>
+
+<div class="form-field">
+
+    <label class="form-label">
+        <%= inputLabel %>
+    </label>
+
+    <textarea
+        class="form-textarea"
+        name="<%= inputName %>"
+        placeholder="<%= inputPlaceholder %>"
+    ><%= inputValue %></textarea>
+
+</div>

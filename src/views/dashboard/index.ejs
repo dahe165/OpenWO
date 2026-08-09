@@ -1,0 +1,627 @@
+<% if (role === "asman" || role === "manager") { %>
+
+<%- include("../components/welcome-card") %>
+
+<%- include("../components/quick-action") %>
+
+<div class="dashboard-kpi">
+
+    <div class="kpi-card">
+        <span class="kpi-icon">📋</span>
+        <div>
+            <span class="kpi-label">Total WO</span>
+            <strong><%= summary.total %></strong>
+        </div>
+    </div>
+
+    <div class="kpi-card">
+        <span class="kpi-icon">🟡</span>
+        <div>
+            <span class="kpi-label">Menunggu</span>
+            <strong><%= summary.menunggu %></strong>
+        </div>
+    </div>
+
+    <div class="kpi-card">
+        <span class="kpi-icon">🔵</span>
+        <div>
+            <span class="kpi-label">Diproses</span>
+            <strong><%= summary.diproses %></strong>
+        </div>
+    </div>
+
+    <div class="kpi-card">
+        <span class="kpi-icon">🟢</span>
+        <div>
+            <span class="kpi-label">Selesai</span>
+            <strong><%= summary.selesai %></strong>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="dashboard-panel">
+
+    <div class="panel-header">
+
+        <div>
+            <h2>📈 Tren Work Order</h2>
+            <p>Aktivitas Work Order 7 hari terakhir</p>
+        </div>
+
+    </div>
+
+    <div class="chart-placeholder">
+
+    <div class="chart-bars">
+
+        <% 
+            const maxTrend = Math.max(
+                ...trend.map(item => item.total),
+                1
+            );
+        %>
+
+        <% trend.forEach(item => { %>
+
+            <div
+                class="chart-bar"
+                style="height: <%= Math.max(
+                    (item.total / maxTrend) * 100,
+                    item.total > 0 ? 8 : 3
+                ) %>%"
+                data-label="<%= item.label %>"
+                data-total="<%= item.total %>"
+                >
+
+                <strong>
+                    <%= item.total %>
+                </strong>
+
+                <span>
+                    <%= item.label %>
+                </span>
+
+            </div>
+
+        <% }); %>
+
+        <div class="chart-tooltip" id="chartTooltip">
+            <b></b>
+            <small></small>
+        </div>
+
+    </div>
+
+    </div>
+
+</div>
+
+<div class="dashboard-panel">
+
+    <div class="panel-header">
+
+        <div>
+            <h2>📊 Trend Kategori</h2>
+            <p>Distribusi Work Order berdasarkan kategori</p>
+        </div>
+
+    </div>
+
+    <div class="category-chart">
+
+        <% 
+            const maxCategory = Math.max(
+                ...categoryTrend.map(item => item.total),
+                1
+            );
+        %>
+
+        <% categoryTrend.forEach(item => { %>
+
+            <div class="category-bar-wrapper">
+
+                <div
+                    class="category-bar"
+                    data-kategori="<%= item.kategori %>"
+                    data-subkategori='<%- JSON.stringify(item.subkategori) %>'
+                    style="height: <%= Math.max(
+                        (item.total / maxCategory) * 100,
+                        item.total > 0 ? 8 : 3
+                    ) %>%"
+                    >
+
+                    <strong>
+                        <%= item.total %>
+                    </strong>
+
+                </div>
+
+                <span>
+                    <%= item.kategori %>
+                </span>
+
+            </div>
+
+        <% }); %>
+
+    </div>
+
+    <div class="subcategory-chart" id="subcategoryChart" style="display: none;">
+
+        <div class="panel-header">
+
+            <div>
+                <h2 id="subcategoryTitle">
+                    📂 Subkategori
+                </h2>
+
+                <p>
+                    Rincian Work Order
+                </p>
+            </div>
+
+            <button type="button" class="subcategory-back" id="subcategoryBack">
+                ← Kembali
+            </button>
+
+        </div>
+
+        <div class="subcategory-bars" id="subcategoryBars"></div>
+
+    </div>
+
+</div>
+
+<div class="dashboard-panel">
+
+<div class="panel-header">
+
+    <div>
+        <h2>📊 Status Work Order</h2>
+        <p>Distribusi Work Order berdasarkan status</p>
+    </div>
+
+</div>
+
+<div class="status-chart">
+
+    <div class="status-row">
+
+        <div class="status-info">
+            <span>Menunggu</span>
+            <strong><%= summary.menunggu %></strong>
+        </div>
+
+        <div class="status-track">
+            <div
+                class="status-bar status-menunggu"
+                style="width: <%= summary.total > 0
+                    ? (summary.menunggu / summary.total) * 100
+                    : 0 %>%">
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="status-row">
+
+        <div class="status-info">
+            <span>Ditugaskan</span>
+            <strong><%= summary.ditugaskan %></strong>
+        </div>
+
+        <div class="status-track">
+            <div
+                class="status-bar status-ditugaskan"
+                style="width: <%= summary.total > 0
+                    ? (summary.ditugaskan / summary.total) * 100
+                    : 0 %>%">
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="status-row">
+
+        <div class="status-info">
+            <span>Diproses</span>
+            <strong><%= summary.diproses %></strong>
+        </div>
+
+        <div class="status-track">
+            <div
+                class="status-bar status-diproses"
+                style="width: <%= summary.total > 0
+                    ? (summary.diproses / summary.total) * 100
+                    : 0 %>%">
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="status-row">
+
+        <div class="status-info">
+            <span>Selesai</span>
+            <strong><%= summary.selesai %></strong>
+        </div>
+
+        <div class="status-track">
+            <div
+                class="status-bar status-selesai"
+                style="width: <%= summary.total > 0
+                    ? (summary.selesai / summary.total) * 100
+                    : 0 %>%">
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<div class="dashboard-panel">
+
+    <div class="panel-header">
+
+        <div>
+            <h2>👨‍🔧 Beban Teknisi</h2>
+            <p>Jumlah Work Order yang sedang ditangani</p>
+        </div>
+
+    </div>
+
+    <div class="technician-load">
+
+        <div class="technician-row">
+            <span>Andi</span>
+
+            <div class="load-bar">
+                <div style="width: 85%"></div>
+            </div>
+
+            <strong>6 WO</strong>
+        </div>
+
+
+        <div class="technician-row">
+            <span>Budi</span>
+
+            <div class="load-bar">
+                <div style="width: 60%"></div>
+            </div>
+
+            <strong>4 WO</strong>
+        </div>
+
+
+        <div class="technician-row">
+            <span>Rudi</span>
+
+            <div class="load-bar">
+                <div style="width: 45%"></div>
+            </div>
+
+            <strong>3 WO</strong>
+        </div>
+
+
+        <div class="technician-row">
+            <span>Joko</span>
+
+            <div class="load-bar">
+                <div style="width: 20%"></div>
+            </div>
+
+            <strong>1 WO</strong>
+        </div>
+
+    </div>
+
+</div>
+
+<% } else if (role === "teknisi") { %>
+
+    <div class="dashboard-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>👨‍🔧 Dashboard Teknisi</h2>
+
+                <p>
+                    Work Order yang sedang menjadi tanggung jawab Anda
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-kpi">
+
+            <div class="kpi-card">
+
+                <span class="kpi-icon">
+                    📋
+                </span>
+
+                <div>
+
+                    <span class="kpi-label">
+                        Ditugaskan
+                    </span>
+
+                    <strong>
+                        <%= technicianSummary.ditugaskan %>
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <span class="kpi-icon">
+                    🔵
+                </span>
+
+                <div>
+
+                    <span class="kpi-label">
+                        Diproses
+                    </span>
+
+                    <strong>
+                        <%= technicianSummary.diproses %>
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <span class="kpi-icon">
+                    🟢
+                </span>
+
+                <div>
+
+                    <span class="kpi-label">
+                        Selesai
+                    </span>
+
+                    <strong>
+                        <%= technicianSummary.selesai %>
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h2>
+                        📋 Work Order Saya
+                    </h2>
+
+                    <p>
+                        Work Order yang perlu Anda tangani
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <% if (technicianWorkorders.length === 0) { %>
+
+            <div class="empty-state">
+
+            <div style="font-size: 40px;margin-bottom: 10px;">
+                📭
+            </div>
+
+            <strong>
+                Belum ada Work Order
+            </strong>
+
+            <p>
+                Work Order yang ditugaskan kepada Anda
+                akan muncul di sini.
+            </p>
+
+            </div>
+
+            <% } else { %>
+
+            <div class="technician-workorders">
+
+            <% technicianWorkorders.forEach(wo => { %>
+
+            <div class="technician-wo-item">
+
+                <div>
+
+                    <strong>
+                        <%= wo.nomor %>
+                    </strong>
+
+                    <div>
+                        <%= wo.judul %>
+                    </div>
+
+                </div>
+
+
+                    <span class="wo-status">
+                        <%= wo.status %>
+                    </span>
+
+            </div>
+
+            <% }); %>
+
+            </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+<% } %>
+
+<script>
+const chartBars = document.querySelectorAll(".chart-bar");
+const chartTooltip = document.getElementById("chartTooltip");
+
+
+chartBars.forEach(bar => {
+
+    bar.addEventListener("mouseenter", () => {
+
+        const label = bar.dataset.label;
+        const total = bar.dataset.total;
+
+        chartTooltip.querySelector("b").textContent = label;
+
+        chartTooltip.querySelector("small").textContent =
+            `${total} Work Order`;
+
+        const rect = bar.getBoundingClientRect();
+
+        chartTooltip.style.left =
+            `${rect.left + rect.width / 2}px`;
+
+        chartTooltip.style.top =
+            `${rect.top - 10}px`;
+
+        chartTooltip.classList.add("show");
+
+    });
+
+    bar.addEventListener("mouseleave", () => {
+
+        chartTooltip.classList.remove("show");
+
+    });
+
+});
+
+
+const categoryBars =
+    document.querySelectorAll(".category-bar");
+
+const subcategoryChart =
+    document.getElementById("subcategoryChart");
+
+const subcategoryBars =
+    document.getElementById("subcategoryBars");
+
+const subcategoryTitle =
+    document.getElementById("subcategoryTitle");
+
+const subcategoryBack =
+    document.getElementById("subcategoryBack");
+
+
+categoryBars.forEach(bar => {
+
+    bar.addEventListener("click", () => {
+
+        const kategori =
+            bar.dataset.kategori;
+
+        const subkategori =
+            JSON.parse(bar.dataset.subkategori);
+
+        subcategoryTitle.textContent =
+            `📂 ${kategori}`;
+
+        subcategoryBars.innerHTML = "";
+
+        const values =
+            Object.entries(subkategori);
+
+        const max =
+            Math.max(
+                ...values.map(item => item[1]),
+                1
+            );
+
+        values.forEach(([nama, total]) => {
+
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.className =
+                "subcategory-bar-wrapper";
+
+            const barElement =
+                document.createElement("div");
+
+            barElement.className =
+                "subcategory-bar";
+
+            barElement.style.height =
+                `${Math.max(
+                    (total / max) * 100,
+                    8
+                )}%`;
+
+            barElement.innerHTML =
+                `<strong>${total}</strong>`;
+
+            const label =
+                document.createElement("span");
+
+            label.textContent = nama;
+
+            wrapper.appendChild(barElement);
+            wrapper.appendChild(label);
+
+            subcategoryBars.appendChild(wrapper);
+
+        });
+
+        subcategoryChart.style.display =
+            "block";
+
+        subcategoryChart.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+
+    });
+
+});
+
+
+subcategoryBack.addEventListener(
+    "click",
+    () => {
+
+        subcategoryChart.style.display =
+            "none";
+
+    }
+);
+</script>
