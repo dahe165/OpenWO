@@ -1524,3 +1524,490 @@ font-size:14px;
 
     background: #eef2ff;
 }
+
+.technician-wo-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-start-work {
+    border: none;
+    border-radius: 8px;
+
+    padding: 7px 12px;
+
+    background: var(--primary);
+    color: white;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.btn-start-work:hover {
+    opacity: 0.9;
+}
+
+.btn-complete-work {
+    border: none;
+    border-radius: 8px;
+
+    padding: 7px 12px;
+
+    background: #16a34a;
+    color: white;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.btn-complete-work:hover {
+    opacity: 0.9;
+}
+
+.technician-summary-card {
+    margin-top: 20px;
+
+    padding: 22px 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    transition: 0.2s ease;
+}
+
+.technician-summary-card:hover {
+    border-color: #d1d5db;
+
+    transform: translateY(-1px);
+}
+
+
+.technician-summary-content {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+
+.technician-summary-icon {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    font-size: 22px;
+}
+
+
+.technician-summary-card h2 {
+    margin: 0 0 5px;
+
+    font-size: 16px;
+
+    color: var(--text);
+}
+
+
+.technician-summary-card p {
+    margin: 0;
+
+    font-size: 13px;
+
+    color: #6b7280;
+}
+
+
+.btn-view-workorders {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 10px 15px;
+
+    border-radius: 9px;
+
+    background: var(--primary);
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition: 0.2s ease;
+}
+
+
+.btn-view-workorders:hover {
+    opacity: 0.9;
+
+    transform: translateX(2px);
+}
+
+
+@media (max-width: 600px) {
+
+    .technician-summary-card {
+        align-items: stretch;
+
+        flex-direction: column;
+    }
+
+    .btn-view-workorders {
+        width: 100%;
+    }
+
+}
+
+.technician-feed {
+    margin-top: 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+.technician-feed-item {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 15px 18px;
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    transition: 0.2s ease;
+}
+
+
+.technician-feed-item:hover {
+    border-color: #d1d5db;
+
+    transform: translateY(-1px);
+}
+
+
+.technician-feed-main strong {
+    font-size: 11px;
+
+    color: #6b7280;
+}
+
+
+.technician-feed-main h3 {
+    margin: 4px 0;
+
+    font-size: 14px;
+
+    color: var(--text);
+}
+
+
+.technician-feed-main span {
+    font-size: 11px;
+
+    color: #6b7280;
+}
+
+
+.technician-feed-meta {
+    display: flex;
+
+    align-items: flex-end;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+    flex-shrink: 0;
+}
+
+
+.technician-feed-meta small {
+    font-size: 11px;
+
+    color: #9ca3af;
+}
+
+
+.wo-status {
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    background: #f1f5f9;
+
+    color: #475569;
+}
+
+
+.technician-feed-empty {
+    padding: 30px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    color: #9ca3af;
+
+    background: #f8fafc;
+
+    border-radius: 12px;
+}
+
+
+@media (max-width: 600px) {
+
+    .technician-feed-item {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .technician-feed-meta {
+        align-items: flex-start;
+
+        flex-direction: row;
+    }
+
+}
+
+.pagination {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    margin-top: 18px;
+}
+
+
+.pagination a {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #6b7280;
+
+    background: #f8fafc;
+
+    border: 1px solid #e5e7eb;
+
+    transition: 0.2s ease;
+}
+
+
+.pagination a:hover {
+    background: #eef2f7;
+
+    color: var(--text);
+}
+
+
+.pagination a.active {
+    background: var(--primary);
+
+    color: white;
+
+    border-color: var(--primary);
+}
+
+
+.pagination a.pagination-arrow {
+    font-size: 15px;
+}
+
+.wo-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.wo-actions form {
+    margin: 0;
+}
+
+.btn-action {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-start {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-complete {
+    background: #16a34a;
+    color: white;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+    .wo-actions {
+        justify-content: stretch;
+    }
+
+    .wo-actions form,
+    .btn-action {
+        width: 100%;
+    }
+}
+
+.timeline .step.active .dot {
+    animation: statusPulse 1.5s ease-in-out infinite;
+}
+
+.timeline .step.changed .dot {
+    animation: statusChanged 0.8s ease-out;
+}
+
+@keyframes statusPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow:
+            0 0 0 0 rgba(37, 99, 235, 0.35);
+    }
+
+    50% {
+        transform: scale(1.15);
+        box-shadow:
+            0 0 0 8px rgba(37, 99, 235, 0);
+    }
+
+}
+
+
+@keyframes statusChanged {
+
+    0% {
+        transform: scale(0.6);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: scale(1.35);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+}
+
+
+.btn-action {
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+}
+
+.btn-action:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.btn-loading {
+    pointer-events: none;
+}
+
+
+.card-enter {
+    animation: cardEnter 0.45s ease-out;
+}
+
+@keyframes cardEnter {
+
+    from {
+        opacity: 0.5;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}

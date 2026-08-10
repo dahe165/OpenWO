@@ -65,10 +65,73 @@ function index(req, res) {
 
 }
 
+function start(req, res) {
+
+    const id = Number(req.params.id);
+
+    const technicianId = req.user?.id;
+
+    console.log("=== START WORK ===");
+    console.log("WO ID:", id);
+    console.log("USER:", req.user);
+    console.log("TECHNICIAN ID:", technicianId);
+
+    const workorder =
+        workorderModel.startWork(
+            id,
+            technicianId
+        );
+
+    if (!workorder) {
+
+        return res.status(404).json({
+            success: false,
+            message:
+                "Work Order tidak ditemukan atau bukan tanggung jawab Anda."
+        });
+
+    }
+
+    return res.json({
+        success: true,
+        workorder
+    });
+}
+
+function complete(req, res) {
+
+    const id = Number(req.params.id);
+
+    const technicianId = req.user?.id;
+
+    const workorder =
+        workorderModel.completeWork(
+            id,
+            technicianId
+        );
+
+    if (!workorder) {
+
+        return res.status(404).json({
+            success: false,
+            message:
+                "Work Order tidak ditemukan, bukan tanggung jawab Anda, atau belum diproses."
+        });
+
+    }
+
+    return res.json({
+        success: true,
+        workorder
+    });
+}
+
 module.exports = {
 
     create,
     store,
-    index
+    index,
+    start,
+    complete
 
 };

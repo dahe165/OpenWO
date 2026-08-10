@@ -337,13 +337,15 @@
                 <h2>👨‍🔧 Dashboard Teknisi</h2>
 
                 <p>
-                    Work Order yang sedang menjadi tanggung jawab Anda
+                    Ringkasan Work Order yang menjadi tanggung jawab Anda
                 </p>
 
             </div>
 
         </div>
 
+
+        <!-- KPI -->
 
         <div class="dashboard-kpi">
 
@@ -412,18 +414,25 @@
         </div>
 
 
-        <div class="dashboard-panel">
+        <!-- Ringkasan Work Order -->
 
-            <div class="panel-header">
+        <div class="technician-summary-card">
+
+            <div class="technician-summary-content">
+
+                <div class="technician-summary-icon">
+                    📋
+                </div>
 
                 <div>
 
                     <h2>
-                        📋 Work Order Saya
+                        Ringkasan Work Order Saya
                     </h2>
 
                     <p>
-                        Work Order yang perlu Anda tangani
+                        Lihat dan kerjakan Work Order yang menjadi
+                        tanggung jawab Anda.
                     </p>
 
                 </div>
@@ -431,61 +440,123 @@
             </div>
 
 
-            <% if (technicianWorkorders.length === 0) { %>
-
-            <div class="empty-state">
-
-            <div style="font-size: 40px;margin-bottom: 10px;">
-                📭
-            </div>
-
-            <strong>
-                Belum ada Work Order
-            </strong>
-
-            <p>
-                Work Order yang ditugaskan kepada Anda
-                akan muncul di sini.
-            </p>
-
-            </div>
-
-            <% } else { %>
-
-            <div class="technician-workorders">
-
-            <% technicianWorkorders.forEach(wo => { %>
-
-            <div class="technician-wo-item">
-
-                <div>
-
-                    <strong>
-                        <%= wo.nomor %>
-                    </strong>
-
-                    <div>
-                        <%= wo.judul %>
-                    </div>
-
-                </div>
-
-
-                    <span class="wo-status">
-                        <%= wo.status %>
-                    </span>
-
-            </div>
-
-            <% }); %>
-
-            </div>
-
-            <% } %>
+            <a
+                href="/workorder"
+                class="btn-view-workorders"
+            >
+                Lihat Semua Work Order
+                <span>→</span>
+            </a>
 
         </div>
 
     </div>
+
+    <div class="technician-feed">
+
+        <% if (technicianFeed.length === 0) { %>
+
+            <div class="technician-feed-empty">
+                Belum ada Work Order.
+            </div>
+
+        <% } else { %>
+
+            <% technicianFeed.forEach(wo => { %>
+
+                <div class="technician-feed-item">
+
+                    <div class="technician-feed-main">
+
+                        <strong>
+                            <%= wo.nomor %>
+                        </strong>
+
+                        <h3>
+                            <%= wo.judul %>
+                        </h3>
+
+                        <span>
+                            <%= wo.kategori %>
+                            <% if (wo.subkategori) { %>
+                                • <%= wo.subkategori %>
+                            <% } %>
+                        </span>
+
+                    </div>
+
+
+                    <div class="technician-feed-meta">
+
+                        <span class="wo-status status-<%= wo.status.toLowerCase() %>">
+                            <%= wo.status %>
+                        </span>
+
+                        <small>
+                            <%= wo.update %>
+                        </small>
+
+                    </div>
+
+                </div>
+
+            <% }); %>
+
+        <% } %>
+
+    </div>
+
+
+        <% if (pagination.totalPages > 1) { %>
+
+            <div class="pagination">
+
+                <% if (pagination.page > 1) { %>
+
+                    <a
+                        href="/dashboard?page=<%= pagination.page - 1 %>"
+                        class="pagination-arrow"
+                    >
+                        ←
+                    </a>
+
+                <% } %>
+
+
+                <% for (
+                    let i = 1;
+                    i <= pagination.totalPages;
+                    i++
+                ) { %>
+
+                    <a
+                        href="/dashboard?page=<%= i %>"
+                        class="<%= pagination.page === i
+                            ? 'active'
+                            : '' %>"
+                    >
+                        <%= i %>
+                    </a>
+
+                <% } %>
+
+
+                <% if (
+                    pagination.page < pagination.totalPages
+                ) { %>
+
+                    <a
+                        href="/dashboard?page=<%= pagination.page + 1 %>"
+                        class="pagination-arrow"
+                    >
+                        →
+                    </a>
+
+                <% } %>
+
+            </div>
+
+        <% } %>
 
 <% } %>
 

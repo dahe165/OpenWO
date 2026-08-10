@@ -7,7 +7,7 @@
         </h1>
 
         <p class="page-subtitle">
-            Pantau semua laporan yang pernah Anda buat.
+            Pantau dan kerjakan Work Order yang ditugaskan kepada Anda.
         </p>
 
         </div>
@@ -44,75 +44,128 @@
                 <%= wo.nomor %>
             </div>
 
-            <% if (wo.id === activeId) { %>
+                <% if (wo.id === activeId) { %>
 
-            <div class="timeline">
+                <div class="timeline">
 
-            <div class="step done">
-                <span>Dibuat</span>
-                <div class="dot"></div>
-            </div>
+                    <div class="step done">
+                        <span>Dibuat</span>
+                        <div class="dot"></div>
+                    </div>
 
-            <div class="step done">
-                <span>Verifikasi</span>
-                <div class="dot"></div>
-            </div>
+                    <div class="step done">
+                        <span>Verifikasi</span>
+                        <div class="dot"></div>
+                    </div>
 
-            <div class="step active">
-                <span><%= wo.status %></span>
-                <div class="dot"></div>
-            </div>
+                    <div class="step <%= wo.status === 'Ditugaskan' ? 'active' : (['Diproses', 'Selesai'].includes(wo.status) ? 'done' : '') %>">
+                        <span>Ditugaskan</span>
+                        <div class="dot"></div>
+                    </div>
 
-            <div class="step">
-                <span>Diproses</span>
-                <div class="dot"></div>
-            </div>
+                    <div class="step <%= wo.status === 'Diproses' ? 'active' : (wo.status === 'Selesai' ? 'done' : '') %>">
+                        <span>Diproses</span>
+                        <div class="dot"></div>
+                    </div>
 
-            <div class="step">
-                <span>Selesai</span>
-                <div class="dot"></div>
-            </div>
-
-            </div>
-
-            <div class="wo-footer">
-
-            <div>
-
-                👨 <%= wo.pelapor %>
-
-            </div>
-
-            <div>
-
-                <%= wo.update %>
-
-            </div>
-
-            </div>
-
-            <% } else { %>
-
-            <div class="wo-footer">
-
-                <div>
-
-                    Status :
-                    <strong><%= wo.status %></strong>
+                    <div class="step <%= wo.status === 'Selesai' ? 'active' : '' %>">
+                        <span>Selesai</span>
+                        <div class="dot"></div>
+                    </div>
 
                 </div>
 
-                <div>
+                <% } else { %>
 
-                    <%= wo.update %>
+                    <div class="wo-footer">
 
-                </div>
+                        <div>
+                            Status :
+                            <strong><%= wo.status %></strong>
+                        </div>
 
-            </div>
+                        <div>
+                            <%= wo.update %>
+                        </div>
 
-            <a href="/workorder?id=<%= wo.id %>" class="btn-open" data-id="<%= wo.id %>"> Lihat Detail → </a>
+                    </div>
 
-            <% } %>
+                    <a
+                        href="/workorder?id=<%= wo.id %>"
+                        class="btn-open"
+                        data-id="<%= wo.id %>"
+                    >
+                        Lihat Detail →
+                    </a>
+
+                <% } %>
+
+
+                <!-- AKSI WO -->
+
+                <% if (
+                    wo.status === "Ditugaskan" ||
+                    wo.status === "Diproses"
+                ) { %>
+
+                    <div class="wo-actions">
+
+                        <% if (wo.status === "Ditugaskan") { %>
+
+                            <form
+                                method="POST"
+                                action="/workorder/<%= wo.id %>/start"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn-action btn-start"
+                                >
+                                    ▶ Mulai Kerjakan
+                                </button>
+
+                            </form>
+
+                        <% } else if (wo.status === "Diproses") { %>
+
+                            <form
+                                method="POST"
+                                action="/workorder/<%= wo.id %>/complete"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn-action btn-complete"
+                                >
+                                    ✓ Selesaikan
+                                </button>
+
+                            </form>
+
+                        <% } %>
+
+                    </div>
+
+                <% } %>
+
+
+                <!-- FOOTER UNTUK DETAIL -->
+
+                <% if (wo.id === activeId) { %>
+
+                    <div class="wo-footer">
+
+                        <div>
+                            👨 <%= wo.pelapor %>
+                        </div>
+
+                        <div>
+                            <%= wo.update %>
+                        </div>
+
+                    </div>
+
+                <% } %>
 
             </div>
 

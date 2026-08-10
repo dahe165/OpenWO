@@ -59,4 +59,14 @@ router.get("/login/:username", (req, res) => {
 
 });
 
+router.post(
+    "/workorder/:id/start",
+    workorderController.start
+);
+
+router.post(
+    "/workorder/:id/complete",
+    workorderController.complete
+);
+
 module.exports = router;

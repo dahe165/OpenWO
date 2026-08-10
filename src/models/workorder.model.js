@@ -40,6 +40,62 @@ const workorders = [
         update: "1 jam lalu",
         createdAt: "2026-08-07T08:30:00",
         expanded: false
+    },
+
+    {
+        id: 4,
+        nomor: "WO-2026-00004",
+        judul: "WiFi Lantai 10 Lag",
+        kategori: "Incident",
+        subkategori: "Hardware",
+        status: "Diproses",
+        pelapor: "Budi",
+        teknisiId: 3,
+        update: "5 jam lalu",
+        createdAt: "2026-08-07T08:30:00",
+        expanded: false
+    },
+
+    {
+        id: 5,
+        nomor: "WO-2026-00005",
+        judul: "WiFi Lantai 2 Lambat",
+        kategori: "Incident",
+        subkategori: "Network",
+        status: "Diproses",
+        pelapor: "Budi",
+        teknisiId: 3,
+        update: "4 jam lalu",
+        createdAt: "2026-08-07T08:30:00",
+        expanded: false
+    },
+
+    {
+        id: 6,
+        nomor: "WO-2026-00006",
+        judul: "WiFi Lantai 2 Lambat",
+        kategori: "Incident",
+        subkategori: "Network",
+        status: "Diproses",
+        pelapor: "Budi",
+        teknisiId: 3,
+        update: "3 jam lalu",
+        createdAt: "2026-08-07T08:30:00",
+        expanded: false
+    },
+
+    {
+        id: 7,
+        nomor: "WO-2026-00007",
+        judul: "Router Tidak ada sinyal",
+        kategori: "Incident",
+        subkategori: "Network",
+        status: "Diproses",
+        pelapor: "Budi",
+        teknisiId: 3,
+        update: "3 jam lalu",
+        createdAt: "2026-08-07T08:30:00",
+        expanded: false
     }
 
 ];
@@ -56,6 +112,50 @@ function getByTechnicianId(technicianId) {
         .filter(wo => wo.teknisiId === technicianId)
         .map(wo => ({ ...wo }));
 
+}
+
+function startWork(id, technicianId) {
+
+    const workorder = workorders.find(
+        wo =>
+            wo.id === id &&
+            wo.teknisiId === technicianId
+    );
+
+    if (!workorder) {
+        return null;
+    }
+
+    if (workorder.status !== "Ditugaskan") {
+        return null;
+    }
+
+    workorder.status = "Diproses";
+    workorder.update = "Baru saja";
+
+    return { ...workorder };
+}
+
+function completeWork(id, technicianId) {
+
+    const workorder = workorders.find(
+        wo =>
+            wo.id === id &&
+            wo.teknisiId === technicianId
+    );
+
+    if (!workorder) {
+        return null;
+    }
+
+    if (workorder.status !== "Diproses") {
+        return null;
+    }
+
+    workorder.status = "Selesai";
+    workorder.update = "Baru saja";
+
+    return { ...workorder };
 }
 
 function create(data) {
@@ -102,5 +202,7 @@ function create(data) {
 module.exports = {
     getAll,
     getByTechnicianId,
+    startWork,
+    completeWork,
     create
 };

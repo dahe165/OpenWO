@@ -2,35 +2,105 @@ const workorderModel = require("../models/workorder.model");
 
 const dashboardService = require("../services/dashboard.service");
 
+
 function index(req, res) {
 
-    const summary = dashboardService.getSummary();
+    const summary =
+        dashboardService.getSummary();
 
-    const trend = dashboardService.getWorkOrderTrend();
+    const trend =
+        dashboardService.getWorkOrderTrend();
 
-    const categoryTrend = dashboardService.getCategoryTrend();
+    const categoryTrend =
+        dashboardService.getCategoryTrend();
 
-    const role = req.user?.role;
+    const role =
+        req.user?.role;
 
-    const technicianId = req.user?.id;
+    const technicianId =
+        req.user?.id;
 
-    const technicianWorkorders = workorderModel.getByTechnicianId(technicianId);
+
+    const technicianWorkorders =
+        workorderModel.getByTechnicianId(
+            technicianId
+        );
+
+
+    /*
+     * =====================================
+     * Ringkasan Teknisi
+     * =====================================
+     */
 
     const technicianSummary = {
 
-    ditugaskan: technicianWorkorders.filter(
-        wo => wo.status === "Ditugaskan"
-    ).length,
+        ditugaskan:
+            technicianWorkorders.filter(
+                wo => wo.status === "Ditugaskan"
+            ).length,
 
-    diproses: technicianWorkorders.filter(
-        wo => wo.status === "Diproses"
-    ).length,
+        diproses:
+            technicianWorkorders.filter(
+                wo => wo.status === "Diproses"
+            ).length,
 
-    selesai: technicianWorkorders.filter(
-        wo => wo.status === "Selesai"
-    ).length
+        selesai:
+            technicianWorkorders.filter(
+                wo => wo.status === "Selesai"
+            ).length
 
     };
+
+
+    /*
+     * =====================================
+     * Pagination Feed Teknisi
+     * =====================================
+     */
+
+    technicianWorkorders.sort(
+        (a, b) =>
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+    );
+
+
+    const limit = 5;
+
+
+    const page = Math.max(
+        Number(req.query.page) || 1,
+        1
+    );
+
+
+    const totalItems =
+        technicianWorkorders.length;
+
+
+    const totalPages =
+        Math.ceil(
+            totalItems / limit
+        );
+
+
+    const offset =
+        (page - 1) * limit;
+
+
+    const technicianFeed =
+        technicianWorkorders.slice(
+            offset,
+            offset + limit
+        );
+
+
+    /*
+     * =====================================
+     * Render Dashboard
+     * =====================================
+     */
 
     res.render("dashboard/index", {
 
@@ -48,11 +118,26 @@ function index(req, res) {
 
         technicianWorkorders,
 
-        technicianSummary
+        technicianSummary,
+
+        technicianFeed,
+
+        pagination: {
+
+            page,
+
+            totalPages,
+
+            totalItems,
+
+            limit
+
+        }
 
     });
 
 }
+
 
 module.exports = {
     index
