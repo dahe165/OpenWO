@@ -69,4 +69,14 @@ router.post(
     workorderController.complete
 );
 
+router.post(
+    "/workorder/:id/verify",
+    workorderController.verify
+);
+
+router.post(
+    "/workorder/:id/verify-manager",
+    workorderController.verifyManager
+);
+
 module.exports = router;

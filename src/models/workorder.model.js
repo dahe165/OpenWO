@@ -9,9 +9,30 @@ const workorders = [
         status: "Ditugaskan",
         pelapor: "Budi",
         teknisiId: 3,
+        eskalasi: false,
         update: "10 menit lalu",
         createdAt: "2026-08-07T09:30:00",
-        expanded: true
+        expanded: true,
+                timeline: [
+                {
+                    status: "Dibuat",
+                    tanggal: "2026-08-07T09:30:00",
+                    user: "Budi",
+                    role: "Pelapor"
+                },
+                {
+                    status: "Diterima",
+                    tanggal: "2026-08-07T09:35:00",
+                    user: "Dahe Ugi",
+                    role: "Asman"
+                },
+                {
+                    status: "Ditugaskan",
+                    tanggal: "2026-08-07T09:40:00",
+                    user: "Dahe Ugi",
+                    role: "Asman"
+                }
+            ]
     },
 
     {
@@ -23,9 +44,18 @@ const workorders = [
         status: "Menunggu",
         pelapor: "Budi",
         teknisiId: null,
+        eskalasi: false,
         update: "30 menit lalu",
         createdAt: "2026-08-07T09:00:00",
-        expanded: false
+        expanded: false,
+        timeline: [
+            {
+                status: "Dibuat",
+                tanggal: "2026-08-07T09:00:00",
+                user: "Budi",
+                role: "Pelapor"
+            }
+        ],
     },
 
     {
@@ -37,9 +67,36 @@ const workorders = [
         status: "Diproses",
         pelapor: "Budi",
         teknisiId: 3,
+        eskalasi: false,
         update: "1 jam lalu",
         createdAt: "2026-08-07T08:30:00",
-        expanded: false
+        expanded: false,
+        timeline: [
+            {
+                status: "Dibuat",
+                tanggal: "2026-08-07T08:30:00",
+                user: "Budi",
+                role: "Pelapor"
+            },
+            {
+                status: "Diterima",
+                tanggal: "2026-08-07T08:35:00",
+                user: "Dahe Ugi",
+                role: "Asman"
+            },
+            {
+                status: "Ditugaskan",
+                tanggal: "2026-08-07T08:40:00",
+                user: "Dahe Ugi",
+                role: "Asman"
+            },
+            {
+                status: "Dikerjakan",
+                tanggal: "2026-08-07T08:45:00",
+                user: "Andi",
+                role: "Teknisi"
+            }
+        ],
     },
 
     {
@@ -51,9 +108,36 @@ const workorders = [
         status: "Diproses",
         pelapor: "Budi",
         teknisiId: 3,
+        eskalasi: false,
         update: "5 jam lalu",
         createdAt: "2026-08-07T08:30:00",
-        expanded: false
+        expanded: false,
+        timeline: [
+            {
+                status: "Dibuat",
+                tanggal: "2026-08-07T08:30:00",
+                user: "Budi",
+                role: "Pelapor"
+            },
+            {
+                status: "Diterima",
+                tanggal: "2026-08-07T08:35:00",
+                user: "Dahe Ugi",
+                role: "Asman"
+            },
+            {
+                status: "Ditugaskan",
+                tanggal: "2026-08-07T08:40:00",
+                user: "Dahe Ugi",
+                role: "Asman"
+            },
+            {
+                status: "Dikerjakan",
+                tanggal: "2026-08-07T08:45:00",
+                user: "Andi",
+                role: "Teknisi"
+            }
+        ],
     },
 
     {
@@ -65,9 +149,36 @@ const workorders = [
         status: "Diproses",
         pelapor: "Budi",
         teknisiId: 3,
+        eskalasi: false,
         update: "4 jam lalu",
         createdAt: "2026-08-07T08:30:00",
-        expanded: false
+        expanded: false,
+        timeline: [
+            {
+                status: "Dibuat",
+                tanggal: "2026-08-07T08:30:00",
+                user: "Budi",
+                role: "Pelapor"
+            },
+            {
+                status: "Diterima",
+                tanggal: "2026-08-07T08:35:00",
+                user: "Dahe Ugi",
+                role: "Asman"
+            },
+            {
+                status: "Ditugaskan",
+                tanggal: "2026-08-07T08:40:00",
+                user: "Dahe Ugi",
+                role: "Asman"
+            },
+            {
+                status: "Dikerjakan",
+                tanggal: "2026-08-07T08:45:00",
+                user: "Andi",
+                role: "Teknisi"
+            }
+        ],
     },
 
     {
@@ -79,9 +190,36 @@ const workorders = [
         status: "Diproses",
         pelapor: "Budi",
         teknisiId: 3,
+        eskalasi: false,
         update: "3 jam lalu",
         createdAt: "2026-08-07T08:30:00",
-        expanded: false
+        expanded: false,
+        timeline: [
+            {
+                status: "Dibuat",
+                tanggal: "2026-08-07T08:30:00",
+                user: "Budi",
+                role: "Pelapor"
+            },
+            {
+                status: "Diterima",
+                tanggal: "2026-08-07T08:35:00",
+                user: "Dahe Ugi",
+                role: "Asman"
+            },
+            {
+                status: "Ditugaskan",
+                tanggal: "2026-08-07T08:40:00",
+                user: "Dahe Ugi",
+                role: "Asman"
+            },
+            {
+                status: "Dikerjakan",
+                tanggal: "2026-08-07T08:45:00",
+                user: "Andi",
+                role: "Teknisi"
+            }
+        ],
     },
 
     {
@@ -93,9 +231,37 @@ const workorders = [
         status: "Diproses",
         pelapor: "Budi",
         teknisiId: 3,
+        eskalasi: true,
+        eskalasiLevel: "Manager",
         update: "3 jam lalu",
         createdAt: "2026-08-07T08:30:00",
-        expanded: false
+        expanded: false,
+        timeline: [
+            {
+                status: "Dibuat",
+                tanggal: "2026-08-07T08:30:00",
+                user: "Budi",
+                role: "Pelapor"
+            },
+            {
+                status: "Diterima",
+                tanggal: "2026-08-07T08:35:00",
+                user: "Dahe Ugi",
+                role: "Asman"
+            },
+            {
+                status: "Ditugaskan",
+                tanggal: "2026-08-07T08:40:00",
+                user: "Dahe Ugi",
+                role: "Asman"
+            },
+            {
+                status: "Dikerjakan",
+                tanggal: "2026-08-07T08:45:00",
+                user: "Andi",
+                role: "Teknisi"
+            }
+        ],
     }
 
 ];
@@ -114,7 +280,22 @@ function getByTechnicianId(technicianId) {
 
 }
 
-function startWork(id, technicianId) {
+function getForManager() {
+
+    return workorders
+        .filter(
+            wo =>
+                wo.status === "Menunggu Verifikasi Manager"
+        )
+        .map(wo => ({ ...wo }));
+
+}
+
+function startWork(
+    id,
+    technicianId,
+    technicianName
+) {
 
     const workorder = workorders.find(
         wo =>
@@ -131,12 +312,24 @@ function startWork(id, technicianId) {
     }
 
     workorder.status = "Diproses";
+
     workorder.update = "Baru saja";
+
+    addTimeline(
+        workorder,
+        "Dikerjakan",
+        technicianName,
+        "Teknisi"
+    );
 
     return { ...workorder };
 }
 
-function completeWork(id, technicianId) {
+function completeWork(
+    id,
+    technicianId,
+    technicianName
+) {
 
     const workorder = workorders.find(
         wo =>
@@ -154,6 +347,124 @@ function completeWork(id, technicianId) {
 
     workorder.status = "Selesai";
     workorder.update = "Baru saja";
+
+    addTimeline(
+        workorder,
+        "Selesai",
+        technicianName,
+        "Teknisi"
+    );
+
+    return { ...workorder };
+}
+
+function verifyByAsman(
+    id,
+    asmanId,
+    asmanName
+) {
+
+    const workorder = workorders.find(
+        wo => wo.id === id
+    );
+
+    if (!workorder) {
+        return null;
+    }
+
+    /*
+     * WO harus sudah selesai.
+     */
+    if (workorder.status !== "Selesai") {
+        return null;
+    }
+
+    /*
+     * Verifikasi Asman
+     */
+    addTimeline(
+        workorder,
+        "Verifikasi Asman",
+        asmanName,
+        "Asman"
+    );
+
+    /*
+     * Jika WO membutuhkan verifikasi Manager,
+     * jangan langsung ditutup.
+     */
+    if (
+        workorder.eskalasi === true &&
+        workorder.eskalasiLevel === "Manager"
+    ) {
+
+        workorder.status = "Menunggu Verifikasi Manager";
+        workorder.update = "Menunggu verifikasi Manager";
+
+        addTimeline(
+            workorder,
+            "Menunggu Verifikasi Manager",
+            asmanName,
+            "Asman"
+        );
+
+    } else {
+
+        /*
+         * WO normal langsung ditutup.
+         */
+        workorder.status = "Ditutup";
+        workorder.update = "Baru saja";
+
+        addTimeline(
+            workorder,
+            "Ditutup",
+            asmanName,
+            "Asman"
+        );
+    }
+
+    return { ...workorder };
+}
+
+function verifyByManager(
+    id,
+    managerId,
+    managerName
+) {
+
+    const workorder = workorders.find(
+        wo => wo.id === id
+    );
+
+    if (!workorder) {
+        return null;
+    }
+
+    if (
+        workorder.status !==
+        "Menunggu Verifikasi Manager"
+    ) {
+        return null;
+    }
+
+    addTimeline(
+        workorder,
+        "Verifikasi Manager",
+        managerName,
+        "Manager"
+    );
+
+    workorder.status = "Ditutup";
+
+    workorder.update = "Baru saja";
+
+    addTimeline(
+        workorder,
+        "Ditutup",
+        managerName,
+        "Manager"
+    );
 
     return { ...workorder };
 }
@@ -189,7 +500,16 @@ function create(data) {
 
         createdAt: new Date().toISOString(),
 
-        expanded: false
+        expanded: false,
+
+                timeline: [
+                    {
+                        status: "Dibuat",
+                        tanggal: new Date().toISOString(),
+                        user: "Dahe Ugi",
+                        role: "Pelapor"
+                    }
+                ]
 
     };
 
@@ -199,10 +519,37 @@ function create(data) {
 
 }
 
+function addTimeline(
+    workorder,
+    status,
+    user,
+    role
+) {
+
+    if (!workorder.timeline) {
+        workorder.timeline = [];
+    }
+
+    workorder.timeline.push({
+
+        status,
+
+        tanggal: new Date().toISOString(),
+
+        user,
+
+        role
+
+    });
+}
+
 module.exports = {
     getAll,
     getByTechnicianId,
+    getForManager,
     startWork,
     completeWork,
+    verifyByAsman,
+    verifyByManager,
     create
 };

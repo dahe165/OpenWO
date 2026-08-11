@@ -46,32 +46,107 @@
 
                 <% if (wo.id === activeId) { %>
 
-                <div class="timeline">
+                <%
+                    const workflowStages = [
+                        "Dibuat",
+                        "Diterima",
+                        "Ditugaskan",
+                        "Dikerjakan",
+                        "Selesai",
+                        "Verifikasi Asman",
+                        "Menunggu Verifikasi Manager",
+                        "Verifikasi Manager",
+                        "Ditutup"
+                    ];
 
-                    <div class="step done">
-                        <span>Dibuat</span>
-                        <div class="dot"></div>
-                    </div>
+                    const timelineEvents = wo.timeline || [];
 
-                    <div class="step done">
-                        <span>Verifikasi</span>
-                        <div class="dot"></div>
-                    </div>
+                    const lastEventIndex = timelineEvents.length - 1;
+                %>
 
-                    <div class="step <%= wo.status === 'Ditugaskan' ? 'active' : (['Diproses', 'Selesai'].includes(wo.status) ? 'done' : '') %>">
-                        <span>Ditugaskan</span>
-                        <div class="dot"></div>
-                    </div>
+                <%
+                    const completedStages = timelineEvents.filter(
+                        event => workflowStages.includes(event.status)
+                    ).length;
 
-                    <div class="step <%= wo.status === 'Diproses' ? 'active' : (wo.status === 'Selesai' ? 'done' : '') %>">
-                        <span>Diproses</span>
-                        <div class="dot"></div>
-                    </div>
+                    const progressPercent =
+                        completedStages > 1
+                            ? ((completedStages - 1) / (workflowStages.length - 1)) * 100
+                            : 0;
+                %>
 
-                    <div class="step <%= wo.status === 'Selesai' ? 'active' : '' %>">
-                        <span>Selesai</span>
-                        <div class="dot"></div>
-                    </div>
+                <div class="timeline" style="--timeline-progress: <%= progressPercent %>%">
+
+                    <% workflowStages.forEach((stage, stageIndex) => {
+
+                        const eventIndex = timelineEvents.findIndex(
+                            event => event.status === stage
+                        );
+
+                        const event = eventIndex !== -1
+                            ? timelineEvents[eventIndex]
+                            : null;
+
+                        let stepClass = "pending";
+
+                        if (event) {
+
+                            if (eventIndex === lastEventIndex) {
+                                stepClass = "active";
+                            } else {
+                                stepClass = "done";
+                            }
+
+                        }
+
+                    %>
+
+                        <div class="step <%= stepClass %>">
+
+                            <span>
+                                <%= stage %>
+                            </span>
+
+                            <div class="dot">
+
+                                <% if (event && stepClass === "done") { %>
+                                    ✓
+                                <% } %>
+
+                            </div>
+
+                            <% if (event) { %>
+
+                                <div class="timeline-info">
+
+                                    <strong>
+                                        <%= event.user %>
+                                    </strong>
+
+                                    <small>
+                                        <%= event.role %>
+                                    </small>
+
+                                    <small>
+                                        <%= new Date(event.tanggal).toLocaleString(
+                                            "id-ID",
+                                            {
+                                                day: "2-digit",
+                                                month: "short",
+                                                year: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit"
+                                            }
+                                        ) %>
+                                    </small>
+
+                                </div>
+
+                            <% } %>
+
+                        </div>
+
+                    <% }) %>
 
                 </div>
 
@@ -100,54 +175,89 @@
 
                 <% } %>
 
-
                 <!-- AKSI WO -->
 
-                <% if (
-                    wo.status === "Ditugaskan" ||
-                    wo.status === "Diproses"
-                ) { %>
+                <div class="wo-actions">
 
-                    <div class="wo-actions">
+                    <% if (wo.status === "Ditugaskan") { %>
 
-                        <% if (wo.status === "Ditugaskan") { %>
+                        <form
+                            method="POST"
+                            action="/workorder/<%= wo.id %>/start"
+                        >
+                            <button
+                                type="submit"
+                                class="btn-action btn-start"
+                            >
+                                ▶ Mulai Kerjakan
+                            </button>
+                        </form>
+
+                    <% } %>
+
+
+                    <% if (wo.status === "Diproses") { %>
+
+                        <form
+                            method="POST"
+                            action="/workorder/<%= wo.id %>/complete"
+                        >
+                            <button
+                                type="submit"
+                                class="btn-action btn-complete"
+                            >
+                                ✓ Selesaikan
+                            </button>
+                        </form>
+
+                    <% } %>
+
+
+                    <% if (
+                        wo.status === "Selesai" &&
+                        role === "asman"
+                    ) { %>
+
+                        <form
+                            method="POST"
+                            action="/workorder/<%= wo.id %>/verify"
+                        >
+                            <button
+                                type="submit"
+                                class="btn-action btn-verify"
+                            >
+                                ✓ Verifikasi WO
+                            </button>
+                        </form>
+
+                    <% } %>
+
+                    <% if (
+                        role === "manager" &&
+                        wo.status === "Menunggu Verifikasi Manager"
+                    ) { %>
+
+                        <div class="wo-actions">
 
                             <form
                                 method="POST"
-                                action="/workorder/<%= wo.id %>/start"
+                                action="/workorder/<%= wo.id %>/verify-manager"
                             >
 
                                 <button
                                     type="submit"
-                                    class="btn-action btn-start"
+                                    class="btn-action btn-verify"
                                 >
-                                    ▶ Mulai Kerjakan
+                                    ✓ Verifikasi Manager
                                 </button>
 
                             </form>
 
-                        <% } else if (wo.status === "Diproses") { %>
+                        </div>
 
-                            <form
-                                method="POST"
-                                action="/workorder/<%= wo.id %>/complete"
-                            >
+                    <% } %>
 
-                                <button
-                                    type="submit"
-                                    class="btn-action btn-complete"
-                                >
-                                    ✓ Selesaikan
-                                </button>
-
-                            </form>
-
-                        <% } %>
-
-                    </div>
-
-                <% } %>
-
+                </div>
 
                 <!-- FOOTER UNTUK DETAIL -->
 

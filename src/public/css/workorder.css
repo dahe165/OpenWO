@@ -135,6 +135,24 @@ body{
     z-index: 0;
 }
 
+.timeline::after {
+    content: "";
+    position: absolute;
+
+    top: 28px;
+    left: 50px;
+
+    height: 3px;
+
+    width: var(--timeline-progress, 0%);
+
+    background: #16a34a;
+
+    z-index: 0;
+
+    transition: width 0.6s ease;
+}
+
 /* Setiap status */
 .step {
     position: relative;
@@ -2010,4 +2028,184 @@ font-size:14px;
         transform: translateY(0);
     }
 
+}
+
+/* =========================================
+   TIMELINE WORK ORDER
+========================================= */
+
+.timeline {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin: 34px 0 20px;
+    padding: 0 24px;
+}
+
+/* Garis timeline */
+.timeline::before {
+    content: "";
+    position: absolute;
+    top: 28px;
+    left: 50px;
+    right: 50px;
+    height: 3px;
+    background: #d9dee8;
+    z-index: 0;
+}
+
+/* Step */
+.timeline .step {
+    position: relative;
+    z-index: 1;
+
+    flex: 1;
+
+    text-align: center;
+    min-width: 0;
+}
+
+/* Judul status */
+.timeline .step > span {
+    display: block;
+
+    margin-bottom: 12px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #64748b;
+
+    white-space: nowrap;
+}
+
+/* Titik */
+.timeline .dot {
+    width: 20px;
+    height: 20px;
+
+    margin: 0 auto;
+
+    border-radius: 50%;
+
+    background: #d9dee8;
+
+    border: 4px solid #fff;
+
+    box-shadow:
+        0 0 0 1px #cbd5e1;
+
+    transition:
+        background .3s ease,
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+/* =========================================
+   EVENT SELESAI
+========================================= */
+
+.timeline .step.done > span {
+    color: #15803d;
+}
+
+.timeline .step.done .dot {
+    background: #16a34a;
+
+    box-shadow:
+        0 0 0 3px rgba(22, 163, 74, .15);
+}
+
+/* =========================================
+   EVENT AKTIF
+========================================= */
+
+.timeline .step.active > span {
+    color: #2563eb;
+}
+
+.timeline .step.active .dot {
+    background: #2563eb;
+
+    transform: scale(1.15);
+
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, .15);
+
+    animation: timelinePulse 1.8s infinite;
+}
+
+/* Animasi titik aktif */
+
+@keyframes timelinePulse {
+
+    0% {
+        box-shadow:
+            0 0 0 0 rgba(37, 99, 235, .35);
+    }
+
+    70% {
+        box-shadow:
+            0 0 0 10px rgba(37, 99, 235, 0);
+    }
+
+    100% {
+        box-shadow:
+            0 0 0 0 rgba(37, 99, 235, 0);
+    }
+
+}
+
+/* =========================================
+   INFORMASI EVENT
+========================================= */
+
+.timeline-info {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 3px;
+
+    margin-top: 10px;
+}
+
+.timeline-info strong {
+    font-size: 13px;
+    font-weight: 700;
+
+    color: #1e293b;
+}
+
+.timeline-info small {
+    font-size: 11px;
+
+    color: #64748b;
+}
+
+/* =========================================
+   TIMELINE - TAHAP BELUM TERJADI
+========================================= */
+
+.timeline .step.pending > span {
+    color: #94a3b8;
+}
+
+.timeline .step.pending .dot {
+    background: #e2e8f0;
+
+    box-shadow:
+        0 0 0 1px #cbd5e1;
+}
+
+/* Titik aktif */
+.timeline .step.active .dot {
+    color: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
