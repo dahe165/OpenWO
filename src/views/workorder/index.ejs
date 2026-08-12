@@ -46,109 +46,234 @@
 
                 <% if (wo.id === activeId) { %>
 
-                <%
-                    const workflowStages = [
-                        "Dibuat",
-                        "Diterima",
-                        "Ditugaskan",
-                        "Dikerjakan",
-                        "Selesai",
-                        "Verifikasi Asman",
-                        "Menunggu Verifikasi Manager",
-                        "Verifikasi Manager",
-                        "Ditutup"
-                    ];
+                    <%
+                        const timelineEvents = wo.timeline || [];
 
-                    const timelineEvents = wo.timeline || [];
+                        const mainStages = [
+                            "Dibuat",
+                            "Diterima",
+                            "Ditugaskan",
+                            "Dikerjakan",
+                            "Selesai"
+                        ];
 
-                    const lastEventIndex = timelineEvents.length - 1;
-                %>
+                        const verificationStages = [
+                            "Verifikasi Asman",
+                            "Menunggu Verifikasi Manager",
+                            "Verifikasi Manager",
+                            "Ditutup"
+                        ];
 
-                <%
-                    const completedStages = timelineEvents.filter(
-                        event => workflowStages.includes(event.status)
-                    ).length;
-
-                    const progressPercent =
-                        completedStages > 1
-                            ? ((completedStages - 1) / (workflowStages.length - 1)) * 100
-                            : 0;
-                %>
-
-                <div class="timeline" style="--timeline-progress: <%= progressPercent %>%">
-
-                    <% workflowStages.forEach((stage, stageIndex) => {
-
-                        const eventIndex = timelineEvents.findIndex(
-                            event => event.status === stage
-                        );
-
-                        const event = eventIndex !== -1
-                            ? timelineEvents[eventIndex]
-                            : null;
-
-                        let stepClass = "pending";
-
-                        if (event) {
-
-                            if (eventIndex === lastEventIndex) {
-                                stepClass = "active";
-                            } else {
-                                stepClass = "done";
-                            }
-
+                        function getEvent(stage) {
+                            return timelineEvents.find(
+                                event => event.status === stage
+                            );
                         }
 
+                        function getStepClass(stage) {
+
+                            const event = getEvent(stage);
+
+                            if (!event) {
+                                return "pending";
+                            }
+
+                            const lastEvent =
+                                timelineEvents[timelineEvents.length - 1];
+
+                            if (event === lastEvent) {
+                                return "active";
+                            }
+
+                            return "done";
+                        }
                     %>
 
-                        <div class="step <%= stepClass %>">
 
-                            <span>
-                                <%= stage %>
-                            </span>
+                    <!-- ================================= -->
+                    <!-- TIMELINE PEKERJAAN -->
+                    <!-- ================================= -->
 
-                            <div class="dot">
+                    <div class="wo-timeline-section">
 
-                                <% if (event && stepClass === "done") { %>
+                        <div class="timeline-heading">
+                            <span class="timeline-heading-icon">⚙️</span>
+                            <span>Proses Pekerjaan</span>
+                        </div>
+
+
+                        <div class="timeline-main">
+
+                            <% mainStages.forEach((stage) => {
+
+                                const event = getEvent(stage);
+                                const stepClass = getStepClass(stage);
+
+                            %>
+
+                                <div class="timeline-main-step <%= stepClass %>">
+
+                                    <div class="timeline-step-label">
+                                        <%= stage %>
+                                    </div>
+
+                                    <div class="timeline-dot">
+
+                                        <% if (stepClass === "done") { %>
+                                            ✓
+                                        <% } else if (stepClass === "active") { %>
+                                            ●
+                                        <% } %>
+
+                                    </div>
+
+                                    <% if (event) { %>
+
+                                        <div class="timeline-info">
+
+                                            <strong>
+                                                <%= event.user %>
+                                            </strong>
+
+                                            <small>
+                                                <%= event.role %>
+                                            </small>
+
+                                            <small>
+                                                <%= new Date(
+                                                    event.tanggal
+                                                ).toLocaleString(
+                                                    "id-ID",
+                                                    {
+                                                        day: "2-digit",
+                                                        month: "short",
+                                                        year: "numeric",
+                                                        hour: "2-digit",
+                                                        minute: "2-digit"
+                                                    }
+                                                ) %>
+                                            </small>
+
+                                        </div>
+
+                                    <% } %>
+
+                                </div>
+
+                            <% }) %>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- VERIFIKASI -->
+                        <!-- ================================= -->
+
+                        <div class="verification-flow">
+
+                            <div class="verification-line"></div>
+
+                            <div class="verification-header">
+
+                                <span class="verification-icon">
                                     ✓
-                                <% } %>
+                                </span>
 
-                            </div>
-
-                            <% if (event) { %>
-
-                                <div class="timeline-info">
+                                <div>
 
                                     <strong>
-                                        <%= event.user %>
+                                        Tahap Verifikasi
                                     </strong>
 
                                     <small>
-                                        <%= event.role %>
-                                    </small>
-
-                                    <small>
-                                        <%= new Date(event.tanggal).toLocaleString(
-                                            "id-ID",
-                                            {
-                                                day: "2-digit",
-                                                month: "short",
-                                                year: "numeric",
-                                                hour: "2-digit",
-                                                minute: "2-digit"
-                                            }
-                                        ) %>
+                                        Pemeriksaan dan persetujuan penyelesaian WO
                                     </small>
 
                                 </div>
 
-                            <% } %>
+                            </div>
+
+
+                            <div class="verification-steps">
+
+                                <% verificationStages.forEach((stage) => {
+
+                                    const event = getEvent(stage);
+                                    const stepClass = getStepClass(stage);
+
+                                %>
+
+                                    <div class="verification-step <%= stepClass %>">
+
+                                        <div class="verification-dot">
+
+                                            <% if (stepClass === "done") { %>
+                                                ✓
+                                            <% } else if (stepClass === "active") { %>
+                                                ●
+                                            <% } %>
+
+                                        </div>
+
+
+                                        <div class="verification-content">
+
+                                            <strong>
+                                                <%= stage %>
+                                            </strong>
+
+
+                                            <% if (event) { %>
+
+                                                <div class="verification-user">
+
+                                                    <span>
+                                                        <%= event.user %>
+                                                    </span>
+
+                                                    <span>
+                                                        <%= event.role %>
+                                                    </span>
+
+                                                </div>
+
+
+                                                <small>
+
+                                                    <%= new Date(
+                                                        event.tanggal
+                                                    ).toLocaleString(
+                                                        "id-ID",
+                                                        {
+                                                            day: "2-digit",
+                                                            month: "short",
+                                                            year: "numeric",
+                                                            hour: "2-digit",
+                                                            minute: "2-digit"
+                                                        }
+                                                    ) %>
+
+                                                </small>
+
+                                            <% } else { %>
+
+                                                <small>
+                                                    Menunggu proses berikutnya
+                                                </small>
+
+                                            <% } %>
+
+                                        </div>
+
+                                    </div>
+
+                                <% }) %>
+
+                            </div>
 
                         </div>
 
-                    <% }) %>
-
-                </div>
+                    </div>
 
                 <% } else { %>
 

@@ -1,3 +1,5 @@
+const {canTransition} = require("../config/workorder.workflow");
+
 const workorders = [
 
     {
@@ -341,11 +343,21 @@ function completeWork(
         return null;
     }
 
-    if (workorder.status !== "Diproses") {
+    /*
+     * Pastikan perpindahan status
+     * memang diperbolehkan workflow.
+     */
+    if (
+        !canTransition(
+            workorder.status,
+            "Selesai"
+        )
+    ) {
         return null;
     }
 
     workorder.status = "Selesai";
+
     workorder.update = "Baru saja";
 
     addTimeline(
@@ -355,7 +367,9 @@ function completeWork(
         "Teknisi"
     );
 
-    return { ...workorder };
+    return {
+        ...workorder
+    };
 }
 
 function verifyByAsman(
@@ -364,23 +378,29 @@ function verifyByAsman(
     asmanName
 ) {
 
-    const workorder = workorders.find(
-        wo => wo.id === id
-    );
+    const workorder =
+        workorders.find(
+            wo => wo.id === id
+        );
 
     if (!workorder) {
         return null;
     }
 
     /*
-     * WO harus sudah selesai.
+     * WO harus berada pada status Selesai.
      */
-    if (workorder.status !== "Selesai") {
+    if (
+        !canTransition(
+            workorder.status,
+            "Verifikasi Asman"
+        )
+    ) {
         return null;
     }
 
     /*
-     * Verifikasi Asman
+     * Catat verifikasi Asman.
      */
     addTimeline(
         workorder,
@@ -390,7 +410,7 @@ function verifyByAsman(
     );
 
     /*
-     * Jika WO membutuhkan verifikasi Manager,
+     * Jika WO membutuhkan Manager,
      * jangan langsung ditutup.
      */
     if (
@@ -398,8 +418,11 @@ function verifyByAsman(
         workorder.eskalasiLevel === "Manager"
     ) {
 
-        workorder.status = "Menunggu Verifikasi Manager";
-        workorder.update = "Menunggu verifikasi Manager";
+        workorder.status =
+            "Menunggu Verifikasi Manager";
+
+        workorder.update =
+            "Menunggu verifikasi Manager";
 
         addTimeline(
             workorder,
@@ -413,7 +436,17 @@ function verifyByAsman(
         /*
          * WO normal langsung ditutup.
          */
+        if (
+            !canTransition(
+                "Verifikasi Asman",
+                "Ditutup"
+            )
+        ) {
+            return null;
+        }
+
         workorder.status = "Ditutup";
+
         workorder.update = "Baru saja";
 
         addTimeline(
@@ -424,7 +457,9 @@ function verifyByAsman(
         );
     }
 
-    return { ...workorder };
+    return {
+        ...workorder
+    };
 }
 
 function verifyByManager(
@@ -433,27 +468,64 @@ function verifyByManager(
     managerName
 ) {
 
-    const workorder = workorders.find(
-        wo => wo.id === id
-    );
+    const workorder =
+        workorders.find(
+            wo => wo.id === id
+        );
 
     if (!workorder) {
         return null;
     }
 
+    /*
+     * Manager hanya boleh memverifikasi
+     * WO yang memang membutuhkan Manager.
+     */
     if (
-        workorder.status !==
-        "Menunggu Verifikasi Manager"
+        workorder.eskalasi !== true ||
+        workorder.eskalasiLevel !== "Manager"
     ) {
         return null;
     }
 
+    /*
+     * Status harus:
+     *
+     * Menunggu Verifikasi Manager
+     *
+     * sebelum Manager melakukan verifikasi.
+     */
+    if (
+        !canTransition(
+            workorder.status,
+            "Verifikasi Manager"
+        )
+    ) {
+        return null;
+    }
+
+    /*
+     * Catat verifikasi Manager.
+     */
     addTimeline(
         workorder,
         "Verifikasi Manager",
         managerName,
         "Manager"
     );
+
+    /*
+     * Setelah Manager melakukan verifikasi,
+     * WO boleh ditutup.
+     */
+    if (
+        !canTransition(
+            "Verifikasi Manager",
+            "Ditutup"
+        )
+    ) {
+        return null;
+    }
 
     workorder.status = "Ditutup";
 
@@ -466,7 +538,9 @@ function verifyByManager(
         "Manager"
     );
 
-    return { ...workorder };
+    return {
+        ...workorder
+    };
 }
 
 function create(data) {
@@ -543,9 +617,51 @@ function addTimeline(
     });
 }
 
+function getStatistics() {
+
+    return {
+
+        total:
+            workorders.length,
+
+        menunggu:
+            workorders.filter(
+                wo => wo.status === "Menunggu"
+            ).length,
+
+        ditugaskan:
+            workorders.filter(
+                wo => wo.status === "Ditugaskan"
+            ).length,
+
+        diproses:
+            workorders.filter(
+                wo => wo.status === "Diproses"
+            ).length,
+
+        selesai:
+            workorders.filter(
+                wo => wo.status === "Selesai"
+            ).length,
+
+        ditutup:
+            workorders.filter(
+                wo => wo.status === "Ditutup"
+            ).length,
+
+        eskalasi:
+            workorders.filter(
+                wo =>
+                    wo.eskalasi === true
+            ).length
+    };
+
+}
+
 module.exports = {
     getAll,
     getByTechnicianId,
+    getStatistics,
     getForManager,
     startWork,
     completeWork,

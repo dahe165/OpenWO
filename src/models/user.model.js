@@ -1,59 +1,54 @@
-const users = [
-
-    {
-        id: 1,
-        nama: "Dahe Ugi",
-        username: "dahe",
-        role: "asman"
-    },
-
-    {
-        id: 2,
-        nama: "Budi",
-        username: "budi",
-        role: "pelapor"
-    },
-
-    {
-        id: 3,
-        nama: "Andi",
-        username: "andi",
-        role: "teknisi"
-    },
-
-    {
-        id: 4,
-        nama: "Manager",
-        username: "manager",
-        role: "manager"
-    }
-
-];
+const db =
+    require("../config/database");
 
 
 function getAll() {
 
-    return users.map(user => ({
-        ...user
-    }));
+    return db
+        .prepare(`
+            SELECT
+                id,
+                nama,
+                username,
+                role
+            FROM users
+            ORDER BY id
+        `)
+        .all();
 
 }
 
 
 function findByUsername(username) {
 
-    return users.find(
-        user => user.username === username
-    );
+    return db
+        .prepare(`
+            SELECT
+                id,
+                nama,
+                username,
+                role
+            FROM users
+            WHERE username = ?
+        `)
+        .get(username);
 
 }
 
 
 function findById(id) {
 
-    return users.find(
-        user => user.id === id
-    );
+    return db
+        .prepare(`
+            SELECT
+                id,
+                nama,
+                username,
+                role
+            FROM users
+            WHERE id = ?
+        `)
+        .get(id);
 
 }
 

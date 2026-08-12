@@ -237,7 +237,7 @@ function verifyManager(req, res) {
         return res.status(404).json({
             success: false,
             message:
-                "Work Order tidak ditemukan atau belum siap diverifikasi Manager."
+                "Work Order tidak ditemukan, bukan WO eskalasi Manager, atau belum siap diverifikasi."
         });
 
     }

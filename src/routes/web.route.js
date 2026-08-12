@@ -10,6 +10,8 @@ const workorderController = require("../controllers/workorder.controller");
 
 const userModel = require("../models/user.model");
 
+const {requireRole} = require("../middleware/role.middleware");
+
 router.get("/dashboard", dashboardController.index);
 
 router.get("/workorder/create", workorderController.create);
@@ -61,21 +63,25 @@ router.get("/login/:username", (req, res) => {
 
 router.post(
     "/workorder/:id/start",
+    requireRole("teknisi"),
     workorderController.start
 );
 
 router.post(
     "/workorder/:id/complete",
+    requireRole("teknisi"),
     workorderController.complete
 );
 
 router.post(
     "/workorder/:id/verify",
+    requireRole("asman"),
     workorderController.verify
 );
 
 router.post(
     "/workorder/:id/verify-manager",
+    requireRole("manager"),
     workorderController.verifyManager
 );
 
