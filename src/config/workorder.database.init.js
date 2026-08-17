@@ -1,3 +1,5 @@
+console.log("=== WORKORDER DATABASE INIT TERPANGGIL ===");
+
 const db = require("./database");
 
 
@@ -84,6 +86,42 @@ db.exec(`
     );
 `);
 
+/*
+ * =====================================
+ * Migrasi Timeline — Alasan Eskalasi
+ * =====================================
+ */
+
+const timelineColumns =
+    db.prepare(`
+        PRAGMA table_info(work_order_timeline)
+    `).all();
+
+
+console.log(
+    "TIMELINE COLUMNS:",
+    timelineColumns.map(column => column.name)
+);
+
+
+const hasReasonColumn =
+    timelineColumns.some(
+        column => column.name === "reason"
+    );
+
+
+if (!hasReasonColumn) {
+
+    db.exec(`
+        ALTER TABLE work_order_timeline
+        ADD COLUMN reason TEXT;
+    `);
+
+    console.log(
+        "DATABASE MIGRATION: kolom reason berhasil ditambahkan."
+    );
+
+}
 
 /*
  * =====================================

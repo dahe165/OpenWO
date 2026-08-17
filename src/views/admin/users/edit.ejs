@@ -1,0 +1,368 @@
+<div class="admin-user-form">
+
+    <div class="form-header">
+
+        <a
+            href="/admin/users"
+            class="back-link"
+        >
+            ← Kembali
+        </a>
+
+        <h1>Edit Pengguna</h1>
+
+        <p>
+            Perbarui informasi pengguna OpenWO.
+        </p>
+
+    </div>
+
+
+    <form
+        action="/admin/users/<%= user.id %>"
+        method="POST"
+        class="user-form"
+    >
+
+        <div class="form-group">
+
+            <label for="nama">
+                Nama Lengkap
+            </label>
+
+            <input
+                type="text"
+                id="nama"
+                name="nama"
+                value="<%= user.nama %>"
+                required
+                autocomplete="name"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="username">
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                name="username"
+                value="<%= user.username %>"
+                required
+                autocomplete="username"
+            >
+
+            <small>
+                Username digunakan untuk masuk ke OpenWO.
+            </small>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="role">
+                Role
+            </label>
+
+            <select
+                id="role"
+                name="role"
+                required
+            >
+
+                <option
+                    value="pelapor"
+                    <%= user.role === "pelapor" ? "selected" : "" %>
+                >
+                    Pelapor
+                </option>
+
+                <option
+                    value="teknisi"
+                    <%= user.role === "teknisi" ? "selected" : "" %>
+                >
+                    Teknisi
+                </option>
+
+                <option
+                    value="asman"
+                    <%= user.role === "asman" ? "selected" : "" %>
+                >
+                    Asman
+                </option>
+
+                <option
+                    value="manager"
+                    <%= user.role === "manager" ? "selected" : "" %>
+                >
+                    Manager
+                </option>
+
+                <option
+                    value="admin"
+                    <%= user.role === "admin" ? "selected" : "" %>
+                >
+                    Admin
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <a
+                href="/admin/users"
+                class="btn-cancel"
+            >
+                Batal
+            </a>
+
+            <button
+                type="submit"
+                class="btn-save"
+            >
+                Simpan Perubahan
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<style>
+
+.admin-user-form {
+
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+
+}
+
+
+.form-header {
+
+    margin-bottom: 22px;
+
+}
+
+
+.back-link {
+
+    display: inline-block;
+
+    margin-bottom: 14px;
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+}
+
+
+.form-header h1 {
+
+    margin: 0;
+
+    font-size: 22px;
+
+}
+
+
+.form-header p {
+
+    margin: 6px 0 0;
+
+    color: #777;
+
+    font-size: 13px;
+
+}
+
+
+.user-form {
+
+    padding: 22px;
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+}
+
+
+.form-group {
+
+    margin-bottom: 18px;
+
+}
+
+
+.form-group label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #1f2937;
+
+}
+
+
+.form-group input,
+.form-group select {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 11px 12px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 9px;
+
+    background: white;
+
+    color: #111827;
+
+    font-size: 14px;
+
+    outline: none;
+
+}
+
+
+.form-group input:focus,
+.form-group select:focus {
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.10);
+
+}
+
+
+.form-group small {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color: #888;
+
+    font-size: 11px;
+
+}
+
+
+.form-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    margin-top: 25px;
+
+}
+
+
+.btn-cancel,
+.btn-save {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 10px 15px;
+
+    border-radius: 9px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+}
+
+
+.btn-cancel {
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+}
+
+
+.btn-save {
+
+    border: 0;
+
+    background: #2563eb;
+
+    color: white;
+
+}
+
+
+@media (max-width: 600px) {
+
+    .user-form {
+
+        padding: 17px;
+
+    }
+
+
+    .form-header h1 {
+
+        font-size: 19px;
+
+    }
+
+
+    .form-actions {
+
+        flex-direction: column-reverse;
+
+    }
+
+
+    .btn-cancel,
+    .btn-save {
+
+        width: 100%;
+
+    }
+
+}
+
+</style>

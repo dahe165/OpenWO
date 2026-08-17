@@ -1,297 +1,475 @@
-const {canTransition} = require("../config/workorder.workflow");
+const db = require("../config/database");
 
-const workorders = [
+const { canTransition } =
+    require("../config/workorder.workflow");
 
-    {
-        id: 1,
-        nomor: "WO-2026-00001",
-        judul: "Internet Kantor Mati",
-        kategori: "Incident",
-        subkategori: "Network",
-        status: "Ditugaskan",
-        pelapor: "Budi",
-        teknisiId: 3,
-        eskalasi: false,
-        update: "10 menit lalu",
-        createdAt: "2026-08-07T09:30:00",
-        expanded: true,
-                timeline: [
-                {
-                    status: "Dibuat",
-                    tanggal: "2026-08-07T09:30:00",
-                    user: "Budi",
-                    role: "Pelapor"
-                },
-                {
-                    status: "Diterima",
-                    tanggal: "2026-08-07T09:35:00",
-                    user: "Dahe Ugi",
-                    role: "Asman"
-                },
-                {
-                    status: "Ditugaskan",
-                    tanggal: "2026-08-07T09:40:00",
-                    user: "Dahe Ugi",
-                    role: "Asman"
-                }
-            ]
-    },
 
-    {
-        id: 2,
-        nomor: "WO-2026-00002",
-        judul: "Printer Tidak Bisa Print",
-        kategori: "Incident",
-        subkategori: "Hardware",
-        status: "Menunggu",
-        pelapor: "Budi",
-        teknisiId: null,
-        eskalasi: false,
-        update: "30 menit lalu",
-        createdAt: "2026-08-07T09:00:00",
-        expanded: false,
-        timeline: [
-            {
-                status: "Dibuat",
-                tanggal: "2026-08-07T09:00:00",
-                user: "Budi",
-                role: "Pelapor"
-            }
-        ],
-    },
+/*
+ * =====================================
+ * Helper: Ubah row SQLite menjadi
+ * object Work Order yang dipakai UI
+ * =====================================
+ */
 
-    {
-        id: 3,
-        nomor: "WO-2026-00003",
-        judul: "WiFi Lantai 2 Lambat",
-        kategori: "Incident",
-        subkategori: "Network",
-        status: "Diproses",
-        pelapor: "Budi",
-        teknisiId: 3,
-        eskalasi: false,
-        update: "1 jam lalu",
-        createdAt: "2026-08-07T08:30:00",
-        expanded: false,
-        timeline: [
-            {
-                status: "Dibuat",
-                tanggal: "2026-08-07T08:30:00",
-                user: "Budi",
-                role: "Pelapor"
-            },
-            {
-                status: "Diterima",
-                tanggal: "2026-08-07T08:35:00",
-                user: "Dahe Ugi",
-                role: "Asman"
-            },
-            {
-                status: "Ditugaskan",
-                tanggal: "2026-08-07T08:40:00",
-                user: "Dahe Ugi",
-                role: "Asman"
-            },
-            {
-                status: "Dikerjakan",
-                tanggal: "2026-08-07T08:45:00",
-                user: "Andi",
-                role: "Teknisi"
-            }
-        ],
-    },
+function mapWorkorder(row) {
 
-    {
-        id: 4,
-        nomor: "WO-2026-00004",
-        judul: "WiFi Lantai 10 Lag",
-        kategori: "Incident",
-        subkategori: "Hardware",
-        status: "Diproses",
-        pelapor: "Budi",
-        teknisiId: 3,
-        eskalasi: false,
-        update: "5 jam lalu",
-        createdAt: "2026-08-07T08:30:00",
-        expanded: false,
-        timeline: [
-            {
-                status: "Dibuat",
-                tanggal: "2026-08-07T08:30:00",
-                user: "Budi",
-                role: "Pelapor"
-            },
-            {
-                status: "Diterima",
-                tanggal: "2026-08-07T08:35:00",
-                user: "Dahe Ugi",
-                role: "Asman"
-            },
-            {
-                status: "Ditugaskan",
-                tanggal: "2026-08-07T08:40:00",
-                user: "Dahe Ugi",
-                role: "Asman"
-            },
-            {
-                status: "Dikerjakan",
-                tanggal: "2026-08-07T08:45:00",
-                user: "Andi",
-                role: "Teknisi"
-            }
-        ],
-    },
-
-    {
-        id: 5,
-        nomor: "WO-2026-00005",
-        judul: "WiFi Lantai 2 Lambat",
-        kategori: "Incident",
-        subkategori: "Network",
-        status: "Diproses",
-        pelapor: "Budi",
-        teknisiId: 3,
-        eskalasi: false,
-        update: "4 jam lalu",
-        createdAt: "2026-08-07T08:30:00",
-        expanded: false,
-        timeline: [
-            {
-                status: "Dibuat",
-                tanggal: "2026-08-07T08:30:00",
-                user: "Budi",
-                role: "Pelapor"
-            },
-            {
-                status: "Diterima",
-                tanggal: "2026-08-07T08:35:00",
-                user: "Dahe Ugi",
-                role: "Asman"
-            },
-            {
-                status: "Ditugaskan",
-                tanggal: "2026-08-07T08:40:00",
-                user: "Dahe Ugi",
-                role: "Asman"
-            },
-            {
-                status: "Dikerjakan",
-                tanggal: "2026-08-07T08:45:00",
-                user: "Andi",
-                role: "Teknisi"
-            }
-        ],
-    },
-
-    {
-        id: 6,
-        nomor: "WO-2026-00006",
-        judul: "WiFi Lantai 2 Lambat",
-        kategori: "Incident",
-        subkategori: "Network",
-        status: "Diproses",
-        pelapor: "Budi",
-        teknisiId: 3,
-        eskalasi: false,
-        update: "3 jam lalu",
-        createdAt: "2026-08-07T08:30:00",
-        expanded: false,
-        timeline: [
-            {
-                status: "Dibuat",
-                tanggal: "2026-08-07T08:30:00",
-                user: "Budi",
-                role: "Pelapor"
-            },
-            {
-                status: "Diterima",
-                tanggal: "2026-08-07T08:35:00",
-                user: "Dahe Ugi",
-                role: "Asman"
-            },
-            {
-                status: "Ditugaskan",
-                tanggal: "2026-08-07T08:40:00",
-                user: "Dahe Ugi",
-                role: "Asman"
-            },
-            {
-                status: "Dikerjakan",
-                tanggal: "2026-08-07T08:45:00",
-                user: "Andi",
-                role: "Teknisi"
-            }
-        ],
-    },
-
-    {
-        id: 7,
-        nomor: "WO-2026-00007",
-        judul: "Router Tidak ada sinyal",
-        kategori: "Incident",
-        subkategori: "Network",
-        status: "Diproses",
-        pelapor: "Budi",
-        teknisiId: 3,
-        eskalasi: true,
-        eskalasiLevel: "Manager",
-        update: "3 jam lalu",
-        createdAt: "2026-08-07T08:30:00",
-        expanded: false,
-        timeline: [
-            {
-                status: "Dibuat",
-                tanggal: "2026-08-07T08:30:00",
-                user: "Budi",
-                role: "Pelapor"
-            },
-            {
-                status: "Diterima",
-                tanggal: "2026-08-07T08:35:00",
-                user: "Dahe Ugi",
-                role: "Asman"
-            },
-            {
-                status: "Ditugaskan",
-                tanggal: "2026-08-07T08:40:00",
-                user: "Dahe Ugi",
-                role: "Asman"
-            },
-            {
-                status: "Dikerjakan",
-                tanggal: "2026-08-07T08:45:00",
-                user: "Andi",
-                role: "Teknisi"
-            }
-        ],
+    if (!row) {
+        return null;
     }
 
-];
+    const timeline = db.prepare(`
+        SELECT
+            wt.status,
+            wt.created_at AS tanggal,
+            wt.reason,
+            u.nama AS user,
+            CASE
+                WHEN u.role = 'pelapor'
+                    THEN 'Pelapor'
+                WHEN u.role = 'teknisi'
+                    THEN 'Teknisi'
+                WHEN u.role = 'asman'
+                    THEN 'Asman'
+                WHEN u.role = 'manager'
+                    THEN 'Manager'
+                ELSE u.role
+            END AS role
+
+        FROM work_order_timeline wt
+
+        LEFT JOIN users u
+            ON u.id = wt.user_id
+
+        WHERE wt.work_order_id = ?
+
+        ORDER BY wt.id ASC
+    `).all(row.id);
+
+
+    return {
+
+        id: row.id,
+
+        nomor: row.nomor,
+
+        judul: row.judul,
+
+        deskripsi: row.deskripsi,
+
+        kategori: row.kategori,
+
+        subkategori: row.subkategori,
+
+        status: row.status,
+
+        pelapor:
+            row.pelapor_nama,
+
+        pelaporId:
+            row.pelapor_id,
+
+        teknisiId:
+            row.teknisi_id,
+
+        teknisi:
+            row.teknisi_nama,
+
+        eskalasi:
+            Boolean(row.eskalasi),
+
+        eskalasiLevel:
+            row.eskalasi_level,
+
+        createdAt:
+            row.created_at,
+
+        updatedAt:
+            row.updated_at,
+
+        /*
+         * Dipakai UI.
+         */
+        expanded: false,
+
+        timeline
+
+    };
+}
+
+
+/*
+ * =====================================
+ * Query dasar Work Order
+ * =====================================
+ */
+
+const baseQuery = `
+    SELECT
+        wo.id,
+        wo.nomor,
+        wo.judul,
+        wo.deskripsi,
+        wo.kategori,
+        wo.subkategori,
+        wo.status,
+
+        wo.pelapor_id,
+        pelapor.nama AS pelapor_nama,
+
+        wo.teknisi_id,
+        teknisi.nama AS teknisi_nama,
+
+        wo.eskalasi,
+        wo.eskalasi_level,
+
+        wo.created_at,
+        wo.updated_at
+
+    FROM work_orders wo
+
+    LEFT JOIN users pelapor
+        ON pelapor.id = wo.pelapor_id
+
+    LEFT JOIN users teknisi
+        ON teknisi.id = wo.teknisi_id
+`;
+
+
+/*
+ * =====================================
+ * GET ALL
+ * =====================================
+ */
 
 function getAll() {
 
-    return workorders.map(wo => ({ ...wo }));
+    const rows = db.prepare(`
+        ${baseQuery}
+        ORDER BY wo.id ASC
+    `).all();
 
+    return rows.map(mapWorkorder);
 }
+
+function getHistory() {
+
+    const rows = db.prepare(`
+        ${baseQuery}
+
+        WHERE wo.status = 'Ditutup'
+
+        ORDER BY wo.updated_at DESC
+    `).all();
+
+    return rows.map(mapWorkorder);
+}
+
+/*
+ * =====================================
+ * GET BY TECHNICIAN
+ * =====================================
+ */
 
 function getByTechnicianId(technicianId) {
 
-    return workorders
-        .filter(wo => wo.teknisiId === technicianId)
-        .map(wo => ({ ...wo }));
+    const rows = db.prepare(`
+        ${baseQuery}
 
+        WHERE wo.teknisi_id = ?
+
+        ORDER BY wo.created_at DESC
+    `).all(technicianId);
+
+    return rows.map(mapWorkorder);
 }
+
+
+/*
+ * =====================================
+ * GET FOR MANAGER
+ * =====================================
+ */
 
 function getForManager() {
 
-    return workorders
-        .filter(
-            wo =>
-                wo.status === "Menunggu Verifikasi Manager"
+    const rows = db.prepare(`
+        ${baseQuery}
+
+        WHERE wo.status =
+            'Menunggu Verifikasi Manager'
+
+        ORDER BY wo.created_at DESC
+    `).all();
+
+    return rows.map(mapWorkorder);
+}
+
+/*
+ * =====================================
+ * ACCEPT WORK ORDER BY ASMAN
+ * =====================================
+ */
+
+function acceptByAsman(
+    id,
+    asmanId,
+    asmanName
+) {
+
+    const workorder =
+        db.prepare(`
+            ${baseQuery}
+
+            WHERE wo.id = ?
+        `).get(id);
+
+
+    if (!workorder) {
+
+        return null;
+
+    }
+
+
+    /*
+     * WO harus boleh berpindah
+     * dari Menunggu → Diterima
+     */
+
+    if (
+        !canTransition(
+            workorder.status,
+            "Diterima"
         )
-        .map(wo => ({ ...wo }));
+    ) {
+
+        return null;
+
+    }
+
+
+    const now =
+        new Date().toISOString();
+
+
+    const update =
+        db.prepare(`
+            UPDATE work_orders
+
+            SET
+                status = ?,
+                updated_at = ?
+
+            WHERE id = ?
+        `);
+
+
+    const insertTimeline =
+        db.prepare(`
+            INSERT INTO work_order_timeline (
+
+                work_order_id,
+                status,
+                user_id,
+                created_at
+
+            )
+
+            VALUES (?, ?, ?, ?)
+        `);
+
+
+    const transaction =
+        db.transaction(() => {
+
+            /*
+             * Update status WO
+             */
+
+            update.run(
+                "Diterima",
+                now,
+                id
+            );
+
+
+            /*
+             * Catat penerimaan
+             * oleh Asman
+             */
+
+            insertTimeline.run(
+                id,
+                "Diterima",
+                asmanId,
+                now
+            );
+
+        });
+
+
+    try {
+
+        transaction();
+
+    } catch (error) {
+
+        console.error(
+            "ACCEPT WORK ORDER ERROR:",
+            error
+        );
+
+        return null;
+
+    }
+
+
+    return getById(id);
 
 }
+
+/*
+ * =====================================
+ * ASSIGN WORK ORDER BY ASMAN
+ * =====================================
+ */
+
+function assignByAsman(
+    id,
+    technicianId,
+    asmanId
+) {
+
+    const workorder =
+        getById(id);
+
+
+    if (!workorder) {
+
+        return null;
+
+    }
+
+
+    /*
+     * Hanya WO Diterima
+     * yang boleh ditugaskan.
+     */
+
+    if (
+        !canTransition(
+            workorder.status,
+            "Ditugaskan"
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    /*
+     * Pastikan user yang dipilih
+     * memang seorang teknisi.
+     */
+
+    const technician =
+        db.prepare(`
+            SELECT
+                id,
+                nama,
+                role
+            FROM users
+            WHERE id = ?
+              AND role = 'teknisi'
+        `).get(technicianId);
+
+
+    if (!technician) {
+
+        return null;
+
+    }
+
+
+    const now =
+        new Date().toISOString();
+
+
+    const transaction =
+        db.transaction(() => {
+
+            /*
+             * Simpan teknisi
+             * dan ubah status WO.
+             */
+
+            db.prepare(`
+                UPDATE work_orders
+
+                SET
+                    status = ?,
+                    teknisi_id = ?,
+                    updated_at = ?
+
+                WHERE id = ?
+            `).run(
+                "Ditugaskan",
+                technicianId,
+                now,
+                id
+            );
+
+
+            /*
+             * Catat penugasan
+             * oleh Asman.
+             */
+
+            db.prepare(`
+                INSERT INTO work_order_timeline (
+                    work_order_id,
+                    status,
+                    user_id,
+                    created_at
+                )
+
+                VALUES (?, ?, ?, ?)
+            `).run(
+                id,
+                "Ditugaskan",
+                asmanId,
+                now
+            );
+
+        });
+
+
+    try {
+
+        transaction();
+
+    } catch (error) {
+
+        console.error(
+            "ASSIGN WORK ORDER ERROR:",
+            error
+        );
+
+        return null;
+
+    }
+
+
+    return getById(id);
+
+}
+
+/*
+ * =====================================
+ * START WORK
+ * =====================================
+ */
 
 function startWork(
     id,
@@ -299,33 +477,107 @@ function startWork(
     technicianName
 ) {
 
-    const workorder = workorders.find(
-        wo =>
-            wo.id === id &&
-            wo.teknisiId === technicianId
+    const workorder = db.prepare(`
+        ${baseQuery}
+
+        WHERE wo.id = ?
+        AND wo.teknisi_id = ?
+    `).get(
+        id,
+        technicianId
     );
+
 
     if (!workorder) {
         return null;
     }
 
-    if (workorder.status !== "Ditugaskan") {
+
+    if (
+        workorder.status !==
+        "Ditugaskan"
+    ) {
+
         return null;
+
     }
 
-    workorder.status = "Diproses";
 
-    workorder.update = "Baru saja";
+    if (
+        !canTransition(
+            workorder.status,
+            "Diproses"
+        )
+    ) {
 
-    addTimeline(
-        workorder,
-        "Dikerjakan",
-        technicianName,
-        "Teknisi"
-    );
+        return null;
 
-    return { ...workorder };
+    }
+
+
+    const now =
+        new Date().toISOString();
+
+
+    const update =
+        db.prepare(`
+            UPDATE work_orders
+
+            SET
+                status = ?,
+                updated_at = ?
+
+            WHERE id = ?
+        `);
+
+
+    const insertTimeline =
+        db.prepare(`
+            INSERT INTO work_order_timeline (
+
+                work_order_id,
+                status,
+                user_id,
+                created_at
+
+            )
+
+            VALUES (?, ?, ?, ?)
+        `);
+
+
+    const transaction =
+        db.transaction(() => {
+
+            update.run(
+                "Diproses",
+                now,
+                id
+            );
+
+
+            insertTimeline.run(
+                id,
+                "Dikerjakan",
+                technicianId,
+                now
+            );
+
+        });
+
+
+    transaction();
+
+
+    return getById(id);
 }
+
+
+/*
+ * =====================================
+ * COMPLETE WORK
+ * =====================================
+ */
 
 function completeWork(
     id,
@@ -333,44 +585,97 @@ function completeWork(
     technicianName
 ) {
 
-    const workorder = workorders.find(
-        wo =>
-            wo.id === id &&
-            wo.teknisiId === technicianId
+    const workorder = db.prepare(`
+        ${baseQuery}
+
+        WHERE wo.id = ?
+        AND wo.teknisi_id = ?
+    `).get(
+        id,
+        technicianId
     );
+
 
     if (!workorder) {
         return null;
     }
 
-    /*
-     * Pastikan perpindahan status
-     * memang diperbolehkan workflow.
-     */
+
     if (
         !canTransition(
             workorder.status,
             "Selesai"
         )
     ) {
+
         return null;
+
     }
 
-    workorder.status = "Selesai";
 
-    workorder.update = "Baru saja";
+    const now =
+        new Date().toISOString();
 
-    addTimeline(
-        workorder,
-        "Selesai",
-        technicianName,
-        "Teknisi"
-    );
 
-    return {
-        ...workorder
-    };
+    const update =
+        db.prepare(`
+            UPDATE work_orders
+
+            SET
+                status = ?,
+                updated_at = ?
+
+            WHERE id = ?
+        `);
+
+
+    const insertTimeline =
+        db.prepare(`
+            INSERT INTO work_order_timeline (
+
+                work_order_id,
+                status,
+                user_id,
+                created_at
+
+            )
+
+            VALUES (?, ?, ?, ?)
+        `);
+
+
+    const transaction =
+        db.transaction(() => {
+
+            update.run(
+                "Selesai",
+                now,
+                id
+            );
+
+
+            insertTimeline.run(
+                id,
+                "Selesai",
+                technicianId,
+                now
+            );
+
+        });
+
+
+    transaction();
+
+
+    return getById(id);
 }
+
+
+/*
+ * =====================================
+ * VERIFY ASMAN
+ * =====================================
+ */
 
 function verifyByAsman(
     id,
@@ -379,16 +684,16 @@ function verifyByAsman(
 ) {
 
     const workorder =
-        workorders.find(
-            wo => wo.id === id
-        );
+        getById(id);
+
 
     if (!workorder) {
         return null;
     }
 
+
     /*
-     * WO harus berada pada status Selesai.
+     * Harus Selesai
      */
     if (
         !canTransition(
@@ -396,71 +701,338 @@ function verifyByAsman(
             "Verifikasi Asman"
         )
     ) {
+
         return null;
+
     }
 
-    /*
-     * Catat verifikasi Asman.
-     */
-    addTimeline(
-        workorder,
-        "Verifikasi Asman",
-        asmanName,
-        "Asman"
-    );
+
+    const now =
+        new Date().toISOString();
+
+
+    const transaction =
+        db.transaction(() => {
+
+            /*
+             * Catat Verifikasi Asman
+             */
+            db.prepare(`
+                INSERT INTO work_order_timeline (
+
+                    work_order_id,
+                    status,
+                    user_id,
+                    created_at
+
+                )
+
+                VALUES (?, ?, ?, ?)
+            `).run(
+                id,
+                "Verifikasi Asman",
+                asmanId,
+                now
+            );
+
+
+            /*
+             * Jika perlu Manager
+             */
+            if (
+                workorder.eskalasi === true &&
+                workorder.eskalasiLevel ===
+                    "Manager"
+            ) {
+
+                if (
+                    !canTransition(
+                        "Verifikasi Asman",
+                        "Menunggu Verifikasi Manager"
+                    )
+                ) {
+
+                    throw new Error(
+                        "Workflow Manager tidak valid."
+                    );
+
+                }
+
+
+                db.prepare(`
+                    UPDATE work_orders
+
+                    SET
+                        status = ?,
+                        updated_at = ?
+
+                    WHERE id = ?
+                `).run(
+                    "Menunggu Verifikasi Manager",
+                    now,
+                    id
+                );
+
+
+                db.prepare(`
+                    INSERT INTO work_order_timeline (
+
+                        work_order_id,
+                        status,
+                        user_id,
+                        created_at
+
+                    )
+
+                    VALUES (?, ?, ?, ?)
+                `).run(
+                    id,
+                    "Menunggu Verifikasi Manager",
+                    asmanId,
+                    now
+                );
+
+            } else {
+
+                /*
+                 * WO normal langsung ditutup
+                 */
+                if (
+                    !canTransition(
+                        "Verifikasi Asman",
+                        "Ditutup"
+                    )
+                ) {
+
+                    throw new Error(
+                        "Workflow penutupan tidak valid."
+                    );
+
+                }
+
+
+                db.prepare(`
+                    UPDATE work_orders
+
+                    SET
+                        status = ?,
+                        updated_at = ?
+
+                    WHERE id = ?
+                `).run(
+                    "Ditutup",
+                    now,
+                    id
+                );
+
+
+                db.prepare(`
+                    INSERT INTO work_order_timeline (
+
+                        work_order_id,
+                        status,
+                        user_id,
+                        created_at
+
+                    )
+
+                    VALUES (?, ?, ?, ?)
+                `).run(
+                    id,
+                    "Ditutup",
+                    asmanId,
+                    now
+                );
+
+            }
+
+        });
+
+
+    try {
+
+        transaction();
+
+    } catch (error) {
+
+        console.error(
+            "VERIFY ASMAN ERROR:",
+            error
+        );
+
+        return null;
+
+    }
+
+
+    return getById(id);
+}
+
+function escalateByAsman(
+    id,
+    asmanId,
+    asmanName,
+    reason
+) {
+
+    const workorder =
+        getById(id);
+
+
+    if (!workorder) {
+
+        return null;
+
+    }
+
 
     /*
-     * Jika WO membutuhkan Manager,
-     * jangan langsung ditutup.
+     * Hanya WO Selesai
+     * yang boleh dieskalasi.
      */
+
     if (
-        workorder.eskalasi === true &&
-        workorder.eskalasiLevel === "Manager"
+        workorder.status !== "Selesai"
     ) {
 
-        workorder.status =
-            "Menunggu Verifikasi Manager";
+        return null;
 
-        workorder.update =
-            "Menunggu verifikasi Manager";
-
-        addTimeline(
-            workorder,
-            "Menunggu Verifikasi Manager",
-            asmanName,
-            "Asman"
-        );
-
-    } else {
-
-        /*
-         * WO normal langsung ditutup.
-         */
-        if (
-            !canTransition(
-                "Verifikasi Asman",
-                "Ditutup"
-            )
-        ) {
-            return null;
-        }
-
-        workorder.status = "Ditutup";
-
-        workorder.update = "Baru saja";
-
-        addTimeline(
-            workorder,
-            "Ditutup",
-            asmanName,
-            "Asman"
-        );
     }
 
-    return {
-        ...workorder
-    };
+
+    /*
+     * Alasan eskalasi wajib.
+     */
+
+    if (
+        !reason ||
+        !reason.trim()
+    ) {
+
+        return null;
+
+    }
+
+
+    const now =
+        new Date().toISOString();
+
+
+    const transaction =
+        db.transaction(() => {
+
+            /*
+             * Ubah status WO.
+             */
+
+            db.prepare(`
+                UPDATE work_orders
+
+                SET
+                    status = ?,
+                    eskalasi = ?,
+                    eskalasi_level = ?,
+                    updated_at = ?
+
+                WHERE id = ?
+            `).run(
+                "Menunggu Verifikasi Manager",
+                1,
+                "Manager",
+                now,
+                id
+            );
+
+            /*
+            * =====================================
+            * CATAT VERIFIKASI ASMAN
+            * =====================================
+            */
+
+            db.prepare(`
+                INSERT INTO work_order_timeline (
+                    work_order_id,
+                    status,
+                    user_id,
+                    created_at
+                )
+
+                VALUES (?, ?, ?, ?)
+            `).run(
+                id,
+                "Verifikasi Asman",
+                asmanId,
+                now
+            );
+
+
+            /*
+            * =====================================
+            * CATAT MENUNGGU VERIFIKASI MANAGER
+            * =====================================
+            */
+
+            db.prepare(`
+                INSERT INTO work_order_timeline (
+                    work_order_id,
+                    status,
+                    user_id,
+                    reason,
+                    created_at
+                )
+
+                VALUES (?, ?, ?, ?, ?)
+            `).run(
+                id,
+                "Menunggu Verifikasi Manager",
+                asmanId,
+                reason.trim(),
+                now
+            );
+
+        });
+
+
+    try {
+
+        transaction();
+
+    } catch (error) {
+
+        console.error(
+            "ESCALATE WORK ORDER ERROR:",
+            error
+        );
+
+        return null;
+
+    }
+
+
+    const checkTimeline =
+    db.prepare(`
+        SELECT
+            id,
+            work_order_id,
+            status,
+            user_id,
+            reason,
+            created_at
+        FROM work_order_timeline
+        WHERE work_order_id = ?
+        ORDER BY id DESC
+        LIMIT 1
+    `).get(id);
+
+    return getById(id);
+
 }
+
+/*
+ * =====================================
+ * VERIFY MANAGER
+ * =====================================
+ */
 
 function verifyByManager(
     id,
@@ -469,31 +1041,30 @@ function verifyByManager(
 ) {
 
     const workorder =
-        workorders.find(
-            wo => wo.id === id
-        );
+        getById(id);
+
 
     if (!workorder) {
         return null;
     }
 
+
     /*
-     * Manager hanya boleh memverifikasi
-     * WO yang memang membutuhkan Manager.
+     * Harus memang WO Manager
      */
     if (
         workorder.eskalasi !== true ||
-        workorder.eskalasiLevel !== "Manager"
+        workorder.eskalasiLevel !==
+            "Manager"
     ) {
+
         return null;
+
     }
 
+
     /*
-     * Status harus:
-     *
-     * Menunggu Verifikasi Manager
-     *
-     * sebelum Manager melakukan verifikasi.
+     * Harus menunggu Manager
      */
     if (
         !canTransition(
@@ -501,171 +1072,418 @@ function verifyByManager(
             "Verifikasi Manager"
         )
     ) {
+
         return null;
+
     }
 
-    /*
-     * Catat verifikasi Manager.
-     */
-    addTimeline(
-        workorder,
-        "Verifikasi Manager",
-        managerName,
-        "Manager"
-    );
 
-    /*
-     * Setelah Manager melakukan verifikasi,
-     * WO boleh ditutup.
-     */
-    if (
-        !canTransition(
-            "Verifikasi Manager",
-            "Ditutup"
-        )
-    ) {
+    const now =
+        new Date().toISOString();
+
+
+    const transaction =
+        db.transaction(() => {
+
+            /*
+             * Catat Verifikasi Manager
+             */
+            db.prepare(`
+                INSERT INTO work_order_timeline (
+
+                    work_order_id,
+                    status,
+                    user_id,
+                    created_at
+
+                )
+
+                VALUES (?, ?, ?, ?)
+            `).run(
+                id,
+                "Verifikasi Manager",
+                managerId,
+                now
+            );
+
+
+            /*
+             * Setelah verifikasi,
+             * tutup WO.
+             */
+            if (
+                !canTransition(
+                    "Verifikasi Manager",
+                    "Ditutup"
+                )
+            ) {
+
+                throw new Error(
+                    "Workflow penutupan Manager tidak valid."
+                );
+
+            }
+
+
+            db.prepare(`
+                UPDATE work_orders
+
+                SET
+                    status = ?,
+                    updated_at = ?
+
+                WHERE id = ?
+            `).run(
+                "Ditutup",
+                now,
+                id
+            );
+
+
+            db.prepare(`
+                INSERT INTO work_order_timeline (
+
+                    work_order_id,
+                    status,
+                    user_id,
+                    created_at
+
+                )
+
+                VALUES (?, ?, ?, ?)
+            `).run(
+                id,
+                "Ditutup",
+                managerId,
+                now
+            );
+
+        });
+
+
+    try {
+
+        transaction();
+
+    } catch (error) {
+
+        console.error(
+            "VERIFY MANAGER ERROR:",
+            error
+        );
+
         return null;
+
     }
 
-    workorder.status = "Ditutup";
 
-    workorder.update = "Baru saja";
-
-    addTimeline(
-        workorder,
-        "Ditutup",
-        managerName,
-        "Manager"
-    );
-
-    return {
-        ...workorder
-    };
+    return getById(id);
 }
+
+
+/*
+ * =====================================
+ * CREATE
+ * =====================================
+ */
 
 function create(data) {
 
-    const nextId =
-        workorders.length > 0
-            ? Math.max(...workorders.map(wo => wo.id)) + 1
-            : 1;
+    const pelaporId =
+        Number(data.pelaporId);
 
-    const nomor = `WO-2026-${String(nextId).padStart(5, "0")}`;
+    if (!pelaporId) {
 
-    const workorder = {
+        throw new Error(
+            "Pelapor Work Order tidak valid."
+        );
 
-        id: nextId,
-
-        nomor,
-
-        judul: data.judul,
-
-        deskripsi: data.deskripsi,
-
-        kategori: data.kategori,
-
-        subkategori: data.subkategori,
-
-        status: "Menunggu",
-
-        pelapor: "Dahe Ugi",
-
-        teknisiId: null,
-
-        createdAt: new Date().toISOString(),
-
-        expanded: false,
-
-                timeline: [
-                    {
-                        status: "Dibuat",
-                        tanggal: new Date().toISOString(),
-                        user: "Dahe Ugi",
-                        role: "Pelapor"
-                    }
-                ]
-
-    };
-
-    workorders.push(workorder);
-
-    return workorder;
-
-}
-
-function addTimeline(
-    workorder,
-    status,
-    user,
-    role
-) {
-
-    if (!workorder.timeline) {
-        workorder.timeline = [];
     }
 
-    workorder.timeline.push({
+    const nextIdRow =
+        db.prepare(`
+            SELECT
+                COALESCE(
+                    MAX(id),
+                    0
+                ) + 1 AS nextId
 
-        status,
+            FROM work_orders
+        `).get();
 
-        tanggal: new Date().toISOString(),
 
-        user,
+    const nextId =
+        nextIdRow.nextId;
 
-        role
 
-    });
+    const nomor =
+        `WO-2026-${String(nextId).padStart(5, "0")}`;
+
+
+    const now =
+        new Date().toISOString();
+
+
+    const insertWorkorder =
+        db.prepare(`
+            INSERT INTO work_orders (
+
+                id,
+                nomor,
+                judul,
+                deskripsi,
+                kategori,
+                subkategori,
+                status,
+                pelapor_id,
+                teknisi_id,
+                eskalasi,
+                eskalasi_level,
+                created_at,
+                updated_at
+
+            )
+
+            VALUES (
+
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+
+            )
+        `);
+
+
+    const insertTimeline =
+        db.prepare(`
+            INSERT INTO work_order_timeline (
+
+                work_order_id,
+                status,
+                user_id,
+                created_at
+
+            )
+
+            VALUES (?, ?, ?, ?)
+        `);
+
+
+    const transaction =
+        db.transaction(() => {
+
+            insertWorkorder.run(
+
+                nextId,
+
+                nomor,
+
+                data.judul,
+
+                data.deskripsi || null,
+
+                data.kategori ||
+                    "Incident",
+
+                data.subkategori ||
+                    "Network",
+
+                "Menunggu",
+
+                pelaporId,
+
+                null,
+
+                0,
+
+                null,
+
+                now,
+
+                now
+
+            );
+
+
+            insertTimeline.run(
+
+                nextId,
+
+                "Dibuat",
+
+                pelaporId,
+
+                now
+
+            );
+
+        });
+
+
+    transaction();
+
+return getById(nextId);
+
 }
 
+
+/*
+ * =====================================
+ * GET BY ID
+ * =====================================
+ */
+
+function getById(id) {
+
+    const row = db.prepare(`
+        ${baseQuery}
+
+        WHERE wo.id = ?
+    `).get(id);
+
+
+    return mapWorkorder(row);
+}
+
+
+/*
+ * =====================================
+ * STATISTICS
+ * =====================================
+ */
+
 function getStatistics() {
+
+    const result =
+        db.prepare(`
+            SELECT
+
+                COUNT(*) AS total,
+
+                SUM(
+                    CASE
+                        WHEN status = 'Menunggu'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS menunggu,
+
+                SUM(
+                    CASE
+                        WHEN status = 'Ditugaskan'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS ditugaskan,
+
+                SUM(
+                    CASE
+                        WHEN status = 'Diproses'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS diproses,
+
+                SUM(
+                    CASE
+                        WHEN status = 'Selesai'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS selesai,
+
+                SUM(
+                    CASE
+                        WHEN status = 'Ditutup'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS ditutup,
+
+                SUM(
+                    CASE
+                        WHEN eskalasi = 1
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS eskalasi
+
+            FROM work_orders
+        `)
+        .get();
+
 
     return {
 
         total:
-            workorders.length,
+            Number(result.total) || 0,
 
         menunggu:
-            workorders.filter(
-                wo => wo.status === "Menunggu"
-            ).length,
+            Number(result.menunggu) || 0,
 
         ditugaskan:
-            workorders.filter(
-                wo => wo.status === "Ditugaskan"
-            ).length,
+            Number(result.ditugaskan) || 0,
 
         diproses:
-            workorders.filter(
-                wo => wo.status === "Diproses"
-            ).length,
+            Number(result.diproses) || 0,
 
         selesai:
-            workorders.filter(
-                wo => wo.status === "Selesai"
-            ).length,
+            Number(result.selesai) || 0,
 
         ditutup:
-            workorders.filter(
-                wo => wo.status === "Ditutup"
-            ).length,
+            Number(result.ditutup) || 0,
 
         eskalasi:
-            workorders.filter(
-                wo =>
-                    wo.eskalasi === true
-            ).length
-    };
+            Number(result.eskalasi) || 0
 
+    };
 }
 
+
+/*
+ * =====================================
+ * EXPORT
+ * =====================================
+ */
+
 module.exports = {
+
     getAll,
+
+    getHistory,
+
     getByTechnicianId,
+
     getStatistics,
+
     getForManager,
+
+    getById,
+
+    acceptByAsman,
+
+    assignByAsman,
+
     startWork,
+
     completeWork,
+
     verifyByAsman,
+
+    escalateByAsman,
+
     verifyByManager,
+
     create
+
 };

@@ -31,33 +31,7 @@
         <button class="filter-btn" data-filter="Selesai">Selesai</button>
 
         </div>
-
-        <div id="wo-result-info" class="wo-result-info">
-
-            <% if (pagination.totalItems > 0) { %>
-
-                Menampilkan
-                <strong>
-                    <%= pagination.from %>–<%= pagination.to %>
-                </strong>
-                dari
-                <strong>
-                    <%= pagination.totalItems %>
-                </strong>
-                Work Order
-
-            <% } else { %>
-
-                Tidak ada Work Order ditemukan
-
-            <% } %>
-
-        </div>
-
-    <div id="workorder-list">
-
-        <div id="workorder-content">
-
+    <div id="workorder-content">
         <% workorders.forEach((wo) => { %>
 
             <div class="wo-card <%= wo.id === activeId ? 'wo-detail' : 'wo-summary' %>" data-id="<%= wo.id %>" data-search="<%= (wo.nomor + ' ' + wo.judul).toLowerCase() %>" data-status="<%= wo.status %>">
@@ -443,7 +417,7 @@
                         </span>
 
                         <strong>
-                            👨‍🔧<%= wo.pelapor || "-" %>
+                            <%= wo.pelapor || "-" %>
                         </strong>
 
                     </div>
@@ -455,7 +429,7 @@
                         </span>
 
                         <strong>
-                            👨‍🔧<%= wo.teknisi || "Belum ditugaskan" %>
+                            <%= wo.teknisi || "Belum ditugaskan" %>
                         </strong>
 
                     </div>
@@ -678,230 +652,5 @@
             </div>
 
         <% }) %>
-
-        </div>
-
-        <%
-            const totalPages =
-                pagination.totalPages;
-
-            const currentPage =
-                pagination.page;
-
-            const paginationParams =
-                new URLSearchParams();
-
-            if (search) {
-
-                paginationParams.set(
-                    "search",
-                    search
-                );
-
-            }
-
-            if (
-                status &&
-                status !== "Semua"
-            ) {
-
-                paginationParams.set(
-                    "status",
-                    status
-                );
-
-            }
-
-
-            /*
-            * Membuat daftar halaman yang
-            * perlu ditampilkan.
-            *
-            * null = ...
-            */
-
-            const pages = [];
-
-            if (totalPages <= 7) {
-
-                for (
-                    let i = 1;
-                    i <= totalPages;
-                    i++
-                ) {
-
-                    pages.push(i);
-
-                }
-
-            } else {
-
-                pages.push(1);
-
-
-                /*
-                * Bagian awal
-                */
-
-                if (currentPage <= 4) {
-
-                    pages.push(2);
-                    pages.push(3);
-                    pages.push(4);
-                    pages.push(5);
-
-                    pages.push(null);
-
-                }
-
-
-                /*
-                * Bagian tengah
-                */
-
-                else if (
-                    currentPage >= 5 &&
-                    currentPage <= totalPages - 4
-                ) {
-
-                    pages.push(null);
-
-                    pages.push(
-                        currentPage - 1
-                    );
-
-                    pages.push(
-                        currentPage
-                    );
-
-                    pages.push(
-                        currentPage + 1
-                    );
-
-                    pages.push(null);
-
-                }
-
-
-                /*
-                * Bagian akhir
-                */
-
-                else {
-
-                    pages.push(null);
-
-                    pages.push(
-                        totalPages - 4
-                    );
-
-                    pages.push(
-                        totalPages - 3
-                    );
-
-                    pages.push(
-                        totalPages - 2
-                    );
-
-                    pages.push(
-                        totalPages - 1
-                    );
-
-                }
-
-
-                pages.push(totalPages);
-
-            }
-        %>
-
-
-        <% if (pagination && pagination.totalPages > 1) { %>
-
-            <div class="wo-pagination">
-
-                <!-- PREVIOUS -->
-
-                <% if (currentPage > 1) { %>
-
-                    <%
-                        paginationParams.set(
-                            "page",
-                            currentPage - 1
-                        );
-                    %>
-
-                    <a
-                        href="/workorder?<%= paginationParams.toString() %>"
-                        class="page-btn page-prev"
-                        aria-label="Halaman sebelumnya"
-                    >
-                        ‹
-                    </a>
-
-                <% } %>
-
-
-                <!-- PAGE NUMBERS -->
-
-                <% pages.forEach(pageNumber => { %>
-
-                    <% if (pageNumber === null) { %>
-
-                        <span
-                            class="page-ellipsis"
-                        >
-                            …
-                        </span>
-
-                    <% } else { %>
-
-                        <%
-                            paginationParams.set(
-                                "page",
-                                pageNumber
-                            );
-                        %>
-
-                        <a
-                            href="/workorder?<%= paginationParams.toString() %>"
-                            class="page-btn <%= currentPage === pageNumber ? 'active' : '' %>"
-                            <%= currentPage === pageNumber
-                                ? 'aria-current="page"'
-                                : ''
-                            %>
-                        >
-                            <%= pageNumber %>
-                        </a>
-
-                    <% } %>
-
-                <% }); %>
-
-
-                <!-- NEXT -->
-
-                <% if (currentPage < totalPages) { %>
-
-                    <%
-                        paginationParams.set(
-                            "page",
-                            currentPage + 1
-                        );
-                    %>
-
-                    <a
-                        href="/workorder?<%= paginationParams.toString() %>"
-                        class="page-btn page-next"
-                        aria-label="Halaman berikutnya"
-                    >
-                        ›
-                    </a>
-
-                <% } %>
-
-            </div>
-
-        <% } %>
     </div>
 </div>

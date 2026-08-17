@@ -1,35 +1,40 @@
 function bindSearch() {
 
-    const input = document.getElementById("searchInput");
+    const input =
+        document.getElementById("searchInput");
 
     if (!input) return;
 
-    // Hindari event listener dobel
-    if (input.dataset.bound === "true") return;
+    if (input.dataset.bound === "true") {
+        return;
+    }
 
     input.dataset.bound = "true";
 
-    input.addEventListener("input", function () {
+    input.addEventListener("input", () => {
 
-        const keyword = this.value.trim().toLowerCase();
+        const keyword =
+            input.value.trim();
 
-        const cards = document.querySelectorAll(".wo-card");
+        const url =
+            new URL(
+                "/workorder",
+                window.location.origin
+            );
 
-        cards.forEach(card => {
+        if (keyword) {
 
-            const text = card.dataset.search || "";
+            url.searchParams.set(
+                "search",
+                keyword
+            );
 
-            if (text.includes(keyword)) {
+        }
 
-                card.style.display = "";
-
-            } else {
-
-                card.style.display = "none";
-
-            }
-
-        });
+        navigate(
+            url.pathname + url.search,
+            true
+        );
 
     });
 
@@ -38,46 +43,112 @@ function bindSearch() {
 
 function bindFilter() {
 
-    const buttons = document.querySelectorAll(".filter-btn");
+    const buttons =
+        document.querySelectorAll(
+            ".filter-btn"
+        );
 
     if (!buttons.length) return;
 
     buttons.forEach(button => {
 
-        if (button.dataset.bound === "true") return;
+        if (button.dataset.bound === "true") {
+            return;
+        }
 
         button.dataset.bound = "true";
 
-        button.addEventListener("click", () => {
+        button.addEventListener(
+            "click",
+            () => {
 
-            const filter = button.dataset.filter;
+                const filter =
+                    button.dataset.filter;
 
-            buttons.forEach(btn => {
-                btn.classList.remove("active");
-            });
+                const url =
+                    new URL(
+                        "/workorder",
+                        window.location.origin
+                    );
 
-            button.classList.add("active");
+                const input =
+                    document.getElementById(
+                        "searchInput"
+                    );
 
-            const cards = document.querySelectorAll(".wo-card");
+                const keyword =
+                    input?.value.trim();
 
-            cards.forEach(card => {
+                if (keyword) {
 
-                const status = card.dataset.status;
-
-                if (
-                    filter === "Semua" ||
-                    status === filter
-                ) {
-
-                    card.style.display = "";
-
-                } else {
-
-                    card.style.display = "none";
+                    url.searchParams.set(
+                        "search",
+                        keyword
+                    );
 
                 }
 
-            });
+                if (
+                    filter &&
+                    filter !== "Semua"
+                ) {
+
+                    url.searchParams.set(
+                        "status",
+                        filter
+                    );
+
+                }
+
+                buttons.forEach(btn => {
+
+                    btn.classList.remove(
+                        "active"
+                    );
+
+                });
+
+                button.classList.add(
+                    "active"
+                );
+
+                navigate(
+                    url.pathname + url.search,
+                    true
+                );
+
+            }
+        );
+
+    });
+
+}
+
+function bindPagination() {
+
+    const links =
+        document.querySelectorAll(
+            ".wo-pagination .page-btn"
+        );
+
+    if (!links.length) return;
+
+    links.forEach(link => {
+
+        if (link.dataset.bound === "true") {
+            return;
+        }
+
+        link.dataset.bound = "true";
+
+        link.addEventListener("click", e => {
+
+            e.preventDefault();
+
+            navigate(
+                link.href,
+                true
+            );
 
         });
 
@@ -85,59 +156,157 @@ function bindFilter() {
 
 }
 
-
 function initWorkOrder() {
 
     bindSearch();
 
     bindFilter();
 
+    bindPagination();
+
     bindOpenDetail();
+
+    bindCardDetail();
+
+    bindEscalationToggle();
 
     bindWorkOrderActions();
 
 }
 
+async function renderPage(
+    html,
+    focusId = null
+) {
 
-async function renderPage(html, focusId = null) {
+    const list =
+        document.querySelector(
+            "#workorder-list"
+        );
+
+    if (!list) return;
+
+
+    // ==========================================
+    // PARSE HTML HASIL AJAX
+    // ==========================================
+
+    const parser =
+        new DOMParser();
+
+    const doc =
+        parser.parseFromString(
+            html,
+            "text/html"
+        );
+
+
+    // ==========================================
+    // UPDATE DAFTAR WORK ORDER
+    // ==========================================
+
+    const newList =
+        doc.querySelector(
+            "#workorder-list"
+        );
+
+    if (!newList) return;
+
+    list.innerHTML =
+        newList.innerHTML;
+
+
+    // ==========================================
+    // UPDATE INFO HASIL
+    // ==========================================
+
+    const resultInfo =
+        document.querySelector(
+            "#wo-result-info"
+        );
+
+    const newResultInfo =
+        doc.querySelector(
+            "#wo-result-info"
+        );
+
+    if (
+        resultInfo &&
+        newResultInfo
+    ) {
+
+        resultInfo.innerHTML =
+            newResultInfo.innerHTML;
+
+    }
+
+
+    // ==========================================
+    // INISIALISASI ULANG WO
+    // ==========================================
+
+    initWorkOrder();
+
+
+    // ==========================================
+    // CARI WO AKTIF
+    // ==========================================
 
     const content =
-        document.querySelector("#workorder-content");
+        list.querySelector(
+            "#workorder-content"
+        );
 
     if (!content) return;
 
-    const parser = new DOMParser();
-
-    const doc =
-        parser.parseFromString(html, "text/html");
-
-    const newContent =
-        doc.querySelector("#workorder-content");
-
-    if (!newContent) return;
-
-    content.innerHTML = newContent.innerHTML;
-
-    initWorkOrder();
 
     const newActive =
         focusId
             ? content.querySelector(
                 `.wo-card[data-id="${focusId}"]`
-              )
-            : content.querySelector(".wo-detail");
+            )
+            : content.querySelector(
+                ".wo-detail"
+            );
+
+
+            console.log(
+                "🎯 RENDER FOCUS ID:",
+                focusId
+            );
+
+            console.log(
+                "🔎 ACTIVE CARD DITEMUKAN:",
+                newActive
+            );
+
+            console.log(
+                "📄 CURRENT URL:",
+                window.location.href
+            );
+
+
+    // ==========================================
+    // ANIMASI WO AKTIF
+    // ==========================================
 
     if (newActive) {
 
-        newActive.classList.add("card-enter");
+        newActive.classList.add(
+            "card-enter"
+        );
 
         requestAnimationFrame(() => {
 
-            newActive.classList.remove("card-enter");
+            newActive.classList.remove(
+                "card-enter"
+            );
 
         });
 
-        focusCard(newActive);
+        focusCard(
+            newActive
+        );
 
     }
 
@@ -145,6 +314,21 @@ async function renderPage(html, focusId = null) {
 
 
 async function navigate(url, push = true, focusId = null) {
+
+    console.log(
+        "🚀 NAVIGATE:",
+        url
+    );
+
+    console.log(
+        "🎯 NAVIGATE FOCUS ID:",
+        focusId
+    );
+
+    console.log(
+        "📌 URL SEBELUM NAVIGATE:",
+        window.location.href
+    );
 
     try {
 
@@ -158,8 +342,18 @@ async function navigate(url, push = true, focusId = null) {
 
         }
 
+        console.log(
+            "📍 URL SETELAH PUSHSTATE:",
+            window.location.href
+        );
+
         const response =
             await fetch(url);
+
+            console.log(
+                "📡 FETCH RESPONSE:",
+                response.url
+            );
 
         if (!response.ok) {
 
@@ -211,7 +405,6 @@ function focusCard(card) {
 
 }
 
-
 function bindOpenDetail() {
 
     if (
@@ -226,26 +419,171 @@ function bindOpenDetail() {
 
     document.addEventListener("click", (e) => {
 
-        const link =
-            e.target.closest(".btn-open");
+        /*
+         * Klik seluruh card WO
+         */
+        const card =
+            e.target.closest(".wo-summary");
 
-        if (!link) return;
+        if (!card) return;
 
-        e.preventDefault();
+
+        /*
+         * Jangan membuka timeline ketika
+         * user sedang berinteraksi dengan aksi WO.
+         */
+        if (
+            e.target.closest(
+                ".wo-actions"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+         * Jangan membuka timeline ketika
+         * user sedang mengisi / mengubah
+         * elemen interaktif lainnya.
+         */
+        if (
+            e.target.closest(
+                "input, select, textarea, button, a"
+            )
+        ) {
+
+            return;
+
+        }
+
 
         const id =
-            link.dataset.id;
+            card.dataset.id;
+
+        if (!id) return;
+
+
+        /*
+         * Pertahankan URL halaman sekarang.
+         *
+         * Contoh:
+         * /workorder?page=8
+         *
+         * menjadi:
+         * /workorder?page=8&id=40
+         */
+
+        const url =
+            new URL(
+                window.location.href
+            );
+
+        url.searchParams.set(
+            "id",
+            id
+        );
+
+
+        console.log(
+            "🎯 WO CARD:",
+            id
+        );
+
+        console.log(
+            "🌐 URL DETAIL:",
+            url.pathname +
+            url.search
+        );
+
 
         navigate(
-            link.href,
+            url.pathname +
+            url.search,
             true,
-            id
+            Number(id)
         );
 
     });
 
 }
 
+// Detail card sekarang ditangani oleh bindOpenDetail()
+function bindCardDetail() {
+    return;
+}
+
+// Toggle Eskalasi
+function bindEscalationToggle() {
+
+    document
+        .querySelectorAll(".escalation-toggle-input")
+        .forEach(toggle => {
+
+            if (toggle.dataset.bound === "true") {
+                return;
+            }
+
+            toggle.dataset.bound = "true";
+
+            toggle.addEventListener("change", () => {
+
+                const container =
+                    toggle.closest(
+                        ".asman-verification-action"
+                    );
+
+                if (!container) return;
+
+                const verifyForm =
+                    container.querySelector(
+                        ".verify-form"
+                    );
+
+                const escalateForm =
+                    container.querySelector(
+                        ".escalate-form"
+                    );
+
+                const verifyButton =
+                    container.querySelector(
+                        ".btn-verify"
+                    );
+
+                const escalateButton =
+                    container.querySelector(
+                        ".btn-escalate-primary"
+                    );
+
+                if (
+                    !verifyForm ||
+                    !escalateForm ||
+                    !verifyButton ||
+                    !escalateButton
+                ) {
+                    return;
+                }
+
+				if (toggle.checked) {
+				
+					verifyForm.style.display = "none";
+					escalateButton.style.display = "block";
+					escalateForm.classList.add("open");
+
+				} else {
+
+					verifyForm.style.display = "";
+					escalateButton.style.display = "none";
+					escalateForm.classList.remove("open");
+
+				}
+
+            });
+
+        });
+
+}
 
 function bindWorkOrderActions() {
 
@@ -262,13 +600,14 @@ function bindWorkOrderActions() {
     document.addEventListener("submit", async (e) => {
 
         const form =
-            e.target.closest(".wo-actions form");
+            e.target.closest(".wo-actions form, .asman-verification-action form");
 
         if (!form) return;
 
         e.preventDefault();
 
         const button =
+            e.submitter ||
             form.querySelector("button");
 
         const card =
@@ -293,6 +632,12 @@ function bindWorkOrderActions() {
 
         try {
 
+            const formData =
+                new FormData(form);
+
+            const body =
+                new URLSearchParams(formData);
+
             const response =
                 await fetch(
                     form.action,
@@ -305,7 +650,9 @@ function bindWorkOrderActions() {
 
                             "Accept":
                                 "application/json"
-                        }
+                        },
+
+                        body
                     }
                 );
 
@@ -325,9 +672,20 @@ function bindWorkOrderActions() {
              * Ambil ulang tampilan Work Order
              * terbaru TANPA reload seluruh halaman.
              */
+            const currentUrl =
+                new URL(
+                    window.location.href
+                );
+
+            currentUrl.searchParams.set(
+                "id",
+                id
+            );
+
             const pageResponse =
                 await fetch(
-                    `/workorder?id=${id}`
+                    currentUrl.pathname +
+                    currentUrl.search
                 );
 
             if (!pageResponse.ok) {

@@ -186,6 +186,65 @@
 
     </script>
 
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+
+            console.log(
+                "🟢 OpenWO Socket.IO terhubung:",
+                socket.id
+            );
+
+        });
+
+        socket.on(
+            "workorder:updated",
+            data => {
+
+                console.log(
+                    "🔔 WORK ORDER BERUBAH:",
+                    data
+                );
+
+                const toast =
+                    document.createElement("div");
+
+                toast.className =
+                    "socket-toast";
+
+                toast.innerHTML = `
+                    <strong>🔄 Work Order diperbarui</strong>
+                    <span>
+                        WO-${String(data.id).padStart(5, "0")}
+                    </span>
+                `;
+
+                document.body.appendChild(toast);
+
+                requestAnimationFrame(() => {
+
+                    toast.classList.add("show");
+
+                });
+
+                setTimeout(() => {
+
+                    toast.classList.remove("show");
+
+                    setTimeout(() => {
+
+                        toast.remove();
+
+                    }, 300);
+
+                }, 2500);
+
+            }
+        );
+    </script>
 
     <script src="/js/workorder.js"></script>
 

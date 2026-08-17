@@ -1,4 +1,8 @@
+const { getIO } = require("../socket");
+
 const workorderModel = require("../models/workorder.model");
+
+const userModel = require("../models/user.model");
 
 const { formatRelativeTime } = require("../utils/time.util");
 
@@ -19,7 +23,9 @@ function store(req, res) {
 
         judul: title,
 
-        deskripsi: description
+        deskripsi: description,
+
+        pelaporId: req.user?.id
 
     });
 
@@ -35,46 +41,97 @@ function store(req, res) {
 
 }
 
+function accept(req, res) {
+
+    const id =
+        Number(req.params.id);
+
+    const asmanId =
+        req.user?.id;
+
+    const asmanName =
+        req.user?.nama;
+
+    console.log("=== ACCEPT WORK ORDER ===");
+    console.log("WO ID:", id);
+    console.log("ASMAN:", req.user);
+
+    const workorder =
+        workorderModel.acceptByAsman(
+            id,
+            asmanId,
+            asmanName
+        );
+
+    if (!workorder) {
+
+        return res.status(404).json({
+            success: false,
+            message:
+                "Work Order tidak ditemukan atau belum dapat diterima."
+        });
+
+    }
+
+    // ==========================================
+    // REAL-TIME EVENT
+    // ==========================================
+    
+    getIO().emit(
+        "workorder:updated",
+        {
+            id,
+            action: "accept",
+            workorder
+        }
+    );
+
+    return res.json({
+        success: true,
+        workorder
+    });
+
+}
+
 function index(req, res) {
+
+    console.log(
+        "📥 WORKORDER QUERY:",
+        req.query
+    );
 
     let workorders;
 
     const activeId =
-        Number(req.query.id) || 1;
+        Number(req.query.id) || null;
+
+    const search =
+        (req.query.search || "").trim().toLowerCase();
+
+    const status =
+        (req.query.status || "Semua").trim();    
+
+    // ==========================================
+    // PAGINATION
+    // ==========================================
+
+    const page =
+        Math.max(
+            Number(req.query.page) || 1,
+            1
+        );
+
+    const limit = 5;
+
+
+    // ==========================================
+    // AMBIL DATA SESUAI ROLE
+    // ==========================================
 
     if (req.user?.role === "manager") {
 
         workorders =
             workorderModel.getForManager();
-
-        /*
-        * Jika Manager sedang membuka WO tertentu
-        * setelah melakukan aksi, tetap tampilkan WO tersebut.
-        */
-        if (req.query.id) {
-
-            const allWorkorders =
-                workorderModel.getAll();
-
-            const activeWorkorder =
-                allWorkorders.find(
-                    wo => wo.id === activeId
-                );
-
-            if (
-                activeWorkorder &&
-                !workorders.some(
-                    wo => wo.id === activeId
-                )
-            ) {
-
-                workorders.push(
-                    activeWorkorder
-                );
-
-            }
-
-        }
 
     } else {
 
@@ -83,36 +140,229 @@ function index(req, res) {
 
     }
 
-    workorders = workorders.map(wo => ({
-        ...wo,
-        update: formatRelativeTime(wo.createdAt)
-    }));
 
-    // const activeId = Number(req.query.id) || 1;
+    // ==========================================
+    // FORMAT DATA
+    // ==========================================
 
-    const activeIndex = workorders.findIndex(
-        wo => wo.id === activeId
+    workorders =
+        workorders.map(wo => ({
+            ...wo,
+            update: formatRelativeTime(
+                wo.createdAt
+            )
+        }));
+
+    // ==========================================
+    // SIMPAN WO AKTIF SEBELUM SEARCH & FILTER
+    // ==========================================
+
+    let activeWO = null;
+
+    if (activeId) {
+
+        activeWO =
+            workorders.find(
+                wo => wo.id === activeId
+            ) || null;
+
+    }
+
+    // ==========================================
+    // SEARCH & FILTER
+    // ==========================================
+
+    if (search) {
+
+        workorders =
+            workorders.filter(wo => {
+
+                const text =
+                    (
+                        (wo.nomor || "") +
+                        " " +
+                        (wo.judul || "")
+                    ).toLowerCase();
+
+                return text.includes(search);
+
+            });
+
+    }
+
+
+    if (
+        status &&
+        status !== "Semua"
+    ) {
+
+        workorders =
+            workorders.filter(
+                wo => wo.status === status
+            );
+
+    }
+
+    // ==========================================
+    // TOTAL DATA
+    // ==========================================
+
+    const totalItems =
+        workorders.length;
+
+    const totalPages =
+        Math.max(
+            Math.ceil(
+                totalItems / limit
+            ),
+            1
+        );
+
+
+    // ==========================================
+    // PASTIKAN PAGE VALID
+    // ==========================================
+
+    const currentPage =
+        Math.min(
+            page,
+            totalPages
+        );
+
+
+    // ==========================================
+    // POSISI DATA
+    // ==========================================
+
+    const offset =
+        (currentPage - 1) * limit;
+
+
+    // ==========================================
+    // AMBIL 5 WO UNTUK HALAMAN INI
+    // ==========================================
+
+    workorders =
+        workorders.slice(
+            offset,
+            offset + limit
+        );
+
+
+    // ==========================================
+    // ACTIVE WO
+    // ==========================================
+
+    if (activeId) {
+
+        const activeIndex =
+            workorders.findIndex(
+                wo => wo.id === activeId
+            );
+
+
+        // ======================================
+        // WO AKTIF MASIH ADA DI HALAMAN INI
+        // ======================================
+
+        if (activeIndex > 0) {
+
+            const currentActiveWO =
+                workorders.splice(
+                    activeIndex,
+                    1
+                )[0];
+
+            workorders.unshift(
+                currentActiveWO
+            );
+
+        }
+
+
+        // ======================================
+        // WO AKTIF HILANG DARI FILTER
+        // ======================================
+        //
+        // Contoh:
+        //
+        // /workorder?status=Menunggu&page=15
+        //
+        // WO 70 = Menunggu
+        //
+        // Klik "Terima WO"
+        //
+        // WO 70 berubah menjadi Diterima.
+        //
+        // Filter Menunggu kemudian membuang
+        // WO 70 dari daftar.
+        //
+        // Tetapi WO 70 harus tetap ditampilkan
+        // sebagai Timeline aktif.
+        // ======================================
+
+        else if (
+            activeIndex === -1 &&
+            activeWO
+        ) {
+
+            workorders.unshift(
+                activeWO
+            );
+
+        }
+
+    }
+
+    // ==========================================
+    // TEKNISI
+    // ==========================================
+
+    const technicians =
+        userModel.getTechnicians();
+
+
+    // ==========================================
+    // RENDER
+    // ==========================================
+
+    res.render(
+        "workorder/index",
+        {
+            title: "Work Order Saya",
+            layout: "layouts/app",
+
+            workorders,
+
+            activeId,
+
+            role:
+                req.user?.role,
+
+            technicians,
+
+            search,
+            status,
+
+            pagination: {
+                page: currentPage,
+                totalPages,
+                totalItems,
+                limit,
+
+                from:
+                    totalItems === 0
+                        ? 0
+                        : offset + 1,
+
+                to:
+                    Math.min(
+                        offset + limit,
+                        totalItems
+                    )
+            }
+        }
     );
-
-    if (activeIndex > 0) {
-
-        const activeWorkorder = workorders.splice(activeIndex, 1)[0];
-
-        workorders.unshift(activeWorkorder);
-
-    }    
-
-    console.log("=== WORKORDER INDEX ===");
-    console.log("USER:", req.user);
-    console.log("ROLE:", req.user?.role);
-
-    res.render("workorder/index", {
-        title: "Work Order Saya",
-        layout: "layouts/app",
-        workorders,
-        activeId,
-        role: req.user?.role
-    });
 
 }
 
@@ -214,6 +464,115 @@ function verify(req, res) {
     });
 }
 
+function assign(req, res) {
+
+    const id =
+        Number(req.params.id);
+
+    const technicianId =
+        Number(req.body?.technicianId);
+
+    const asmanId =
+        req.user?.id;
+
+    console.log("=== ASSIGN WORK ORDER ===");
+    console.log("WO ID:", id);
+    console.log("ASMAN:", req.user);
+    console.log("TECHNICIAN ID:", technicianId);
+
+
+    if (!technicianId) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Teknisi belum dipilih."
+        });
+
+    }
+
+
+    const workorder =
+        workorderModel.assignByAsman(
+            id,
+            technicianId,
+            asmanId
+        );
+
+
+    if (!workorder) {
+
+        return res.status(404).json({
+            success: false,
+            message:
+                "Work Order tidak ditemukan, belum berstatus Diterima, atau teknisi tidak valid."
+        });
+
+    }
+
+
+    return res.json({
+        success: true,
+        workorder
+    });
+
+}
+
+function escalate(req, res) {
+
+    const id =
+        Number(req.params.id);
+
+    const asmanId =
+        req.user?.id;
+
+    const asmanName =
+        req.user?.nama;
+
+    const reason =
+        req.body?.reason;
+
+    if (
+        !reason ||
+        !reason.trim()
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Alasan eskalasi wajib diisi."
+        });
+
+    }
+
+
+    const workorder =
+        workorderModel.escalateByAsman(
+            id,
+            asmanId,
+            asmanName,
+            reason
+        );
+
+
+    if (!workorder) {
+
+        return res.status(404).json({
+            success: false,
+            message:
+                "Work Order tidak ditemukan atau belum siap dieskalasi."
+        });
+
+    }
+
+
+    return res.json({
+        success: true,
+        workorder
+    });
+
+}
+
 function verifyManager(req, res) {
 
     const id = Number(req.params.id);
@@ -248,14 +607,71 @@ function verifyManager(req, res) {
     });
 }
 
+function history(req, res) {
+
+    const workorders =
+        workorderModel.getHistory();
+
+    res.render(
+        "workorder/history",
+        {
+            workorders,
+            user: req.user,
+            title: "Riwayat Work Order"
+        }
+    );
+
+}
+
+function detail(req, res) {
+
+    const id =
+        Number(req.params.id);
+
+    if (!id) {
+
+        return res.status(400).send(
+            "ID Work Order tidak valid."
+        );
+
+    }
+
+    const workorder =
+        workorderModel.getById(id);
+
+    if (!workorder) {
+
+        return res.status(404).send(
+            "Work Order tidak ditemukan."
+        );
+
+    }
+
+    res.render(
+        "workorder/detail",
+        {
+            workorder,
+            user: req.user,
+            role: req.user?.role,
+            title: `Detail ${workorder.nomor}`
+        }
+    );
+
+}
+
 module.exports = {
 
     create,
     store,
     index,
+    detail,
+    accept,
     start,
     complete,
     verify,
-    verifyManager
+    assign,
+    escalate,
+    verifyManager,
+    history
 
 };

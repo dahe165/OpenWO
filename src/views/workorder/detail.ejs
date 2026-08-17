@@ -1,0 +1,348 @@
+<div class="wo-detail">
+
+    <div class="wo-header">
+
+        <div class="wo-title-area">
+
+            <div class="wo-title">
+                <%= workorder.judul %>
+            </div>
+
+            <div class="wo-meta">
+
+                <span class="wo-number">
+                    <%= workorder.nomor %>
+                </span>
+
+                <span class="wo-meta-separator">
+                    |
+                </span>
+
+                <span class="wo-category">
+                    <%= workorder.kategori %>
+                </span>
+
+                <span class="wo-meta-separator">
+                    |
+                </span>
+
+                <span class="wo-created">
+                    <%= new Date(
+                        workorder.createdAt
+                    ).toLocaleString(
+                        "id-ID",
+                        {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }
+                    ) %>
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <%
+            let displayStatus =
+                workorder.status;
+
+            if (
+                workorder.status === "Diproses"
+            ) {
+                displayStatus =
+                    "Sedang Dikerjakan";
+            }
+        %>
+
+
+        <div class="wo-current-status">
+
+            <span class="status-dot"></span>
+
+            <span>
+                <%= displayStatus %>
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="wo-detail-content">
+
+        <h2>
+            Detail Work Order
+        </h2>
+
+        <p>
+            <strong>Deskripsi:</strong>
+        </p>
+
+        <p>
+            <%= workorder.deskripsi || "-" %>
+        </p>
+
+
+        <p>
+            <strong>Subkategori:</strong>
+            <%= workorder.subkategori || "-" %>
+        </p>
+
+
+        <p>
+            <strong>Pelapor:</strong>
+            <%= workorder.pelapor || "-" %>
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="wo-timeline">
+
+    <h2>
+        Timeline Work Order
+    </h2>
+
+
+    <% if (
+        !workorder.timeline ||
+        workorder.timeline.length === 0
+    ) { %>
+
+        <p>
+            Belum ada aktivitas.
+        </p>
+
+    <% } else { %>
+
+        <% workorder.timeline.forEach(item => { %>
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+
+                <div class="timeline-content">
+
+                    <div class="timeline-status">
+
+                        <strong>
+                            <%= item.status %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="timeline-meta">
+
+                        <span>
+                            <%= item.role %>
+                        </span>
+
+                        <span>
+                            —
+                        </span>
+
+                        <span>
+                            <%= item.user || "-" %>
+                        </span>
+
+                        <span>
+                            —
+                        </span>
+
+                        <span>
+                            <%= new Date(
+                                item.tanggal
+                            ).toLocaleString(
+                                "id-ID",
+                                {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit"
+                                }
+                            ) %>
+                        </span>
+
+                    </div>
+
+
+                    <% if (item.reason) { %>
+
+                        <div class="timeline-reason">
+
+                            <strong>
+                                Alasan:
+                            </strong>
+
+                            <span>
+                                <%= item.reason %>
+                            </span>
+
+                        </div>
+
+                    <% } %>
+
+                </div>
+
+            </div>
+
+        <% }) %>
+
+    <% } %>
+
+</div>
+
+<style>
+.wo-timeline {
+    margin-top: 32px;
+}
+
+.wo-timeline h2 {
+    margin-bottom: 24px;
+}
+
+
+/* ==============================
+   TIMELINE
+   ============================== */
+
+.timeline-item {
+    position: relative;
+
+    display: flex;
+
+    gap: 16px;
+
+    padding-bottom: 28px;
+}
+
+
+/* Garis vertikal */
+
+.timeline-item::before {
+    content: "";
+
+    position: absolute;
+
+    left: 7px;
+    top: 16px;
+    bottom: 0;
+
+    width: 2px;
+
+    background: #d9dee7;
+}
+
+
+/* Hilangkan garis pada item terakhir */
+
+.timeline-item:last-child::before {
+    display: none;
+}
+
+
+/* Titik */
+
+.timeline-dot {
+    position: relative;
+
+    flex: 0 0 16px;
+
+    width: 16px;
+    height: 16px;
+
+    margin-top: 2px;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+
+    border: 3px solid #ffffff;
+
+    box-shadow:
+        0 0 0 2px #2563eb;
+
+    z-index: 1;
+}
+
+
+/* Isi */
+
+.timeline-content {
+    flex: 1;
+
+    padding: 0 16px 16px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 10px;
+}
+
+
+/* Status */
+
+.timeline-status {
+    padding-top: 14px;
+
+    font-size: 15px;
+}
+
+
+/* Informasi pelaku + waktu */
+
+.timeline-meta {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 6px;
+
+    font-size: 13px;
+
+    color: #64748b;
+}
+
+
+/* Alasan eskalasi */
+
+.timeline-reason {
+    margin-top: 12px;
+
+    padding: 12px 14px;
+
+    border-left: 4px solid #f59e0b;
+
+    background: #fff7ed;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+}
+
+
+.timeline-reason strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #92400e;
+}
+
+
+.timeline-reason span {
+    color: #78350f;
+}
+</style>

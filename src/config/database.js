@@ -10,6 +10,11 @@ const dbPath =
         "../../database/openwo.db"
     );
 
+console.log(
+    "DATABASE PATH:",
+    dbPath
+);
+
 const db =
     new Database(dbPath);
 

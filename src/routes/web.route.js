@@ -8,15 +8,25 @@ const dashboardController = require("../controllers/dashboard.controller");
 
 const workorderController = require("../controllers/workorder.controller");
 
+const adminController = require("../controllers/admin.controller");
+
 const userModel = require("../models/user.model");
 
 const {requireRole} = require("../middleware/role.middleware");
 
 router.get("/dashboard", dashboardController.index);
 
-router.get("/workorder/create", workorderController.create);
+router.get(
+    "/workorder/create",
+    requireRole("pelapor"),
+    workorderController.create
+);
 
-router.post("/workorder", workorderController.store);
+router.post(
+    "/workorder",
+    requireRole("pelapor"),
+    workorderController.store
+);
 
 router.get("/workorder", workorderController.index);
 
@@ -62,6 +72,18 @@ router.get("/login/:username", (req, res) => {
 });
 
 router.post(
+    "/workorder/:id/accept",
+    requireRole("asman"),
+    workorderController.accept
+);
+
+router.post(
+    "/workorder/:id/assign",
+    requireRole("asman"),
+    workorderController.assign
+);
+
+router.post(
     "/workorder/:id/start",
     requireRole("teknisi"),
     workorderController.start
@@ -80,9 +102,61 @@ router.post(
 );
 
 router.post(
+    "/workorder/:id/escalate",
+    requireRole("asman"),
+    workorderController.escalate
+);
+
+router.post(
     "/workorder/:id/verify-manager",
     requireRole("manager"),
     workorderController.verifyManager
+);
+
+router.get(
+    "/admin/users",
+    requireRole("admin", "superuser"),
+    adminController.index
+);
+
+router.get(
+    "/admin/users/create",
+    requireRole("admin", "superuser"),
+    adminController.create
+);
+
+router.post(
+    "/admin/users",
+    requireRole("admin", "superuser"),
+    adminController.store
+);
+
+router.get(
+    "/admin/users/:id/edit",
+    requireRole("admin", "superuser"),
+    adminController.edit
+);
+
+router.post(
+    "/admin/users/:id",
+    requireRole("admin", "superuser"),
+    adminController.update
+);
+
+router.post(
+    "/admin/users/:id/delete",
+    requireRole("admin", "superuser"),
+    adminController.remove
+);
+
+router.get(
+    "/workorder/history",
+    workorderController.history
+);
+
+router.get(
+    "/workorder/:id",
+    workorderController.detail
 );
 
 module.exports = router;

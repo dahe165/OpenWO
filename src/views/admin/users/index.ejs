@@ -1,0 +1,945 @@
+<div class="admin-users">
+
+    <div class="admin-users-header">
+
+        <div>
+            <h1>Manajemen Pengguna</h1>
+
+            <p class="admin-users-subtitle">
+                Kelola akun pengguna OpenWO
+            </p>
+        </div>
+
+        <a
+            href="/admin/users/create"
+            class="btn-add-user"
+        >
+            + Tambah Pengguna
+        </a>
+
+    </div>
+
+
+    <div class="user-list">
+
+        <% if (!users || users.length === 0) { %>
+
+            <div class="empty-users">
+
+                <div class="empty-users-icon">
+                    👤
+                </div>
+
+                <h3>Belum ada pengguna</h3>
+
+                <p>
+                    Silakan tambahkan pengguna baru.
+                </p>
+
+            </div>
+
+        <% } %>
+
+
+        <% users?.forEach(user => { %>
+
+            <div
+                class="user-card"
+                data-user-id="<%= user.id %>"
+            >
+
+                <div class="user-info">
+
+                    <div class="user-avatar">
+                        <%= user.nama
+                            .charAt(0)
+                            .toUpperCase()
+                        %>
+                    </div>
+
+
+                    <div class="user-detail">
+
+                        <div class="user-name">
+                            <%= user.nama %>
+                        </div>
+
+                        <div class="user-username">
+                            @<%= user.username %>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="user-role">
+
+                    <span
+                        class="role-badge role-<%= user.role %>"
+                    >
+                        <%= user.role %>
+                    </span>
+
+                </div>
+
+
+                <div class="user-actions">
+
+                    <a
+                        href="/admin/users/<%= user.id %>/edit"
+                        class="btn-user-edit"
+                    >
+                        ✏️
+                        <span>Edit</span>
+                    </a>
+
+
+                    <% if (user.id !== user?.currentUserId) { %>
+
+                        <form
+                            action="/admin/users/<%= user.id %>/delete"
+                            method="POST"
+                            class="delete-user-form"
+                            data-user-name="<%= user.nama %>"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn-user-delete"
+                            >
+                                🗑️
+                                <span>Hapus</span>
+                            </button>
+
+                        </form>
+
+                    <% } %>
+
+                </div>
+
+            </div>
+
+        <% }) %>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.admin-users {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+
+/* Header */
+
+.admin-users-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 16px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.admin-users-header h1 {
+
+    margin: 0;
+
+    font-size: 22px;
+
+}
+
+
+.admin-users-subtitle {
+
+    margin: 5px 0 0;
+
+    color: #777;
+
+    font-size: 13px;
+
+}
+
+
+/* Tambah */
+
+.btn-add-user {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 10px 14px;
+
+    border-radius: 9px;
+
+    background: #2563eb;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+
+/* List */
+
+.user-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+
+/* Card */
+
+.user-card {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        auto;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 13px 15px;
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+}
+
+
+/* User */
+
+.user-info {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    min-width: 0;
+
+}
+
+
+.user-avatar {
+
+    width: 38px;
+
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eef2ff;
+
+    color: #3730a3;
+
+    font-weight: 700;
+
+}
+
+
+.user-detail {
+
+    min-width: 0;
+
+}
+
+
+.user-name {
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+.user-username {
+
+    margin-top: 2px;
+
+    color: #777;
+
+    font-size: 12px;
+
+}
+
+
+/* Role */
+
+.role-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    text-transform: capitalize;
+
+}
+
+
+/* Actions */
+
+.user-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+}
+
+
+.user-actions form {
+
+    margin: 0;
+
+}
+
+
+.btn-user-edit,
+.btn-user-delete {
+
+    border: 0;
+
+    background: transparent;
+
+    padding: 6px 7px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+}
+
+
+.btn-user-edit {
+
+    color: #2563eb;
+
+}
+
+
+.btn-user-delete {
+
+    color: #dc2626;
+
+}
+
+
+/* Empty */
+
+.empty-users {
+
+    padding: 45px 20px;
+
+    text-align: center;
+
+    border: 1px dashed #d1d5db;
+
+    border-radius: 12px;
+
+}
+
+
+.empty-users-icon {
+
+    font-size: 30px;
+
+}
+
+
+.empty-users h3 {
+
+    margin: 10px 0 5px;
+
+    font-size: 16px;
+
+}
+
+
+.empty-users p {
+
+    margin: 0;
+
+    color: #777;
+
+    font-size: 13px;
+
+}
+
+/* =====================================
+   Delete Modal
+   ===================================== */
+
+.delete-modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+}
+
+
+.delete-modal.show {
+
+    display: flex;
+
+}
+
+
+.delete-modal-backdrop {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        rgba(15, 23, 42, 0.45);
+
+    backdrop-filter:
+        blur(3px);
+
+}
+
+
+.delete-modal-box {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 390px;
+
+    padding: 24px;
+
+    background: white;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 20px 50px
+        rgba(0, 0, 0, 0.18);
+
+    animation:
+        deleteModalIn
+        0.18s ease-out;
+
+}
+
+
+.delete-modal-icon {
+
+    width: 46px;
+
+    height: 46px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-bottom: 14px;
+
+    border-radius: 12px;
+
+    background: #fef2f2;
+
+    font-size: 21px;
+
+}
+
+
+.delete-modal-content h2 {
+
+    margin: 0;
+
+    font-size: 18px;
+
+}
+
+
+.delete-modal-content p {
+
+    margin: 8px 0 5px;
+
+    color: #4b5563;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+}
+
+
+.delete-modal-content strong {
+
+    color: #111827;
+
+}
+
+
+.delete-modal-content small {
+
+    color: #9ca3af;
+
+    font-size: 11px;
+
+}
+
+
+.delete-modal-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    margin-top: 22px;
+
+}
+
+
+.delete-modal-actions button {
+
+    padding: 9px 14px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+.delete-cancel {
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+}
+
+
+.delete-confirm {
+
+    background: #dc2626;
+
+    color: white;
+
+}
+
+
+.delete-confirm:disabled {
+
+    opacity: 0.65;
+
+    cursor: wait;
+
+}
+
+
+@keyframes deleteModalIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(8px)
+            scale(0.98);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .delete-modal {
+
+        padding: 14px;
+
+        align-items: flex-end;
+
+    }
+
+
+    .delete-modal-box {
+
+        max-width: none;
+
+        border-radius: 16px 16px 12px 12px;
+
+        padding: 20px;
+
+    }
+
+
+    .delete-modal-actions {
+
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+
+    .delete-modal-actions button {
+
+        width: 100%;
+
+        padding: 11px;
+
+    }
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    .admin-users-header {
+
+        align-items: flex-start;
+
+    }
+
+
+    .admin-users-header h1 {
+
+        font-size: 19px;
+
+    }
+
+
+    .btn-add-user {
+
+        padding: 8px 10px;
+
+        font-size: 12px;
+
+    }
+
+
+    .user-card {
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+
+        gap: 8px;
+
+    }
+
+
+    .user-role {
+
+        grid-column: 1 / 2;
+
+        margin-left: 49px;
+
+        margin-top: -7px;
+
+    }
+
+
+    .user-actions {
+
+        grid-column: 2 / 3;
+
+        grid-row: 1 / 3;
+
+    }
+
+
+    .user-actions span {
+
+        display: none;
+
+    }
+
+}
+
+</style>
+
+<div
+    id="deleteUserModal"
+    class="delete-modal"
+    aria-hidden="true"
+>
+    <div
+        class="delete-modal-backdrop"
+        data-delete-cancel
+    ></div>
+
+    <div
+        class="delete-modal-box"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="deleteModalTitle"
+    >
+
+        <div class="delete-modal-icon">
+            🗑️
+        </div>
+
+        <div class="delete-modal-content">
+
+            <h2 id="deleteModalTitle">
+                Hapus Pengguna?
+            </h2>
+
+            <p>
+                Apakah kamu yakin ingin menghapus
+                pengguna
+                <strong id="deleteUserName"></strong>?
+            </p>
+
+            <small>
+                Data pengguna akan dihapus dari OpenWO.
+            </small>
+
+        </div>
+
+        <div class="delete-modal-actions">
+
+            <button
+                type="button"
+                class="delete-cancel"
+                data-delete-cancel
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="delete-confirm"
+                id="deleteConfirmButton"
+            >
+                🗑️ Hapus
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+(function () {
+
+    const modal =
+        document.getElementById(
+            "deleteUserModal"
+        );
+
+    const userName =
+        document.getElementById(
+            "deleteUserName"
+        );
+
+    const confirmButton =
+        document.getElementById(
+            "deleteConfirmButton"
+        );
+
+    const cancelButtons =
+        modal.querySelectorAll(
+            "[data-delete-cancel]"
+        );
+
+
+    let pendingForm = null;
+
+
+    function openModal(form) {
+
+        pendingForm = form;
+
+        userName.textContent =
+            form.dataset.userName || "pengguna ini";
+
+        modal.classList.add("show");
+
+        modal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+    }
+
+
+    function closeModal() {
+
+        modal.classList.remove("show");
+
+        modal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        pendingForm = null;
+
+    }
+
+
+    document.addEventListener(
+        "submit",
+        function (event) {
+
+            const form =
+                event.target.closest(
+                    ".delete-user-form"
+                );
+
+            if (!form) return;
+
+            event.preventDefault();
+
+            openModal(form);
+
+        }
+    );
+
+
+    confirmButton.addEventListener(
+        "click",
+        function () {
+
+            if (!pendingForm) return;
+
+            confirmButton.disabled = true;
+
+            confirmButton.textContent =
+                "⏳ Menghapus...";
+
+            pendingForm.submit();
+
+        }
+    );
+
+
+    cancelButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                closeModal
+            );
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                modal.classList.contains("show")
+            ) {
+
+                closeModal();
+
+            }
+
+        }
+    );
+
+})();
+
+</script>
