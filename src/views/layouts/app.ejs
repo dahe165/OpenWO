@@ -72,18 +72,38 @@
 
                 <div class="topbar-user">
 
+                    <%
+                        const currentUser =
+                            user || {};
+
+                        const nama =
+                            currentUser.nama || "Pengguna";
+
+                        const role =
+                            currentUser.role || "pengguna";
+
+                        const avatar =
+                            nama
+                                .split(" ")
+                                .filter(Boolean)
+                                .map(word => word[0])
+                                .join("")
+                                .substring(0, 2)
+                                .toUpperCase();
+                    %>
+
                     <div class="user-avatar">
-                        DU
+                        <%= avatar %>
                     </div>
 
                     <div class="user-info">
 
                         <strong>
-                            Dahe Ugi
+                            <%= nama %>
                         </strong>
 
                         <small>
-                            Pengguna
+                            <%= role.charAt(0).toUpperCase() + role.slice(1) %>
                         </small>
 
                     </div>

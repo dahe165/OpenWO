@@ -17,6 +17,22 @@ function index(req, res) {
     const role =
         req.user?.role;
 
+    const pelaporId =
+    req.user?.id;
+
+    let pelaporDashboard =
+        null;
+
+    if (role === "pelapor") {
+
+        pelaporDashboard =
+            dashboardService
+                .getPelaporDashboard(
+                    pelaporId
+                );
+
+    }
+
     const technicianId =
         req.user?.id;
 
@@ -115,6 +131,8 @@ function index(req, res) {
         categoryTrend,
 
         role,
+
+        pelaporDashboard,
 
         technicianWorkorders,
 

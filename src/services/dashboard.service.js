@@ -31,6 +31,85 @@ function getSummary() {
     };
 }
 
+function getPelaporDashboard(pelaporId) {
+
+    const workorders =
+        workorderModel
+            .getAll()
+            .filter(
+                wo =>
+                    wo.pelaporId === pelaporId
+            );
+
+
+    const total =
+        workorders.length;
+
+
+    const diproses =
+        workorders.filter(
+            wo => wo.status === "Diproses"
+        ).length;
+
+
+    const selesai =
+        workorders.filter(
+            wo => wo.status === "Selesai"
+        ).length;
+
+
+    const menunggu =
+        workorders.filter(
+            wo => wo.status === "Menunggu"
+        ).length;
+
+
+    const diterima =
+        workorders.filter(
+            wo => wo.status === "Diterima"
+        ).length;
+
+
+    const ditugaskan =
+        workorders.filter(
+            wo => wo.status === "Ditugaskan"
+        ).length;
+
+
+    const feed =
+        [...workorders]
+            .sort(
+                (a, b) =>
+                    new Date(b.updatedAt) -
+                    new Date(a.updatedAt)
+            )
+            .slice(0, 5);
+
+
+    return {
+
+        summary: {
+
+            total,
+
+            menunggu,
+
+            diterima,
+
+            ditugaskan,
+
+            diproses,
+
+            selesai
+
+        },
+
+        feed
+
+    };
+
+}
+
 function getWorkOrderTrend() {
 
     const workorders = workorderModel.getAll();
@@ -118,5 +197,6 @@ function getCategoryTrend() {
 module.exports = {
     getSummary,
     getWorkOrderTrend,
-    getCategoryTrend
+    getCategoryTrend,
+    getPelaporDashboard
 };

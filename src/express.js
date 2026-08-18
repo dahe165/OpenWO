@@ -33,6 +33,21 @@ expressApp.use(
 
 expressApp.use(loadUser);
 
+/*
+ * =====================================
+ * USER GLOBAL UNTUK SEMUA VIEW EJS
+ * =====================================
+ */
+
+expressApp.use((req, res, next) => {
+
+    res.locals.user =
+        req.user || null;
+
+    next();
+
+});
+
 // Routes
 expressApp.use("/", webRoute);
 

@@ -109,18 +109,39 @@
 
         <div class="sidebar-user">
 
+            <%
+                const sidebarUser =
+                    user || {};
+
+                const sidebarNama =
+                    sidebarUser.nama || "Pengguna";
+
+                const sidebarRole =
+                    sidebarUser.role || "pengguna";
+
+                const sidebarAvatar =
+                    sidebarNama
+                        .split(" ")
+                        .filter(Boolean)
+                        .map(word => word[0])
+                        .join("")
+                        .substring(0, 2)
+                        .toUpperCase();
+            %>
+
             <div class="sidebar-avatar">
-                DU
+                <%= sidebarAvatar %>
             </div>
 
             <div>
 
                 <strong>
-                    Dahe Ugi
+                    <%= sidebarNama %>
                 </strong>
 
                 <small>
-                    Pengguna
+                    <%= sidebarRole.charAt(0).toUpperCase() +
+                        sidebarRole.slice(1) %>
                 </small>
 
             </div>

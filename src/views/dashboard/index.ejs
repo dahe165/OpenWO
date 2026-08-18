@@ -1,4 +1,187 @@
-<% if (role === "asman" || role === "manager") { %>
+<% if (role === "pelapor") { %>
+
+    <%- include("../components/welcome-card") %>
+
+    <%- include("../components/quick-action") %>
+
+
+    <div class="dashboard-kpi">
+
+        <div class="kpi-card">
+
+            <span class="kpi-icon">
+                📋
+            </span>
+
+            <div>
+
+                <span class="kpi-label">
+                    Total WO
+                </span>
+
+                <strong>
+                    <%= pelaporDashboard.summary.total %>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card">
+
+            <span class="kpi-icon">
+                🟡
+            </span>
+
+            <div>
+
+                <span class="kpi-label">
+                    Menunggu
+                </span>
+
+                <strong>
+                    <%= pelaporDashboard.summary.menunggu %>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card">
+
+            <span class="kpi-icon">
+                🔵
+            </span>
+
+            <div>
+
+                <span class="kpi-label">
+                    Diproses
+                </span>
+
+                <strong>
+                    <%= pelaporDashboard.summary.diproses %>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card">
+
+            <span class="kpi-icon">
+                🟢
+            </span>
+
+            <div>
+
+                <span class="kpi-label">
+                    Selesai
+                </span>
+
+                <strong>
+                    <%= pelaporDashboard.summary.selesai %>
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>🕘 Work Order Terakhir</h2>
+
+                <p>
+                    Aktivitas Work Order Anda
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <% if (
+            pelaporDashboard.feed.length === 0
+        ) { %>
+
+            <div class="technician-feed-empty">
+
+                Belum ada Work Order.
+
+            </div>
+
+        <% } else { %>
+
+            <div class="technician-feed">
+
+                <% pelaporDashboard.feed.forEach(
+                    wo => {
+                %>
+
+                    <div class="technician-feed-item">
+
+                        <div class="technician-feed-main">
+
+                            <strong>
+                                <%= wo.nomor %>
+                            </strong>
+
+                            <h3>
+                                <%= wo.judul %>
+                            </h3>
+
+                            <span>
+                                <%= wo.kategori %>
+
+                                <% if (
+                                    wo.subkategori
+                                ) { %>
+
+                                    •
+                                    <%= wo.subkategori %>
+
+                                <% } %>
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="technician-feed-meta">
+
+                            <span
+                                class="wo-status status-<%= wo.status.toLowerCase() %>"
+                            >
+                                <%= wo.status %>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                <% }); %>
+
+            </div>
+
+        <% } %>
+
+    </div>
+
+
+    <% } else if (
+        role === "asman" ||
+        role === "manager"
+    ) { %>
 
 <%- include("../components/welcome-card") %>
 
@@ -197,7 +380,7 @@
         <div class="status-track">
             <div
                 class="status-bar status-menunggu"
-                style="width: <%= summary.total > 0
+                style="width: <%= summary.total> 0
                     ? (summary.menunggu / summary.total) * 100
                     : 0 %>%">
             </div>

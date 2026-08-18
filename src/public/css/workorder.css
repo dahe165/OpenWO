@@ -570,19 +570,18 @@ font-size:14px;
 /* Tombol tambah */
 
 .quick-action-create {
-    width: 64px;
-
-    display: flex;
+    width: 84px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-
+    
     background: var(--primary);
 
     color: #ffffff;
 
     border-radius: 14px;
 
-    font-size: 28px;
+    font-size: 20px;
 
     box-shadow:
         0 6px 14px rgba(37, 99, 235, 0.20);
