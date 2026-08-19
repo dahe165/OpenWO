@@ -76,14 +76,14 @@
                         const currentUser =
                             user || {};
 
-                        const nama =
+                        const currentName =
                             currentUser.nama || "Pengguna";
 
-                        const role =
+                        const currentRole =
                             currentUser.role || "pengguna";
 
-                        const avatar =
-                            nama
+                        const currentAvatar =
+                            currentName
                                 .split(" ")
                                 .filter(Boolean)
                                 .map(word => word[0])
@@ -92,19 +92,65 @@
                                 .toUpperCase();
                     %>
 
-                    <div class="user-avatar">
-                        <%= avatar %>
-                    </div>
+                    <div class="topbar-profile">
 
-                    <div class="user-info">
+                        <button
+                            type="button"
+                            class="topbar-user"
+                            id="profileToggle"
+                            aria-expanded="false"
+                        >
 
-                        <strong>
-                            <%= nama %>
-                        </strong>
+                            <div class="user-avatar">
+                                <%= currentAvatar %>
+                            </div>
 
-                        <small>
-                            <%= role.charAt(0).toUpperCase() + role.slice(1) %>
-                        </small>
+                            <div class="user-info">
+
+                                <strong>
+                                    <%= currentName %>
+                                </strong>
+
+                                <small>
+                                    <%= currentRole.charAt(0).toUpperCase() +
+                                        currentRole.slice(1) %>
+                                </small>
+
+                            </div>
+
+                            <span class="profile-chevron">
+                                ▾
+                            </span>
+
+                        </button>
+
+
+                        <div
+                            class="profile-dropdown"
+                            id="profileDropdown"
+                        >
+
+                            <a href="/profile">
+                                👤
+                                <span>Profil Saya</span>
+                            </a>
+
+                            <a href="/setting">
+                                ⚙️
+                                <span>Pengaturan</span>
+                            </a>
+
+                            <div class="profile-divider"></div>
+
+                            <a
+                                href="/logout"
+                                class="profile-logout"
+                            >
+                                🚪
+                                <span>Keluar</span>
+                            </a>
+
+                        </div>
 
                     </div>
 
@@ -203,6 +249,69 @@
                 );
 
             });
+
+        const profileToggle =
+            document.getElementById(
+                "profileToggle"
+            );
+
+        const profileDropdown =
+            document.getElementById(
+                "profileDropdown"
+            );
+
+
+        if (
+            profileToggle &&
+            profileDropdown
+        ) {
+
+            profileToggle.addEventListener(
+                "click",
+                (e) => {
+
+                    e.stopPropagation();
+
+                    const isOpen =
+                        profileDropdown.classList.toggle(
+                            "show"
+                        );
+
+                    profileToggle.classList.toggle(
+                        "open",
+                        isOpen
+                    );
+
+                    profileToggle.setAttribute(
+                        "aria-expanded",
+                        isOpen
+                    );
+
+                }
+            );
+
+
+            document.addEventListener(
+                "click",
+                () => {
+
+                    profileDropdown.classList.remove(
+                        "show"
+                    );
+
+                    profileToggle.classList.remove(
+                        "open"
+                    );
+
+                    profileToggle.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+                }
+            );
+
+        }
 
     </script>
 

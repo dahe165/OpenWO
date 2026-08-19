@@ -51,6 +51,44 @@ function findById(id) {
 
 }
 
+function updateProfile(
+    id,
+    nama
+) {
+
+    const cleanNama =
+        (nama || "").trim();
+
+
+    if (!cleanNama) {
+        return null;
+    }
+
+
+    const result =
+        db.prepare(`
+            UPDATE users
+
+            SET
+                nama = ?
+
+            WHERE id = ?
+        `).run(
+            cleanNama,
+            id
+        );
+
+
+    if (
+        result.changes === 0
+    ) {
+        return null;
+    }
+
+
+    return findById(id);
+}
+
 function getTechnicians() {
 
     return db
@@ -91,7 +129,6 @@ function create(data) {
 
 }
 
-
 function update(id, data) {
 
     db.prepare(`
@@ -99,14 +136,12 @@ function update(id, data) {
 
         SET
             nama = ?,
-            username = ?,
             role = ?
 
         WHERE id = ?
     `)
     .run(
         data.nama,
-        data.username,
         data.role,
         id
     );
@@ -114,7 +149,6 @@ function update(id, data) {
     return findById(id);
 
 }
-
 
 function remove(id) {
 
@@ -129,6 +163,65 @@ function remove(id) {
 
 }
 
+function getUserStats() {
+
+    const total =
+        db.prepare(`
+            SELECT COUNT(*) AS total
+            FROM users
+        `).get().total;
+
+
+    const rows =
+        db.prepare(`
+            SELECT
+                role,
+                COUNT(*) AS total
+
+            FROM users
+
+            GROUP BY role
+        `).all();
+
+
+    const stats = {
+
+        totalUsers: total,
+
+        pelapor: 0,
+
+        teknisi: 0,
+
+        asman: 0,
+
+        manager: 0,
+
+        admin: 0
+
+    };
+
+
+    rows.forEach(row => {
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                stats,
+                row.role
+            )
+        ) {
+
+            stats[row.role] =
+                row.total;
+
+        }
+
+    });
+
+
+    return stats;
+
+}
+
 module.exports = {
 
     getAll,
@@ -137,7 +230,11 @@ module.exports = {
 
     findById,
 
+    updateProfile,
+
     getTechnicians,
+
+    getUserStats,
 
     create,
 

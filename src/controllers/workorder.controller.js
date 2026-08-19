@@ -162,9 +162,11 @@ function index(req, res) {
     if (activeId) {
 
         activeWO =
-            workorders.find(
-                wo => wo.id === activeId
-            ) || null;
+            workorderModel
+                .getAll()
+                .find(
+                    wo => wo.id === activeId
+                ) || null;
 
     }
 

@@ -4,7 +4,6 @@
 
     <%- include("../components/quick-action") %>
 
-
     <div class="dashboard-kpi">
 
         <div class="kpi-card">
@@ -508,6 +507,177 @@
     </div>
 
 </div>
+
+<% } else if (role === "admin") { %>
+
+    <%- include("../components/welcome-card") %>
+
+    <%- include("../components/quick-action") %>
+
+
+    <div class="dashboard-kpi">
+
+        <div class="kpi-card">
+
+            <span class="kpi-icon">
+                👥
+            </span>
+
+            <div>
+
+                <span class="kpi-label">
+                    Total Pengguna
+                </span>
+
+                <strong>
+                    <%= stats.totalUsers %>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card">
+
+            <span class="kpi-icon">
+                👤
+            </span>
+
+            <div>
+
+                <span class="kpi-label">
+                    Pelapor
+                </span>
+
+                <strong>
+                    <%= stats.pelapor %>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card">
+
+            <span class="kpi-icon">
+                🧑‍🔧
+            </span>
+
+            <div>
+
+                <span class="kpi-label">
+                    Teknisi
+                </span>
+
+                <strong>
+                    <%= stats.teknisi %>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card">
+
+            <span class="kpi-icon">
+                🧑‍💼
+            </span>
+
+            <div>
+
+                <span class="kpi-label">
+                    Asman
+                </span>
+
+                <strong>
+                    <%= stats.asman %>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="kpi-card">
+
+            <span class="kpi-icon">
+                👔
+            </span>
+
+            <div>
+
+                <span class="kpi-label">
+                    Manager
+                </span>
+
+                <strong>
+                    <%= stats.manager %>
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>
+                    ⚡ Administrasi OpenWO
+                </h2>
+
+                <p>
+                    Kelola pengguna dan konfigurasi sistem
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="technician-summary-card">
+
+            <div class="technician-summary-content">
+
+                <div class="technician-summary-icon">
+                    👥
+                </div>
+
+                <div>
+
+                    <h2>
+                        Kelola Pengguna
+                    </h2>
+
+                    <p>
+                        Tambah, edit, dan kelola akun
+                        pengguna OpenWO.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <a
+                href="/admin/users"
+                class="btn-view-workorders"
+            >
+                Kelola Pengguna
+                <span>→</span>
+            </a>
+
+        </div>
+
+    </div>
 
 <% } else if (role === "teknisi") { %>
 

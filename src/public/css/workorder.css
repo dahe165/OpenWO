@@ -3306,3 +3306,20 @@ font-size:14px;
     font-weight: 700;
     margin: 0 3px;
 }*/
+
+/* =====================================
+   ADMIN DASHBOARD - KPI DESKTOP
+   ===================================== */
+
+@media (min-width: 901px) {
+
+    .dashboard-kpi {
+        display: grid;
+
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+
+        gap: 12px;
+    }
+
+}

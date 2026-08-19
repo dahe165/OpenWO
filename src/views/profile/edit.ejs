@@ -1,0 +1,128 @@
+<div class="profile-page">
+
+    <div class="profile-header">
+
+        <div class="profile-avatar">
+            <%= user.nama
+                .split(" ")
+                .filter(Boolean)
+                .map(word => word[0])
+                .join("")
+                .substring(0, 2)
+                .toUpperCase()
+            %>
+        </div>
+
+        <div>
+
+            <h1>
+                Edit Profil
+            </h1>
+
+            <p>
+                Perbarui informasi profil Anda.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <form
+        method="POST"
+        action="/profile/edit"
+        class="profile-card"
+    >
+
+        <div class="profile-card-title">
+            Informasi Profil
+        </div>
+
+
+        <div class="profile-field profile-field-edit">
+
+            <label for="nama">
+                Nama
+            </label>
+
+            <input
+                type="text"
+                id="nama"
+                name="nama"
+                value="<%= user.nama %>"
+                required
+            >
+
+        </div>
+
+
+        <div class="profile-field profile-field-edit">
+
+            <label>
+                Username
+            </label>
+
+            <div class="profile-readonly">
+
+                <span>
+                    <%= user.username %>
+                </span>
+
+                <span>
+                    🔒
+                </span>
+
+            </div>
+
+            <small>
+                Username merupakan identitas akun
+                dan tidak dapat diubah.
+            </small>
+
+        </div>
+
+
+        <div class="profile-field profile-field-edit">
+
+            <label>
+                Role
+            </label>
+
+            <div class="profile-readonly">
+
+                <span>
+                    <%= user.role.charAt(0).toUpperCase() +
+                        user.role.slice(1) %>
+                </span>
+
+                <span>
+                    🔒
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-edit-actions">
+
+            <a
+                href="/profile"
+                class="btn-profile-cancel"
+            >
+                ← Batal
+            </a>
+
+            <button
+                type="submit"
+                class="btn-profile-save"
+            >
+                <span>✓</span>
+                <span>Simpan Perubahan</span>
+            </button>
+
+        </div>
+
+    </form>
+
+</div>

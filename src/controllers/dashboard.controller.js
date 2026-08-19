@@ -2,6 +2,9 @@ const workorderModel = require("../models/workorder.model");
 
 const dashboardService = require("../services/dashboard.service");
 
+const userModel =  require("../models/user.model");
+
+// controller lainnya...
 
 function index(req, res) {
 
@@ -13,6 +16,9 @@ function index(req, res) {
 
     const categoryTrend =
         dashboardService.getCategoryTrend();
+
+    const stats =
+        userModel.getUserStats();
 
     const role =
         req.user?.role;
@@ -129,6 +135,8 @@ function index(req, res) {
         trend,
 
         categoryTrend,
+
+        stats,
 
         role,
 

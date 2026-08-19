@@ -1,0 +1,91 @@
+<div class="profile-page">
+
+    <div class="profile-header">
+
+        <div class="profile-avatar">
+            <%= user.nama
+                .split(" ")
+                .filter(Boolean)
+                .map(word => word[0])
+                .join("")
+                .substring(0, 2)
+                .toUpperCase()
+            %>
+        </div>
+
+        <div>
+
+            <h1>
+                Profil Saya
+            </h1>
+
+            <p>
+                Informasi akun pengguna OpenWO
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="profile-card">
+
+        <div class="profile-card-title">
+            Informasi Pengguna
+        </div>
+
+
+        <div class="profile-field">
+
+            <span>
+                Nama
+            </span>
+
+            <strong>
+                <%= user.nama %>
+            </strong>
+
+        </div>
+
+
+        <div class="profile-field">
+
+            <span>
+                Username
+            </span>
+
+            <strong>
+                <%= user.username %>
+            </strong>
+
+        </div>
+
+
+        <div class="profile-field">
+
+            <span>
+                Role
+            </span>
+
+            <strong>
+                <%= user.role.charAt(0).toUpperCase() +
+                    user.role.slice(1) %>
+            </strong>
+
+        </div>
+
+    </div>
+
+    <div class="profile-actions">
+
+        <a
+            href="/profile/edit"
+            class="btn-profile-edit"
+        >
+            <span class="profile-edit-icon">✎</span>
+            <span>Edit Profil</span>
+        </a>
+
+    </div>
+
+</div>

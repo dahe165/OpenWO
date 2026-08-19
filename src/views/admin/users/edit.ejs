@@ -51,14 +51,15 @@
             <input
                 type="text"
                 id="username"
-                name="username"
                 value="<%= user.username %>"
-                required
-                autocomplete="username"
+                readonly
+                class="input-readonly"
+                autocomplete="off"
             >
 
             <small>
-                Username digunakan untuk masuk ke OpenWO.
+                🔒 Username adalah identitas permanen
+                dan tidak dapat diubah.
             </small>
 
         </div>
@@ -362,6 +363,25 @@
         width: 100%;
 
     }
+
+}
+
+.form-group input.input-readonly {
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+    cursor: not-allowed;
+
+}
+
+
+.form-group input.input-readonly:focus {
+
+    border-color: #d1d5db;
+
+    box-shadow: none;
 
 }
 

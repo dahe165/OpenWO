@@ -12,9 +12,24 @@ const adminController = require("../controllers/admin.controller");
 
 const userModel = require("../models/user.model");
 
+const profileController = require("../controllers/profile.controller");
+
 const {requireRole} = require("../middleware/role.middleware");
 
 router.get("/dashboard", dashboardController.index);
+
+router.get("/profile", profileController.index);
+
+router.get(
+    "/profile/edit",
+    profileController.edit
+);
+
+
+router.post(
+    "/profile/edit",
+    profileController.update
+);
 
 router.get(
     "/workorder/create",
