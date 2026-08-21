@@ -10,7 +10,12 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title><%= title || "OpenWO" %></title>
+    <title>
+        <%= title
+            ? `${title} - ${appName || "OpenWO"}`
+            : (appName || "OpenWO")
+        %>
+    </title>
 
     <!-- App Layout -->
     <link
@@ -64,7 +69,7 @@
                     </span>
 
                     <strong>
-                        OpenWO
+                        <%= appName || "OpenWO" %>
                     </strong>
 
                 </div>
@@ -320,6 +325,43 @@
     <script>
         const socket = io();
 
+
+        function updateSocketStatus(
+            connected
+        ) {
+
+            const socketStatus =
+                document.getElementById(
+                    "socketStatus"
+                );
+
+
+            if (!socketStatus) {
+                return;
+            }
+
+
+            if (connected) {
+
+                socketStatus.textContent =
+                    "● Terhubung";
+
+                socketStatus.className =
+                    "system-status-badge status-online";
+
+            } else {
+
+                socketStatus.textContent =
+                    "● Terputus";
+
+                socketStatus.className =
+                    "system-status-badge status-error";
+
+            }
+
+        }
+
+
         socket.on("connect", () => {
 
             console.log(
@@ -327,7 +369,23 @@
                 socket.id
             );
 
+            updateSocketStatus(true);
+
         });
+
+
+        socket.on("disconnect", () => {
+
+            updateSocketStatus(false);
+
+        });
+
+
+        if (socket.connected) {
+
+            updateSocketStatus(true);
+
+        }
 
         socket.on(
             "workorder:updated",

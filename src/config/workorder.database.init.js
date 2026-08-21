@@ -2,6 +2,14 @@ console.log("=== WORKORDER DATABASE INIT TERPANGGIL ===");
 
 const db = require("./database");
 
+console.log(
+    "=== DATABASE FILE ==="
+);
+
+console.log(
+    db.name
+);
+
 
 /*
  * =====================================
@@ -55,6 +63,39 @@ db.exec(`
 
     );
 `);
+
+/*
+ * =====================================
+ * MIGRASI — DESKRIPSI PENYELESAIAN
+ * =====================================
+ */
+
+const workOrderColumns =
+    db.prepare(`
+        PRAGMA table_info(work_orders)
+    `).all();
+
+
+const hasResolutionDescription =
+    workOrderColumns.some(
+        column =>
+            column.name ===
+            "resolution_description"
+    );
+
+
+if (!hasResolutionDescription) {
+
+    db.exec(`
+        ALTER TABLE work_orders
+        ADD COLUMN resolution_description TEXT;
+    `);
+
+    console.log(
+        "DATABASE MIGRATION: kolom resolution_description berhasil ditambahkan."
+    );
+
+}
 
 
 /*

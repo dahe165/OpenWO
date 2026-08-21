@@ -643,7 +643,10 @@
         </div>
 
 
-        <div class="technician-summary-card">
+        <a
+            href="/admin/users"
+            class="admin-menu-card"
+        >
 
             <div class="technician-summary-content">
 
@@ -666,18 +669,188 @@
 
             </div>
 
+            <span class="admin-menu-arrow">
+                →
+            </span>
 
-            <a
-                href="/admin/users"
-                class="btn-view-workorders"
-            >
-                Kelola Pengguna
-                <span>→</span>
-            </a>
+        </a>
+
+        <a
+            href="/workorder"
+            class="admin-menu-card"
+        >
+
+            <div class="technician-summary-content">
+
+                <div class="technician-summary-icon">
+                    📋
+                </div>
+
+                <div>
+
+                    <h2>
+                        Lihat Work Order
+                    </h2>
+
+                    <p>
+                        Pantau seluruh Work Order dan
+                        lihat detail progres pekerjaan.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <span class="admin-menu-arrow">
+                →
+            </span>
+
+        </a>
+
+    </div>
+
+    <div class="dashboard-panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>
+                🖥️ Status Sistem
+            </h2>
+
+            <p>
+                Kondisi komponen utama OpenWO
+            </p>
 
         </div>
 
     </div>
+
+
+    <div class="system-status-list">
+
+
+        <!-- SERVER -->
+
+        <div class="system-status-item">
+
+            <div class="system-status-info">
+
+                <span class="system-status-icon">
+                    🖥️
+                </span>
+
+                <div>
+
+                    <strong>
+                        Server
+                    </strong>
+
+                    <small>
+                        OpenWO Application
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <span class="system-status-badge status-online">
+
+                ● Online
+
+            </span>
+
+        </div>
+
+
+        <!-- DATABASE -->
+
+        <div class="system-status-item">
+
+            <div class="system-status-info">
+
+                <span class="system-status-icon">
+                    🗄️
+                </span>
+
+                <div>
+
+                    <strong>
+                        Database
+                    </strong>
+
+                    <small>
+                        SQLite
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <% if (
+                databaseStatus === "normal"
+            ) { %>
+
+                <span
+                    class="system-status-badge status-online"
+                >
+                    ● Normal
+                </span>
+
+            <% } else { %>
+
+                <span
+                    class="system-status-badge status-error"
+                >
+                    ● Error
+                </span>
+
+            <% } %>
+
+        </div>
+
+
+        <!-- SOCKET.IO -->
+
+        <div class="system-status-item">
+
+            <div class="system-status-info">
+
+                <span class="system-status-icon">
+                    ⚡
+                </span>
+
+                <div>
+
+                    <strong>
+                        Real-Time
+                    </strong>
+
+                    <small>
+                        Socket.IO
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <span
+                id="socketStatus"
+                class="system-status-badge status-checking"
+            >
+                ● Memeriksa...
+            </span>
+
+        </div>
+
+
+    </div>
+
+</div>
 
 <% } else if (role === "teknisi") { %>
 
@@ -1039,13 +1212,19 @@ categoryBars.forEach(bar => {
 });
 
 
-subcategoryBack.addEventListener(
-    "click",
-    () => {
+if (subcategoryBack) {
 
-        subcategoryChart.style.display =
-            "none";
+    subcategoryBack.addEventListener(
+        "click",
+        () => {
 
-    }
-);
+            subcategoryChart.style.display =
+                "none";
+
+        }
+    );
+
+}
+
+
 </script>

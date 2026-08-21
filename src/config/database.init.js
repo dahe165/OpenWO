@@ -99,6 +99,64 @@ const insertUsers =
 
 insertUsers();
 
+/*
+ * =====================================
+ * Tabel System Settings
+ * =====================================
+ */
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS system_settings (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        key TEXT NOT NULL UNIQUE,
+
+        value TEXT,
+
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+    );
+`);
+
+
+/*
+ * =====================================
+ * Pengaturan Sistem Awal
+ * =====================================
+ */
+
+const insertSetting =
+    db.prepare(`
+        INSERT OR IGNORE INTO system_settings (
+            key,
+            value
+        )
+        VALUES (?, ?)
+    `);
+
+
+insertSetting.run(
+    "app_name",
+    "OpenWO"
+);
+
+
+insertSetting.run(
+    "app_description",
+    "Smart Work Order Management"
+);
+
+insertSetting.run(
+    "app_logo",
+    ""
+);
+
+
+console.log(
+    "✅ Tabel system_settings siap."
+);
+
 
 console.log(
     "✅ Database SQLite siap."

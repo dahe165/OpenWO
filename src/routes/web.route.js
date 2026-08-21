@@ -14,7 +14,11 @@ const userModel = require("../models/user.model");
 
 const profileController = require("../controllers/profile.controller");
 
+const settingsController = require("../controllers/settings.controller");
+
 const {requireRole} = require("../middleware/role.middleware");
+
+const {uploadBranding} = require("../middleware/upload.middleware");
 
 router.get("/dashboard", dashboardController.index);
 
@@ -56,12 +60,6 @@ router.get("/login", (req, res) => {
 router.get("/report", (req, res) => {
 
     res.send("Halaman Laporan");
-
-});
-
-router.get("/setting", (req, res) => {
-
-    res.send("Halaman Pengaturan");
 
 });
 
@@ -172,6 +170,19 @@ router.get(
 router.get(
     "/workorder/:id",
     workorderController.detail
+);
+
+router.get(
+    "/setting",
+    requireRole("admin", "superuser"),
+    settingsController.index
+);
+
+router.post(
+    "/setting",
+    requireRole("admin", "superuser"),
+    uploadBranding.single("appLogo"),
+    settingsController.update
 );
 
 module.exports = router;

@@ -105,6 +105,9 @@ function index(req, res) {
     const activeId =
         Number(req.query.id) || null;
 
+    const completeMode =
+        req.query.complete === "1";
+
     const search =
         (req.query.search || "").trim().toLowerCase();
 
@@ -338,6 +341,8 @@ function index(req, res) {
 
             activeId,
 
+            completeMode,
+
             role:
                 req.user?.role,
 
@@ -403,33 +408,93 @@ function start(req, res) {
 
 function complete(req, res) {
 
-    const id = Number(req.params.id);
+    const id =
+        Number(req.params.id);
 
-    const technicianId = req.user?.id;
 
-    const technicianName = req.user?.nama;
+    const technicianId =
+        req.user?.id;
 
-    const workorder =
-        workorderModel.completeWork(
-            id,
-            technicianId,
-            technicianName
-        );
 
-    if (!workorder) {
+    const technicianName =
+        req.user?.nama;
 
-        return res.status(404).json({
+
+    /*
+     * =====================================
+     * DESKRIPSI PENYELESAIAN
+     * =====================================
+     */
+
+    const resolutionDescription =
+        (
+            req.body?.resolutionDescription ||
+            ""
+        ).trim();
+
+
+    /*
+     * =====================================
+     * VALIDASI WAJIB
+     * =====================================
+     */
+
+    if (!resolutionDescription) {
+
+        return res.status(400).json({
+
             success: false,
+
             message:
-                "Work Order tidak ditemukan, bukan tanggung jawab Anda, atau belum diproses."
+                "Deskripsi penyelesaian wajib diisi."
+
         });
 
     }
 
+
+    /*
+     * =====================================
+     * SELESAIKAN WORK ORDER
+     * =====================================
+     */
+
+    const workorder =
+        workorderModel.completeWork(
+
+            id,
+
+            technicianId,
+
+            technicianName,
+
+            resolutionDescription
+
+        );
+
+
+    if (!workorder) {
+
+        return res.status(404).json({
+
+            success: false,
+
+            message:
+                "Work Order tidak ditemukan, bukan tanggung jawab Anda, atau belum diproses."
+
+        });
+
+    }
+
+
     return res.json({
+
         success: true,
+
         workorder
+
     });
+
 }
 
 function verify(req, res) {

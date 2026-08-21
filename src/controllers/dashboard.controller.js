@@ -4,6 +4,8 @@ const dashboardService = require("../services/dashboard.service");
 
 const userModel =  require("../models/user.model");
 
+const db = require("../config/database");
+
 // controller lainnya...
 
 function index(req, res) {
@@ -117,7 +119,27 @@ function index(req, res) {
             offset + limit
         );
 
+    let databaseStatus =
+    "normal";
 
+    try {
+
+        db.prepare(`
+            SELECT 1
+        `).get();
+
+    } catch (error) {
+
+        console.error(
+            "DATABASE HEALTH CHECK ERROR:",
+            error
+        );
+
+        databaseStatus =
+            "error";
+
+    }
+    
     /*
      * =====================================
      * Render Dashboard
@@ -137,6 +159,8 @@ function index(req, res) {
         categoryTrend,
 
         stats,
+
+        databaseStatus,
 
         role,
 

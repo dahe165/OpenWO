@@ -144,6 +144,16 @@ body {
         rgba(37, 99, 235, .25);
 }
 
+.brand-logo img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
+
+}
 
 .sidebar-brand strong {
 
@@ -1122,4 +1132,292 @@ body {
 
     box-shadow:
         0 6px 14px rgba(37, 99, 235, 0.22);
+}
+
+
+
+.system-status-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0;
+
+}
+
+
+.system-status-item {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 15px 4px;
+
+    border-bottom: 1px solid #eef2f7;
+
+}
+
+
+.system-status-item:last-child {
+
+    border-bottom: 0;
+
+}
+
+
+.system-status-info {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.system-status-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    background: #f8fafc;
+
+    font-size: 18px;
+
+}
+
+
+.system-status-info strong {
+
+    display: block;
+
+    color: #1f2937;
+
+    font-size: 13px;
+
+}
+
+
+.system-status-info small {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+}
+
+
+.system-status-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+}
+
+
+.status-online {
+
+    background: #ecfdf5;
+
+    color: #059669;
+
+}
+
+
+.status-error {
+
+    background: #fef2f2;
+
+    color: #dc2626;
+
+}
+
+
+.status-checking {
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+}
+
+
+@media (max-width: 600px) {
+
+    .system-status-item {
+
+        align-items: flex-start;
+
+    }
+
+    .system-status-badge {
+
+        margin-top: 3px;
+
+    }
+
+}
+
+/* =====================================
+   ADMIN MENU CARD
+   ===================================== */
+
+.admin-menu-card {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 18px;
+
+    margin-bottom: 12px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    text-decoration: none;
+
+    color: inherit;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+
+}
+
+
+.admin-menu-card:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #d1d5db;
+
+    box-shadow:
+        0 8px 20px
+        rgba(15, 23, 42, 0.07);
+
+}
+
+
+.admin-menu-card
+.technician-summary-content {
+
+    min-width: 0;
+
+}
+
+
+.admin-menu-card
+.technician-summary-icon {
+
+    flex-shrink: 0;
+
+    transition:
+        transform 0.18s ease;
+
+}
+
+
+.admin-menu-card:hover
+.technician-summary-icon {
+
+    transform: scale(1.06);
+
+}
+
+
+.admin-menu-arrow {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 9px;
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+    font-size: 18px;
+
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        color 0.18s ease;
+
+}
+
+
+.admin-menu-card:hover
+.admin-menu-arrow {
+
+    transform: translateX(3px);
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+}
+
+
+@media (max-width: 600px) {
+
+    .admin-menu-card {
+
+        padding: 15px;
+
+        gap: 12px;
+
+    }
+
 }

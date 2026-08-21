@@ -531,7 +531,10 @@
 
                     <% } %>
 
-                    <% if (wo.status === "Ditugaskan") { %>
+                    <% if (
+                        role === "teknisi" &&
+                        wo.status === "Ditugaskan"
+                    ) { %>
 
                         <form
                             method="POST"
@@ -548,19 +551,105 @@
                     <% } %>
 
 
-                    <% if (wo.status === "Diproses") { %>
+                    <% if (
+                        role === "teknisi" &&
+                        wo.status === "Diproses"
+                    ) { %>
 
-                        <form
-                            method="POST"
-                            action="/workorder/<%= wo.id %>/complete">
+                        <% if (
+                            wo.id === activeId &&
+                            completeMode
+                        ) { %>
+
+                            <form
+                                method="POST"
+                                action="/workorder/<%= wo.id %>/complete"
+                                class="completion-form"
+                                enctype="multipart/form-data"
+                            >
+
+                                <div class="completion-header">
+
+                                    <span class="completion-icon">
+                                        📝
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            Penyelesaian Pekerjaan
+                                        </strong>
+
+                                        <small>
+                                            Lengkapi hasil pekerjaan sebelum menyelesaikan Work Order.
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="completion-field">
+
+                                    <label for="resolution-<%= wo.id %>">
+                                        Deskripsi Penyelesaian
+                                    </label>
+
+                                    <textarea
+                                        id="resolution-<%= wo.id %>"
+                                        name="resolutionDescription"
+                                        rows="4"
+                                        placeholder="Jelaskan pekerjaan yang telah dilakukan..."
+                                        required
+                                    ></textarea>
+
+                                </div>
+
+
+                                <div class="completion-field">
+
+                                    <label for="photo-<%= wo.id %>">
+                                        📷 Foto Penyelesaian
+                                    </label>
+
+                                    <input
+                                        type="file"
+                                        id="photo-<%= wo.id %>"
+                                        name="completionPhoto"
+                                        accept="image/png,image/jpeg,image/webp"
+                                    >
+
+                                    <small class="field-hint">
+                                        Tambahkan foto sebagai bukti penyelesaian.
+                                    </small>
+
+                                </div>
+
+
+                                <div class="completion-actions">
+
+                                    <button
+                                        type="submit"
+                                        class="btn-action btn-complete"
+                                    >
+                                        ✓ Selesaikan Work Order
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        <% } else { %>
 
                             <button
-                                type="submit"
-                                class="btn-action btn-complete">
-
+                                type="button"
+                                class="btn-action btn-complete btn-open-completion"
+                                data-id="<%= wo.id %>"
+                            >
                                 ✓ Selesaikan
                             </button>
-                        </form>
+
+                        <% } %>
 
                     <% } %>
 

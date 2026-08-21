@@ -168,6 +168,8 @@ function initWorkOrder() {
 
     bindCardDetail();
 
+    bindOpenCompletion();
+
     bindEscalationToggle();
 
     bindWorkOrderActions();
@@ -506,6 +508,83 @@ function bindOpenDetail() {
         );
 
     });
+
+}
+
+function bindOpenCompletion() {
+
+    if (
+        document.body.dataset.openCompletionBound === "true"
+    ) {
+
+        return;
+
+    }
+
+    document.body.dataset.openCompletionBound = "true";
+
+
+    document.addEventListener(
+        "click",
+        (e) => {
+
+            const button =
+                e.target.closest(
+                    ".btn-open-completion"
+                );
+
+            if (!button) return;
+
+
+            const id =
+                button.dataset.id;
+
+            if (!id) return;
+
+
+            const url =
+                new URL(
+                    window.location.href
+                );
+
+
+            url.searchParams.set(
+                "id",
+                id
+            );
+
+
+            /*
+             * AKTIFKAN MODE PENYELESAIAN
+             */
+
+            url.searchParams.set(
+                "complete",
+                "1"
+            );
+
+
+            console.log(
+                "🎯 BUKA WO UNTUK PENYELESAIAN:",
+                id
+            );
+
+            console.log(
+                "🌐 URL:",
+                url.pathname +
+                url.search
+            );
+
+
+            navigate(
+                url.pathname +
+                url.search,
+                true,
+                Number(id)
+            );
+
+        }
+    );
 
 }
 

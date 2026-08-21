@@ -2902,6 +2902,19 @@ font-size:14px;
    TECHNICIAN SELECT
    ========================================================= */
 
+.technician-select {
+
+    order: 2;
+
+}
+
+
+.btn-assign {
+
+    order: 1;
+
+}
+
 .wo-actions form:has(.technician-select) {
     display: flex;
     align-items: center;
@@ -3320,6 +3333,225 @@ font-size:14px;
             repeat(5, minmax(0, 1fr));
 
         gap: 12px;
+    }
+
+}
+
+/* =====================================
+   FORM PENYELESAIAN WO
+   ===================================== */
+
+.completion-form {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    margin-top: 16px;
+
+    padding: 16px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+}
+
+
+.completion-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 16px;
+
+}
+
+
+.completion-icon {
+
+    width: 34px;
+
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #eff6ff;
+
+    font-size: 17px;
+
+}
+
+
+.completion-header strong {
+
+    display: block;
+
+    font-size: 14px;
+
+    color: #1f2937;
+
+}
+
+
+.completion-header small {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+}
+
+
+.completion-field {
+
+    margin-bottom: 14px;
+
+}
+
+
+.completion-field label {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #374151;
+
+}
+
+
+.completion-field textarea {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    min-height: 95px;
+
+    padding: 10px 12px;
+
+    resize: vertical;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 9px;
+
+    background: white;
+
+    color: #1f2937;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    outline: none;
+
+}
+
+
+.completion-field textarea:focus {
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.10);
+
+}
+
+
+.completion-field input[type="file"] {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 9px;
+
+    border: 1px dashed #cbd5e1;
+
+    border-radius: 9px;
+
+    background: white;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+}
+
+
+.field-hint {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+
+}
+
+
+.completion-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: 18px;
+
+}
+
+
+.completion-actions .btn-complete {
+
+    white-space: nowrap;
+
+}
+
+
+@media (max-width: 600px) {
+
+    .completion-form {
+
+        padding: 13px;
+
+    }
+
+
+    .completion-actions {
+
+        justify-content: stretch;
+
+    }
+
+
+    .completion-actions .btn-complete {
+
+        width: 100%;
+
     }
 
 }

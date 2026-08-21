@@ -8,6 +8,8 @@ const session = require("express-session");
 
 const {loadUser} = require("./middleware/user.middleware");
 
+const settingsModel = require("./models/settings.model");
+
 const expressApp = express();
 
 expressApp.use(express.urlencoded({ extended: true }));
@@ -43,6 +45,30 @@ expressApp.use((req, res, next) => {
 
     res.locals.user =
         req.user || null;
+
+    next();
+
+});
+
+/*
+ * =====================================
+ * SYSTEM SETTINGS GLOBAL
+ * =====================================
+ */
+
+expressApp.use((req, res, next) => {
+
+    res.locals.appName =
+        settingsModel.get("app_name")
+        || "OpenWO";
+
+    res.locals.appDescription =
+        settingsModel.get("app_description")
+        || "Work Order System";
+
+    res.locals.appLogo =
+        settingsModel.get("app_logo")
+        || "";
 
     next();
 

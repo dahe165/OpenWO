@@ -62,6 +62,9 @@ function mapWorkorder(row) {
 
         status: row.status,
 
+        resolutionDescription:
+            row.resolution_description,
+
         pelapor:
             row.pelapor_nama,
 
@@ -112,7 +115,7 @@ const baseQuery = `
         wo.kategori,
         wo.subkategori,
         wo.status,
-
+        wo.resolution_description,
         wo.pelapor_id,
         pelapor.nama AS pelapor_nama,
 
@@ -582,7 +585,8 @@ function startWork(
 function completeWork(
     id,
     technicianId,
-    technicianName
+    technicianName,
+    resolutionDescription
 ) {
 
     const workorder = db.prepare(`
@@ -612,6 +616,21 @@ function completeWork(
 
     }
 
+    /*
+    * =====================================
+    * DESKRIPSI PENYELESAIAN WAJIB
+    * =====================================
+    */
+
+    if (
+        !resolutionDescription ||
+        !resolutionDescription.trim()
+    ) {
+
+        return null;
+
+    }
+
 
     const now =
         new Date().toISOString();
@@ -623,6 +642,7 @@ function completeWork(
 
             SET
                 status = ?,
+                resolution_description = ?,
                 updated_at = ?
 
             WHERE id = ?
@@ -649,6 +669,7 @@ function completeWork(
 
             update.run(
                 "Selesai",
+                resolutionDescription.trim(),
                 now,
                 id
             );
