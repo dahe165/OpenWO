@@ -1,0 +1,85 @@
+<div class="dashboard-panel">
+
+    <div class="panel-header">
+
+        <div>
+            <h2>📈 Tren Work Order</h2>
+            <p>Aktivitas Work Order 7 hari terakhir</p>
+        </div>
+
+    </div>
+
+
+    <div class="chart-placeholder">
+
+        <div
+            class="trend-y-axis"
+            aria-hidden="true"
+        >
+            <span class="trend-y-label trend-y-40">40</span>
+            <span class="trend-y-label trend-y-30">30</span>
+            <span class="trend-y-label trend-y-20">20</span>
+            <span class="trend-y-label trend-y-10">10</span>
+            <span class="trend-y-label trend-y-0">0</span>
+        </div>
+
+
+        <div
+            class="trend-grid"
+            aria-hidden="true"
+        >
+            <span class="trend-grid-line trend-grid-40"></span>
+            <span class="trend-grid-line trend-grid-30"></span>
+            <span class="trend-grid-line trend-grid-20"></span>
+            <span class="trend-grid-line trend-grid-10"></span>
+            <span class="trend-grid-line trend-grid-0"></span>
+        </div>
+
+
+        <svg
+            class="chart-curve-layer"
+            viewBox="0 0 1000 220"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+        ></svg>
+
+
+        <div class="chart-bars">
+
+            <% trend.forEach(item => { %>
+
+                <div
+                    class="chart-bar"
+                    style="height: <%= (
+                        item.total / 40
+                    ) * 100 %>%"
+                    data-label="<%= item.label %>"
+                    data-total="<%= item.total %>"
+                >
+
+                    <strong>
+                        <%= item.total %>
+                    </strong>
+
+                    <span>
+                        <%= item.label %>
+                    </span>
+
+                </div>
+
+            <% }); %>
+
+
+            <div
+                class="chart-tooltip"
+                id="chartTooltip"
+            >
+                <b></b>
+                <small></small>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

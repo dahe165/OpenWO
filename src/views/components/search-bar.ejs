@@ -1,0 +1,167 @@
+<form
+    class="reusable-search"
+    action="<%= action %>"
+    method="GET"
+    data-live-search="<%= liveSearch ? 'true' : 'false' %>"
+    <% if (endpoint) { %>
+        data-search-endpoint="<%= endpoint %>"
+    <% } %>
+    <% if (target) { %>
+        data-search-target="<%= target %>"
+    <% } %>
+>
+
+    <div class="search-box">
+
+        <span class="search-icon">🔎</span>
+
+        <input
+            type="search"
+            name="<%= name || 'q' %>"
+            value="<%= value || '' %>"
+            placeholder="<%= placeholder || 'Cari...' %>"
+            autocomplete="off"
+
+            <% if (liveSearch) { %>
+                data-live-search="true"
+            <% } %>
+
+            <% if (endpoint) { %>
+                data-search-endpoint="<%= endpoint %>"
+            <% } %>
+
+            <% if (target) { %>
+                data-search-target="<%= target %>"
+            <% } %>
+        >
+
+        <% if (value) { %>
+
+            <a
+                href="<%= action %>"
+                class="search-clear"
+                aria-label="Hapus pencarian"
+            >
+                ×
+            </a>
+
+        <% } %>
+
+    </div>
+
+    <button
+        type="submit"
+        class="search-button"
+    >
+        Cari
+    </button>
+
+</form>
+
+
+<style>
+.reusable-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    font-size: 14px;
+    pointer-events: none;
+    opacity: .65;
+}
+
+.search-box input {
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
+    padding: 0 38px 0 36px;
+
+    border: 1px solid #dce3ee;
+    border-radius: 10px;
+
+    background: #fff;
+    color: #1e293b;
+
+    font-size: 13px;
+    outline: none;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.search-box input:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, .10);
+}
+
+.search-clear {
+    position: absolute;
+    right: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+
+    color: #64748b;
+    text-decoration: none;
+
+    font-size: 18px;
+    line-height: 1;
+}
+
+.search-clear:hover {
+    color: #ef4444;
+}
+
+.search-button {
+    height: 40px;
+    padding: 0 15px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: #2563eb;
+    color: #fff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.search-button:hover {
+    background: #1d4ed8;
+}
+
+
+@media (max-width: 600px) {
+
+    .reusable-search {
+        align-items: stretch;
+    }
+
+    .search-button {
+        padding: 0 13px;
+    }
+
+}
+</style>

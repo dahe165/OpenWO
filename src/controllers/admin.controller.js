@@ -4,21 +4,80 @@ const userModel =
 
 function index(req, res) {
 
-    const users =
-        userModel.getAll();
+    const page =
+        Math.max(
+            Number(req.query.page) || 1,
+            1
+        );
 
-    res.render("admin/users/index", {
+    const q =
+        String(
+            req.query.q || ""
+        ).trim();
 
-        title: "Manajemen Pengguna",
 
-        layout: "layouts/app",
+    const result =
+        userModel.getPaginated({
 
-        users
+            page,
 
-    });
+            limit: 15,
+
+            search: q
+
+        });
+
+
+    res.render(
+        "admin/users/index",
+        {
+
+            title:
+                "Manajemen Pengguna",
+
+            layout:
+                "layouts/app",
+
+            users:
+                result.users,
+
+            pagination:
+                result.pagination,
+
+            q
+
+        }
+    );
 
 }
 
+function search(req, res) {
+
+    const page =
+        Math.max(
+            Number(req.query.page) || 1,
+            1
+        );
+
+    const q =
+        String(
+            req.query.q || ""
+        ).trim();
+
+    const result =
+        userModel.getPaginated({
+            page,
+            limit: 15,
+            search: q
+        });
+
+    res.json({
+        success: true,
+        users: result.users,
+        pagination: result.pagination
+    });
+
+}
 
 function create(req, res) {
 
@@ -122,26 +181,21 @@ function update(req, res) {
     const id =
         Number(req.params.id);
 
-
     const {
         nama,
-        username,
         role
     } = req.body;
 
-
     if (
         !nama ||
-        !username ||
         !role
     ) {
 
         return res.status(400).send(
-            "Semua data pengguna wajib diisi."
+            "Nama dan role wajib diisi."
         );
 
     }
-
 
     try {
 
@@ -149,7 +203,6 @@ function update(req, res) {
             id,
             {
                 nama,
-                username,
                 role
             }
         );
@@ -166,7 +219,7 @@ function update(req, res) {
         );
 
         res.status(400).send(
-            "Username sudah digunakan."
+            "Gagal memperbarui pengguna."
         );
 
     }
@@ -272,10 +325,11 @@ function remove(req, res) {
 
 }
 
-
 module.exports = {
 
     index,
+
+    search,
 
     create,
 

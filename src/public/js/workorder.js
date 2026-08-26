@@ -679,26 +679,49 @@ function bindWorkOrderActions() {
     document.addEventListener("submit", async (e) => {
 
         const form =
-            e.target.closest(".wo-actions form, .asman-verification-action form");
+            e.target.closest(
+                ".wo-actions form, .asman-verification-action form"
+            );
 
         if (!form) return;
 
+
+        console.log(
+            "🟡 FORM SUBMIT:",
+            form.action
+        );
+
+
+        console.log(
+            "🟡 FORM DATA:",
+            Object.fromEntries(
+                new FormData(form).entries()
+            )
+        );
+
+
         e.preventDefault();
+
 
         const button =
             e.submitter ||
             form.querySelector("button");
 
+
         const card =
             form.closest(".wo-card");
+
 
         const id =
             card?.dataset.id;
 
+
         if (!button || !id) return;
+
 
         const originalText =
             button.innerHTML;
+
 
         button.disabled = true;
 
@@ -706,16 +729,71 @@ function bindWorkOrderActions() {
             "btn-loading"
         );
 
+
         button.innerHTML =
             "⏳ Memproses...";
 
+
         try {
+
+            /*
+             * =====================================
+             * SIAPKAN DATA FORM
+             * =====================================
+             */
 
             const formData =
                 new FormData(form);
 
-            const body =
-                new URLSearchParams(formData);
+
+            let body;
+
+
+            /*
+             * =====================================
+             * FORM MULTIPART
+             *
+             * Digunakan oleh:
+             * - Selesaikan WO
+             * - Deskripsi penyelesaian
+             * - Upload foto
+             * =====================================
+             */
+
+            if (
+                form.enctype ===
+                "multipart/form-data"
+            ) {
+
+                body =
+                    formData;
+
+            }
+
+
+            /*
+             * =====================================
+             * FORM BIASA
+             *
+             * Digunakan oleh:
+             * - Terima
+             * - Tugaskan Teknisi
+             * - Mulai Kerjakan
+             * - Eskalasi
+             * - Verifikasi
+             * dll.
+             * =====================================
+             */
+
+            else {
+
+                body =
+                    new URLSearchParams(
+                        formData
+                    );
+
+            }
+
 
             const response =
                 await fetch(
@@ -735,10 +813,15 @@ function bindWorkOrderActions() {
                     }
                 );
 
+
             const result =
                 await response.json();
 
-            if (!response.ok || !result.success) {
+
+            if (
+                !response.ok ||
+                !result.success
+            ) {
 
                 throw new Error(
                     result.message ||
@@ -747,25 +830,31 @@ function bindWorkOrderActions() {
 
             }
 
+
             /*
-             * Ambil ulang tampilan Work Order
-             * terbaru TANPA reload seluruh halaman.
+             * =====================================
+             * AMBIL ULANG TAMPILAN WO
+             * =====================================
              */
+
             const currentUrl =
                 new URL(
                     window.location.href
                 );
+
 
             currentUrl.searchParams.set(
                 "id",
                 id
             );
 
+
             const pageResponse =
                 await fetch(
                     currentUrl.pathname +
                     currentUrl.search
                 );
+
 
             if (!pageResponse.ok) {
 
@@ -775,21 +864,28 @@ function bindWorkOrderActions() {
 
             }
 
+
             const html =
                 await pageResponse.text();
+
 
             await renderPage(
                 html,
                 id
             );
 
+
             /*
-             * Tandai indikator yang baru berubah.
+             * =====================================
+             * INDIKATOR PERUBAHAN TIMELINE
+             * =====================================
              */
+
             const updatedCard =
                 document.querySelector(
                     `.wo-card[data-id="${id}"]`
                 );
+
 
             if (updatedCard) {
 
@@ -798,11 +894,13 @@ function bindWorkOrderActions() {
                         ".timeline .step.active"
                     );
 
+
                 if (activeStep) {
 
                     activeStep.classList.add(
                         "changed"
                     );
+
 
                     setTimeout(() => {
 
@@ -816,20 +914,25 @@ function bindWorkOrderActions() {
 
             }
 
+
         } catch (error) {
 
             console.error(error);
+
 
             alert(
                 error.message ||
                 "Terjadi kesalahan."
             );
 
+
             button.disabled = false;
+
 
             button.classList.remove(
                 "btn-loading"
             );
+
 
             button.innerHTML =
                 originalText;

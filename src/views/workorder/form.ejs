@@ -1,5 +1,9 @@
 <form action="/workorder" method="POST">
 
+    <!-- =====================================
+         JUDUL
+         ===================================== -->
+
     <%- include("../components/form/input", {
 
         label: "Judul Work Order",
@@ -10,6 +14,84 @@
 
     }) %>
 
+
+    <!-- =====================================
+         KATEGORI & SUB KATEGORI
+         ===================================== -->
+
+    <div class="wo-form-row">
+
+        <!-- KATEGORI -->
+
+        <div class="wo-form-field">
+
+            <label
+                for="kategori"
+                class="form-label"
+            >
+                Kategori
+            </label>
+
+            <select
+                id="kategori"
+                name="kategori"
+                class="form-select"
+                required
+            >
+
+                <option value="">
+                    Pilih Kategori
+                </option>
+
+                <option value="Incident">
+                    Incident
+                </option>
+
+                <option value="Service Request">
+                    Service Request
+                </option>
+
+                <option value="Preventive Maintenance">
+                    Preventive Maintenance
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- SUB KATEGORI -->
+
+        <div class="wo-form-field">
+
+            <label
+                for="subkategori"
+                class="form-label"
+            >
+                Sub Kategori
+            </label>
+
+            <select
+                id="subkategori"
+                name="subkategori"
+                class="form-select"
+                required
+                disabled
+            >
+                <option value="">
+                    Pilih Sub Kategori
+                </option>
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         DESKRIPSI
+         ===================================== -->
+
     <%- include("../components/form/textarea", {
 
         label: "Deskripsi",
@@ -19,6 +101,11 @@
         placeholder: "Jelaskan permasalahan..."
 
     }) %>
+
+
+    <!-- =====================================
+         SUBMIT
+         ===================================== -->
 
     <%- include("../components/button/primary", {
 

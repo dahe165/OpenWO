@@ -1,0 +1,117 @@
+<a
+    href="<%= href || '#' %>"
+    class="floating-action-button"
+    aria-label="<%= label || 'Aksi' %>"
+    title="<%= label || 'Aksi' %>"
+>
+    <% if (icon) { %>
+        <span class="floating-action-icon">
+            <%= icon %>
+        </span>
+    <% } %>
+
+    <% if (text) { %>
+        <span class="floating-action-text">
+            <%= text %>
+        </span>
+    <% } %>
+</a>
+
+<style>
+/* ==========================================
+   FLOATING ACTION BUTTON
+   ========================================== */
+
+.floating-action-button {
+    position: fixed;
+
+    right: 24px;
+    bottom: 24px;
+
+    z-index: 1000;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-width: 52px;
+    height: 52px;
+
+    padding: 0 18px;
+
+    border-radius: 999px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    text-decoration: none;
+
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.28);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* ICON */
+
+.floating-action-icon {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+}
+
+
+/* TEXT */
+
+.floating-action-text {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* HOVER */
+
+.floating-action-button:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 26px rgba(37, 99, 235, 0.34);
+}
+
+
+/* ACTIVE */
+
+.floating-action-button:active {
+    transform: translateY(-1px);
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .floating-action-button {
+        right: 16px;
+        bottom: 16px;
+
+        width: 52px;
+        height: 52px;
+
+        min-width: 52px;
+
+        padding: 0;
+    }
+
+    .floating-action-text {
+        display: none;
+    }
+}
+</style>

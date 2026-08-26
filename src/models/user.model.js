@@ -18,6 +18,115 @@ function getAll() {
 
 }
 
+function getPaginated({
+    page = 1,
+    limit = 15,
+    search = ""
+} = {}) {
+
+    const currentPage =
+        Math.max(
+            Number(page) || 1,
+            1
+        );
+
+    const perPage =
+        Math.max(
+            Number(limit) || 15,
+            1
+        );
+
+    const offset =
+        (currentPage - 1) * perPage;
+
+    const keyword =
+        String(search || "").trim();
+
+
+    let where = "";
+    let params = [];
+
+
+    if (keyword) {
+
+        where = `
+            WHERE
+                nama LIKE ?
+                OR username LIKE ?
+                OR role LIKE ?
+        `;
+
+        const pattern =
+            `%${keyword}%`;
+
+        params = [
+            pattern,
+            pattern,
+            pattern
+        ];
+
+    }
+
+
+    const total =
+        db.prepare(`
+            SELECT COUNT(*) AS total
+            FROM users
+            ${where}
+        `)
+        .get(...params)
+        .total;
+
+
+    const users =
+        db.prepare(`
+            SELECT
+                id,
+                nama,
+                username,
+                role
+            FROM users
+
+            ${where}
+
+            ORDER BY id
+
+            LIMIT ?
+            OFFSET ?
+        `)
+        .all(
+            ...params,
+            perPage,
+            offset
+        );
+
+
+    const totalPages =
+        Math.ceil(
+            total / perPage
+        );
+
+
+    return {
+
+        users,
+
+        pagination: {
+
+            page: currentPage,
+
+            limit: perPage,
+
+            total,
+
+            totalPages
+
+        }
+
+    };
+
+}
+
 function findByUsername(username) {
 
     return db
@@ -225,6 +334,8 @@ function getUserStats() {
 module.exports = {
 
     getAll,
+
+    getPaginated,
 
     findByUsername,
 

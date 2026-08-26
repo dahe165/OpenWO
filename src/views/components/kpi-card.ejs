@@ -1,0 +1,39 @@
+<div
+    class="kpi-card kpi-enhanced"
+    data-kpi="<%= key %>"
+>
+
+    <div class="kpi-main">
+
+        <div class="kpi-content">
+
+            <span class="kpi-label">
+                <%= label %>
+            </span>
+
+            <strong class="kpi-value">
+                <%= value %>
+            </strong>
+
+            <div class="kpi-comparison">
+
+                <span class="kpi-change"></span>
+
+                <span class="kpi-period">
+                    vs 7 hari sebelumnya
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <svg
+        class="kpi-sparkline"
+        viewBox="0 0 120 42"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+    ></svg>
+
+</div>

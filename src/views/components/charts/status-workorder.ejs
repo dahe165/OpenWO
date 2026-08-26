@@ -1,0 +1,103 @@
+<div class="dashboard-panel">
+
+    <div class="panel-header">
+
+        <div>
+            <h2>📊 Status Work Order</h2>
+            <p>Distribusi Work Order berdasarkan status</p>
+        </div>
+
+    </div>
+
+    <div class="status-chart">
+
+        <div class="status-row">
+
+            <div class="status-info">
+                <span>Menunggu</span>
+                <strong><%= summary.menunggu %></strong>
+            </div>
+
+            <div class="status-track">
+
+                <div
+                    class="status-bar status-menunggu"
+                    style="width: <%= summary.total > 0
+                        ? (summary.menunggu / summary.total) * 100
+                        : 0 %>%"
+                >
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="status-row">
+
+            <div class="status-info">
+                <span>Ditugaskan</span>
+                <strong><%= summary.ditugaskan %></strong>
+            </div>
+
+            <div class="status-track">
+
+                <div
+                    class="status-bar status-ditugaskan"
+                    style="width: <%= summary.total > 0
+                        ? (summary.ditugaskan / summary.total) * 100
+                        : 0 %>%"
+                >
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="status-row">
+
+            <div class="status-info">
+                <span>Diproses</span>
+                <strong><%= summary.diproses %></strong>
+            </div>
+
+            <div class="status-track">
+
+                <div
+                    class="status-bar status-diproses"
+                    style="width: <%= summary.total > 0
+                        ? (summary.diproses / summary.total) * 100
+                        : 0 %>%"
+                >
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="status-row">
+
+            <div class="status-info">
+                <span>Selesai</span>
+                <strong><%= summary.selesai %></strong>
+            </div>
+
+            <div class="status-track">
+
+                <div
+                    class="status-bar status-selesai"
+                    style="width: <%= summary.total > 0
+                        ? (summary.selesai / summary.total) * 100
+                        : 0 %>%"
+                >
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

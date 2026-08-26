@@ -71,7 +71,7 @@ body{
 
     border-radius:20px;
 
-    padding:25px;
+    padding:25px 25px 0;
 
     box-shadow:0 12px 35px rgba(0,0,0,.06);
 
@@ -279,6 +279,7 @@ font-size:14px;
 }
 
 .btn-open{
+    display: flex;
 
     margin-top:12px;
 
@@ -288,11 +289,20 @@ font-size:14px;
 
     color:#2563eb;
 
+    font-size: 11px;
+
     font-weight:600;
+
+    text-decoration: none;
 
     cursor:pointer;
 
     transition:.25s;
+
+    flex-direction: row-reverse;
+
+    position: relative;
+    bottom: 0;
 
 }
 
@@ -570,10 +580,13 @@ font-size:14px;
 /* Tombol tambah */
 
 .quick-action-create {
-    width: 84px;
+    width: 82px;
     display: inline-flex;
     align-items: center;
+    align-content: space-around;
+    flex-wrap: wrap;
     justify-content: center;
+    flex-direction: column;
     
     background: var(--primary);
 
@@ -622,7 +635,9 @@ font-size:14px;
     }
 
     .quick-action-create {
-        width: 54px;
+        width: 80px;
+        min-height: 80;
+
     }
 
 }
@@ -1176,65 +1191,206 @@ font-size:14px;
 
 /* Chart */
 
+/* ==========================================
+   OpenWO - Modern Trend Work Order Chart
+   ========================================== */
+
 .chart-placeholder {
-    height: 220px;
+    position: relative;
+    height: 260px;
 
     display: flex;
     align-items: flex-end;
 
-    padding: 10px 10px 0;
+    padding: 25px 15px 25px;
 
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e8edf4;
+
+    overflow: visible;
 }
 
+
+/* Area batang */
 .chart-bars {
     width: 100%;
-    height: 190px;
+    height: 205px;
 
     display: flex;
     align-items: flex-end;
     justify-content: space-around;
 
-    gap: 14px;
+    gap: 18px;
 }
+
+
+/* ==========================================
+   BAR
+   ========================================== */
 
 .chart-bars .chart-bar {
     position: relative;
 
     width: 42px;
-    min-height: 25px;
+    min-height: 1px;
 
-    border-radius: 8px 8px 0 0;
+    border-radius: 10px 10px 4px 4px;
 
-    background: var(--primary);
+    background: linear-gradient(
+        to top,
+        #2563eb,
+        #3b82f6
+    );
 
-    transition: height 0.3s ease;
+    box-shadow:
+        0 6px 14px rgba(37, 99, 235, 0.18);
+
+    transition:
+        height 0.35s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+
+    cursor: pointer;
 }
 
-.chart-bars .chart-bar span {
+
+/* Efek hover */
+.chart-bars .chart-bar:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 10px 22px rgba(37, 99, 235, 0.28);
+}
+
+
+/* Kilau lembut di bagian atas bar */
+.chart-bars .chart-bar::before {
+    content: "";
+
     position: absolute;
 
-    bottom: -24px;
-    left: 50%;
+    top: 0;
+    left: 8px;
+    right: 8px;
 
-    transform: translateX(-50%);
+    height: 2px;
 
-    font-size: 11px;
-    color: #6b7280;
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.55);
 }
+
+
+/* ==========================================
+   ANGKA DI ATAS BAR
+   ========================================== */
 
 .chart-bars .chart-bar strong {
     position: absolute;
 
-    top: -22px;
+    top: -27px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    min-width: 24px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-align: center;
+
+    color: #334155;
+
+    transition:
+        transform 0.25s ease,
+        color 0.25s ease;
+}
+
+
+.chart-bars .chart-bar:hover strong {
+    color: var(--primary);
+
+    transform:
+        translateX(-50%)
+        translateY(-2px);
+}
+
+
+/* ==========================================
+   LABEL HARI
+   ========================================== */
+
+.chart-bars .chart-bar span {
+    position: absolute;
+
+    bottom: -20px;
     left: 50%;
 
     transform: translateX(-50%);
 
     font-size: 11px;
-    color: var(--text);
+    font-weight: 500;
+
+    color: #64748b;
+
+    white-space: nowrap;
+
+    transition:
+        color 0.25s ease,
+        font-weight 0.25s ease;
+}
+
+
+.chart-bars .chart-bar:hover span {
+    color: var(--primary);
 
     font-weight: 600;
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 600px) {
+
+    .chart-placeholder {
+        height: 235px;
+
+        padding:
+            22px
+            5px
+            25px;
+    }
+
+    .chart-bars {
+        height: 185px;
+
+        gap: 7px;
+    }
+
+    .chart-bars .chart-bar {
+        width: 30px;
+
+        border-radius:
+            8px
+            8px
+            3px
+            3px;
+    }
+
+    .chart-bars .chart-bar strong {
+        top: -24px;
+
+        font-size: 10px;
+    }
+
+    .chart-bars .chart-bar span {
+        bottom: -27px;
+
+        font-size: 10px;
+    }
+
 }
 
 
@@ -1283,217 +1439,204 @@ font-size:14px;
     opacity: 0.8;
 }
 /*Status Work Order*/
+/* ==========================================
+   OpenWO - Modern Status Work Order
+   ========================================== */
+
 .status-chart {
     display: flex;
     flex-direction: column;
+
     gap: 18px;
 }
 
+
+/* ==========================================
+   STATUS ROW
+   ========================================== */
+
 .status-row {
     display: grid;
-    grid-template-columns: 100px 1fr 40px;
+
+    grid-template-columns:
+        120px
+        1fr
+        45px;
+
     align-items: center;
+
     gap: 14px;
+
+    padding: 8px 0;
 }
+
+
+/* ==========================================
+   LABEL
+   ========================================== */
 
 .status-info {
     display: contents;
 }
 
+
 .status-info span {
     font-size: 13px;
-    color: var(--text);
+    font-weight: 500;
+
+    color: #475569;
+
+    white-space: nowrap;
 }
+
 
 .status-info strong {
     font-size: 13px;
+    font-weight: 700;
+
     text-align: right;
-    color: var(--text);
+
+    color: #334155;
 }
 
+
+/* ==========================================
+   TRACK
+   ========================================== */
+
 .status-track {
-    height: 10px;
+    position: relative;
 
-    background: #eef0f3;
+    height: 12px;
 
-    border-radius: 20px;
+    background: #eef2f7;
+
+    border-radius: 999px;
 
     overflow: hidden;
 }
+
+
+/* ==========================================
+   BAR
+   ========================================== */
 
 .status-bar {
     height: 100%;
 
     border-radius: inherit;
 
-    transition: width 0.4s ease;
+    transition:
+        width 0.5s ease,
+        box-shadow 0.3s ease;
+
+    box-shadow:
+        0 3px 8px rgba(15, 23, 42, 0.08);
 }
+
+
+/* ==========================================
+   STATUS COLORS
+   ========================================== */
 
 .status-menunggu {
-    background: #eab308;
+    background: linear-gradient(
+        90deg,
+        #eab308,
+        #facc15
+    );
 }
+
 
 .status-ditugaskan {
-    background: #8b5cf6;
+    background: linear-gradient(
+        90deg,
+        #7c3aed,
+        #8b5cf6
+    );
 }
+
 
 .status-diproses {
-    background: #3b82f6;
+    background: linear-gradient(
+        90deg,
+        #2563eb,
+        #3b82f6
+    );
 }
+
 
 .status-selesai {
-    background: #22c55e;
+    background: linear-gradient(
+        90deg,
+        #16a34a,
+        #22c55e
+    );
 }
 
-/*tren kategori*/
-.category-chart {
-    height: 220px;
 
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-around;
+/* ==========================================
+   HOVER
+   ========================================== */
 
-    gap: 30px;
-
-    padding: 10px 20px 30px;
-
-    border-bottom: 1px solid #e5e7eb;
+.status-row:hover .status-bar {
+    box-shadow:
+        0 5px 14px rgba(15, 23, 42, 0.15);
 }
 
-.category-bar-wrapper {
-    height: 190px;
 
-    display: flex;
-    flex-direction: column;
-
-    justify-content: flex-end;
-    align-items: center;
-
-    min-width: 70px;
+.status-row:hover .status-info span {
+    color: var(--primary);
 }
 
-.category-bar {
-    width: 55px;
 
-    min-height: 8px;
+.status-row:hover .status-info strong {
+    transform: scale(1.05);
 
-    border-radius: 8px 8px 0 0;
-
-    background: var(--primary);
-
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-
-    transition: height 0.3s ease;
+    transition:
+        transform 0.2s ease;
 }
 
-.category-bar strong {
-    margin-top: -22px;
 
-    font-size: 11px;
+/* ==========================================
+   MOBILE
+   ========================================== */
 
-    color: var(--text);
+@media (max-width: 600px) {
+
+    .status-chart {
+        gap: 16px;
+    }
+
+
+    .status-row {
+        grid-template-columns:
+            90px
+            1fr
+            38px;
+
+        gap: 10px;
+    }
+
+
+    .status-info span {
+        font-size: 12px;
+    }
+
+
+    .status-info strong {
+        font-size: 12px;
+    }
+
+
+    .status-track {
+        height: 10px;
+    }
+
 }
 
-.category-bar-wrapper > span {
-    margin-top: 10px;
+/**/
 
-    font-size: 12px;
-
-    color: #6b7280;
-
-    text-align: center;
-}
-
-.category-bar {
-    cursor: pointer;
-}
-
-.subcategory-chart {
-    margin-top: 24px;
-    padding-top: 24px;
-
-    border-top: 1px solid #e5e7eb;
-}
-
-.subcategory-back {
-    border: 0;
-
-    background: #f3f4f6;
-
-    color: var(--text);
-
-    padding: 7px 12px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-}
-
-.subcategory-bars {
-    height: 200px;
-
-    display: flex;
-
-    align-items: flex-end;
-
-    justify-content: center;
-
-    gap: 40px;
-
-    padding: 20px;
-}
-
-.subcategory-bar-wrapper {
-    height: 170px;
-
-    min-width: 70px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: flex-end;
-
-    align-items: center;
-}
-
-.subcategory-bar {
-    width: 55px;
-
-    min-height: 8px;
-
-    border-radius: 8px 8px 0 0;
-
-    background: var(--primary);
-
-    display: flex;
-
-    justify-content: center;
-
-    cursor: pointer;
-
-    transition: height 0.3s ease;
-}
-
-.subcategory-bar strong {
-    margin-top: -22px;
-
-    font-size: 11px;
-
-    color: var(--text);
-}
-
-.subcategory-bar-wrapper span {
-    margin-top: 10px;
-
-    font-size: 12px;
-
-    color: #6b7280;
-
-    text-align: center;
-}
 
 .technician-workorders {
     display: flex;
@@ -1838,63 +1981,7 @@ font-size:14px;
 
 }
 
-.pagination {
-    display: flex;
 
-    align-items: center;
-    justify-content: center;
-
-    gap: 6px;
-
-    margin-top: 18px;
-}
-
-
-.pagination a {
-    width: 30px;
-    height: 30px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 8px;
-
-    text-decoration: none;
-
-    font-size: 12px;
-    font-weight: 600;
-
-    color: #6b7280;
-
-    background: #f8fafc;
-
-    border: 1px solid #e5e7eb;
-
-    transition: 0.2s ease;
-}
-
-
-.pagination a:hover {
-    background: #eef2f7;
-
-    color: var(--text);
-}
-
-
-.pagination a.active {
-    background: var(--primary);
-
-    color: white;
-
-    border-color: var(--primary);
-}
-
-
-.pagination a.pagination-arrow {
-    font-size: 15px;
-}
 /*---
 .wo-actions {
     display: flex;
@@ -1909,6 +1996,7 @@ font-size:14px;
     justify-content: flex-start;
     gap: 20px;
     width: 100%;
+    margin-top: 0px;
 }
 
 .wo-actions form {
@@ -2423,7 +2511,7 @@ font-size:14px;
 .verification-flow {
     position: relative;
 
-    margin: 10px 20px 0;
+    margin: 10px 20px 18px;
 
     padding: 24px;
 
@@ -3056,14 +3144,15 @@ font-size:14px;
 
 .wo-assignment-info {
     display: flex;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: space-between;
     gap: 40px;
     margin-bottom: 12px;
 }
 
 .wo-person {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 3px;
 }
 
@@ -3073,7 +3162,7 @@ font-size:14px;
 }
 
 .wo-person strong {
-    font-size: 13px;
+    font-size: 11px;
     color: #1f2937;
 }
 
@@ -3305,20 +3394,21 @@ font-size:14px;
 .page-next:hover {
     color: #1e293b;
 }
-/*
+
 .wo-result-info {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    margin: 10px 2px 14px;
-    font-size: 12px;
-    color: #94a3b8;
+    justify-content: flex-start;
+    padding: 5px;
+    margin: 5px;
+    font-size: 13px;
+    color: #757980;
 }
 .wo-result-info strong {
-    color: #475569;
+    color: #2b2d30;
     font-weight: 700;
     margin: 0 3px;
-}*/
+}
 
 /* =====================================
    ADMIN DASHBOARD - KPI DESKTOP
@@ -3350,12 +3440,6 @@ font-size:14px;
     margin-top: 16px;
 
     padding: 16px;
-
-    background: #f8fafc;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 12px;
 
 }
 
@@ -3552,6 +3636,2130 @@ font-size:14px;
 
         width: 100%;
 
+    }
+
+}
+
+
+/* =========================================
+   HASIL PENYELESAIAN
+   CLEAN / NO CARD
+   ========================================= */
+
+.completion-result {
+    margin-top: 18px;
+    padding: 4px 0 10px;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.completion-result-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 24px;
+}
+
+
+.completion-result-icon {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    font-size: 18px;
+}
+
+
+.completion-result-header > div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.completion-result-header strong {
+    font-size: 15px;
+    font-weight: 700;
+
+    color: #1e293b;
+}
+
+
+.completion-result-header small {
+    font-size: 11px;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================
+   DUA KOLOM
+   ========================================= */
+
+.completion-result-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 32px;
+
+    align-items: start;
+}
+
+
+/* =========================================
+   BLOK HASIL
+   ========================================= */
+
+.completion-result-block {
+    min-width: 0;
+
+    padding: 0;
+
+    background: transparent;
+
+    border: none;
+
+    border-radius: 0;
+}
+
+
+/* =========================================
+   LABEL
+   ========================================= */
+
+.completion-result-block .result-label {
+    display: block;
+
+    margin-bottom: 10px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #64748b;
+
+    text-align: left;
+}
+
+
+/* =========================================
+   DESKRIPSI
+   ========================================= */
+
+.completion-result-description {
+    display: block;
+    width: 100%;
+    min-height: 0;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+    text-align: left !important;
+}
+
+
+.completion-result-description p {
+    display: block;
+    width: 100%;
+    margin: 0;
+
+    text-align: left !important;
+
+    color: #475569;
+
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+
+.completion-result-description .result-empty {
+    color: #94a3b8;
+}
+
+
+/* =========================================
+   FOTO
+   ========================================= */
+
+.completion-result-photo {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: flex-start;
+
+    text-align: left;
+}
+
+
+.completion-photo-thumb {
+    width: 90px;
+    height: 90px;
+
+    display: block;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+    border: none;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.completion-photo-thumb:hover {
+    transform: scale(1.04);
+
+    box-shadow:
+        0 6px 18px rgba(15, 23, 42, .15);
+}
+
+
+/* =========================================
+   FOTO BELUM ADA
+   ========================================= */
+
+.photo-empty {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+.photo-empty span {
+    font-size: 18px;
+}
+
+
+.photo-empty small {
+    font-size: 11px;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .completion-result {
+        margin-top: 16px;
+    }
+
+
+    .completion-result-header {
+        margin-bottom: 20px;
+    }
+
+
+    .completion-result-grid {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+    }
+
+
+    .completion-result-block {
+        width: 100%;
+    }
+
+
+    .completion-result-description {
+        font-size: 13px;
+    }
+
+
+    .completion-photo-thumb {
+        width: 80px;
+        height: 80px;
+    }
+
+}
+
+/* =========================================
+   PAKSA DESKRIPSI PENYELESAIAN KE KIRI
+   ========================================= */
+
+.completion-result-block:first-child {
+    text-align: left !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+}
+
+
+.completion-result-block:first-child
+.completion-result-description {
+    display: block !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    text-align: left !important;
+}
+
+
+.completion-result-block:first-child
+.completion-result-description p {
+    display: block !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    text-align: left !important;
+
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+}
+
+/* =========================================
+   FORM BUAT WORK ORDER
+   ========================================= */
+
+.wo-form-row {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+
+.wo-form-field {
+    min-width: 0;
+}
+
+
+.wo-form-field .form-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #334155;
+}
+
+
+.wo-form-field .form-select {
+    width: 100%;
+
+    height: 42px;
+
+    padding:
+        0 38px 0 13px;
+
+    border:
+        1px solid #dbe2ea;
+
+    border-radius: 9px;
+
+    background-color: #fff;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.wo-form-field .form-select:hover {
+    border-color: #b8c5d6;
+}
+
+
+.wo-form-field .form-select:focus {
+    border-color: #3b6df6;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(59, 109, 246, .10);
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .wo-form-row {
+        grid-template-columns: 1fr;
+
+        gap: 16px;
+
+        margin-bottom: 18px;
+    }
+
+}
+
+/* ==========================================
+   OPENWO
+   MODERN TREND KATEGORI
+   ========================================== */
+
+.category-dashboard-panel {
+    overflow: hidden;
+}
+
+
+/* ==========================================
+   ANALYTICS LAYOUT
+   ========================================== */
+
+.category-analytics {
+
+    display: grid;
+
+    grid-template-columns:
+        145px
+        1fr;
+
+    align-items: center;
+
+    gap: 35px;
+
+    min-height: 185px;
+
+    padding:
+        8px
+        20px
+        18px;
+}
+
+
+/* ==========================================
+   DONUT AREA
+   ========================================== */
+
+.category-donut-area {
+
+    width: 145px;
+    height: 145px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+
+.category-donut {
+
+    position: relative;
+
+    width: 125px;
+    height: 125px;
+
+    flex: 0 0 125px;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 5px 16px
+        rgba(15, 23, 42, 0.10);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+
+    cursor: pointer;
+}
+
+
+.category-donut:hover {
+
+    transform: scale(1.025);
+
+    box-shadow:
+        0 8px 20px
+        rgba(15, 23, 42, 0.14);
+}
+
+
+/* Lubang donut */
+
+.category-donut-center {
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 2px 8px
+        rgba(15, 23, 42, 0.06);
+
+    pointer-events: none;
+}
+
+
+.category-donut-center strong {
+
+    font-size: 19px;
+
+    line-height: 1;
+
+    font-weight: 700;
+
+    color: #172033;
+}
+
+
+.category-donut-center span {
+
+    margin-top: 4px;
+
+    font-size: 9px;
+
+    color: #64748b;
+}
+
+
+/* ==========================================
+   LEGEND
+   ========================================== */
+
+.category-legend {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+}
+
+
+.category-legend-item {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    font-family: inherit;
+
+    font-size: 10px;
+
+    color: #475569;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.category-legend-item:hover {
+
+    color: #172033;
+
+    transform:
+        translateY(-1px);
+}
+
+
+.category-legend-dot {
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    flex: 0 0 7px;
+}
+
+
+/* ==========================================
+   WARNA KATEGORI
+   ========================================== */
+
+.category-color-0 {
+    --category-color: #2563eb;
+}
+
+.category-color-1 {
+    --category-color: #10b981;
+}
+
+.category-color-2 {
+    --category-color: #7c3aed;
+}
+
+.category-color-3 {
+    --category-color: #f59e0b;
+}
+
+.category-color-4 {
+    --category-color: #ef4444;
+}
+
+.category-color-5 {
+    --category-color: #06b6d4;
+}
+
+
+/* ==========================================
+   BAR CHART
+   ========================================== */
+
+.category-bar-chart {
+
+    position: relative;
+
+    height: 155px;
+
+    min-width: 0;
+
+    padding:
+        5px
+        10px
+        28px;
+}
+
+
+/* ==========================================
+   GRID
+   ========================================== */
+
+.category-grid-line {
+
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+
+    height: 1px;
+
+    border-top:
+        1px solid #edf1f7;
+
+    pointer-events: none;
+}
+
+
+.category-grid-line span {
+
+    position: absolute;
+
+    left: -27px;
+
+    top: -7px;
+
+    font-size: 9px;
+
+    color: #94a3b8;
+}
+
+
+.line-25 {
+    bottom: 25%;
+}
+
+.line-50 {
+    bottom: 50%;
+}
+
+.line-75 {
+    bottom: 75%;
+}
+
+.line-100 {
+    bottom: 100%;
+}
+
+
+/* ==========================================
+   BAR CONTAINER
+   ========================================== */
+
+.category-bars-final {
+
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+
+    bottom: 0;
+    top: 5px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-around;
+
+    gap: 30px;
+}
+
+
+/* ==========================================
+   ITEM
+   ========================================== */
+
+.category-final-item {
+
+    position: relative;
+
+    height: 100%;
+
+    flex: 1;
+
+    max-width: 130px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    cursor: pointer;
+}
+
+
+/* ==========================================
+   BAR
+   ========================================== */
+
+.category-final-bar {
+
+    position: relative;
+
+    width: 72px;
+
+    max-width: 70%;
+
+    min-height: 5px;
+
+    border-radius:
+        9px
+        9px
+        3px
+        3px;
+
+    background:
+        var(--category-color);
+
+    box-shadow:
+        0 6px 14px
+        color-mix(
+            in srgb,
+            var(--category-color) 22%,
+            transparent
+        );
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* Kilau atas */
+
+.category-final-bar::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 8px;
+    right: 8px;
+
+    height: 2px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255, 255, 255, 0.45);
+}
+
+
+/* Hover */
+
+.category-final-item:hover
+.category-final-bar {
+
+    transform:
+        translateY(-4px);
+
+    box-shadow:
+        0 10px 20px
+        color-mix(
+            in srgb,
+            var(--category-color) 30%,
+            transparent
+        );
+}
+
+
+/* ==========================================
+   ANGKA
+   ========================================== */
+
+.category-final-bar strong {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: -24px;
+
+    transform:
+        translateX(-50%);
+
+    padding:
+        3px
+        7px;
+
+    border-radius: 8px;
+
+    background: #f1f5f9;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    color: #334155;
+
+    white-space: nowrap;
+
+    box-shadow:
+        0 2px 6px
+        rgba(15, 23, 42, 0.06);
+}
+
+
+/* ==========================================
+   LABEL
+   ========================================== */
+
+.category-final-label {
+
+    position: absolute;
+
+    bottom: -25px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    width: 120px;
+
+    font-size: 10px;
+
+    font-weight: 500;
+
+    line-height: 1.2;
+
+    text-align: center;
+
+    color: #475569;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 700px) {
+
+    .category-analytics {
+
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+
+        min-height: auto;
+
+        padding:
+            12px
+            10px
+            20px;
+    }
+
+
+    .category-donut-area {
+
+        width: 100%;
+        height: 125px;
+    }
+
+
+    .category-donut {
+
+        width: 110px;
+        height: 110px;
+
+        flex-basis: 110px;
+    }
+
+
+    .category-donut-center {
+
+        width: 64px;
+        height: 64px;
+    }
+
+
+    .category-donut-center strong {
+
+        font-size: 17px;
+    }
+
+
+    .category-legend {
+
+        justify-content: center;
+
+        gap: 10px;
+    }
+
+
+    .category-bar-chart {
+
+        height: 165px;
+
+        padding-left: 28px;
+    }
+
+
+    .category-bars-final {
+
+        gap: 12px;
+    }
+
+
+    .category-final-bar {
+
+        width: 45px;
+    }
+
+
+    .category-final-label {
+
+        width: 80px;
+
+        font-size: 9px;
+    }
+
+}
+
+/* ==========================================
+   PERSENTASE DONUT
+   ========================================== */
+
+.donut-percentage {
+
+    position: absolute;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 3;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 1px 3px
+        rgba(15, 23, 42, 0.28);
+
+    pointer-events: none;
+
+    white-space: nowrap;
+}
+
+
+/*
+ * Untuk slice kecil seperti 2%.
+ * Dipindahkan sedikit keluar donut.
+ */
+
+.donut-percentage.small {
+
+    padding:
+        3px
+        5px;
+
+    border-radius: 6px;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    text-shadow: none;
+
+    box-shadow:
+        0 2px 7px
+        rgba(15, 23, 42, 0.12);
+
+    font-size: 9px;
+}
+
+/* ==========================================
+   OPENWO
+   TREND SUBKATEGORI
+   ========================================== */
+
+.subcategory-chart {
+    overflow: hidden;
+}
+
+
+/* ==========================================
+   LAYOUT UTAMA
+   ========================================== */
+
+.subcategory-analytics {
+
+    display: grid;
+
+    grid-template-columns:
+        125px
+        minmax(260px, 1fr)
+        190px;
+
+    align-items: center;
+
+    gap: 28px;
+
+    min-height: 175px;
+
+    padding:
+        8px
+        20px
+        18px;
+}
+
+
+/* ==========================================
+   DONUT
+   ========================================== */
+
+.subcategory-donut-area {
+
+    width: 125px;
+    height: 125px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+
+.subcategory-donut {
+
+    position: relative;
+
+    width: 110px;
+    height: 110px;
+
+    flex: 0 0 110px;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 5px 16px
+        rgba(15, 23, 42, 0.09);
+
+    cursor: pointer;
+}
+
+
+/* Lubang tengah */
+
+.subcategory-donut-center {
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 2px 7px
+        rgba(15, 23, 42, 0.06);
+
+    pointer-events: none;
+}
+
+
+.subcategory-donut-center strong {
+
+    font-size: 17px;
+
+    line-height: 1;
+
+    color: #172033;
+}
+
+
+.subcategory-donut-center span {
+
+    margin-top: 4px;
+
+    font-size: 9px;
+
+    color: #64748b;
+}
+
+
+/* ==========================================
+   PERSENTASE DONUT
+   ========================================== */
+
+.subcategory-donut-percentage {
+
+    position: absolute;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 3;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 1px 3px
+        rgba(15, 23, 42, 0.3);
+
+    pointer-events: none;
+
+    white-space: nowrap;
+}
+
+
+/* Slice kecil */
+
+.subcategory-donut-percentage.small {
+
+    padding:
+        3px
+        5px;
+
+    border-radius: 6px;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    text-shadow: none;
+
+    box-shadow:
+        0 2px 7px
+        rgba(15, 23, 42, 0.12);
+}
+
+
+/* ==========================================
+   BAR SUBKATEGORI
+   ========================================== */
+
+.subcategory-bars {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    min-width: 0;
+}
+
+
+/* Satu bar */
+
+/* ==========================================
+   BAR SUBKATEGORI
+   ========================================== */
+
+.subcategory-bar-wrapper {
+
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+        130px
+        minmax(120px, 1fr)
+        42px
+        52px;
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-height: 24px;
+
+    padding: 3px 0;
+
+    cursor: pointer;
+}
+
+
+/* ==========================================
+   LABEL + INDIKATOR WARNA
+   ========================================== */
+
+.subcategory-bar-wrapper > span {
+
+    grid-column: 1;
+
+    grid-row: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    min-width: 0;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    color: #475569;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* indikator warna */
+
+.subcategory-bar-wrapper > span::before {
+
+    content: "";
+
+    width: 8px;
+
+    height: 8px;
+
+    min-width: 8px;
+
+    border-radius: 50%;
+
+    background:
+        var(
+            --subcategory-color,
+            #2563eb
+        );
+
+    box-shadow:
+        0 2px 5px
+        color-mix(
+            in srgb,
+            var(--subcategory-color, #2563eb)
+            30%,
+            transparent
+        );
+}
+
+
+/* ==========================================
+   TRACK BAR
+   ========================================== */
+
+.subcategory-bar {
+
+    grid-column: 2;
+
+    grid-row: 1;
+
+    position: relative;
+
+    width: 100% !important;
+
+    height: 7px !important;
+
+    min-height: 7px !important;
+
+    border-radius: 10px;
+
+    background: #eef2f7;
+
+    overflow: visible;
+
+    box-shadow: none;
+}
+
+
+/* bagian nilai */
+
+.subcategory-bar::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 0;
+
+    width:
+        var(
+            --subcategory-progress,
+            0%
+        );
+
+    height: 100%;
+
+    border-radius: 10px;
+
+    background:
+        var(
+            --subcategory-color,
+            #2563eb
+        );
+
+    transition:
+        width 0.45s ease;
+}
+
+
+/* ==========================================
+   JUMLAH
+   ========================================== */
+
+.subcategory-bar strong {
+
+    position: absolute;
+
+    left: calc(100% + 10px);
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: #334155;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================
+   PERSENTASE
+   ========================================== */
+
+.subcategory-bar-wrapper::after {
+
+    grid-column: 4;
+
+    grid-row: 1;
+
+    content:
+        attr(data-percentage);
+
+    font-size: 10px;
+
+    color: #64748b;
+
+    text-align: right;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================
+   HIGHLIGHT
+   ========================================== */
+
+.subcategory-highlight {
+
+    min-height: 145px;
+
+    padding:
+        18px
+        16px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f8faff,
+            #eef4ff
+        );
+
+    border:
+        1px solid #edf2fb;
+
+    box-shadow:
+        0 5px 16px
+        rgba(15, 23, 42, 0.05);
+}
+
+
+.subcategory-highlight-icon {
+
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 8px;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 3px 10px
+        rgba(37, 99, 235, 0.10);
+
+    font-size: 15px;
+}
+
+
+.subcategory-highlight small {
+
+    font-size: 9px;
+
+    color: #94a3b8;
+}
+
+
+.subcategory-highlight > strong {
+
+    margin-top: 5px;
+
+    font-size: 16px;
+
+    color: #2563eb;
+}
+
+
+.subcategory-top-meta {
+
+    display: flex;
+
+    align-items: baseline;
+
+    gap: 4px;
+
+    margin-top: 6px;
+}
+
+
+.subcategory-top-meta b {
+
+    font-size: 12px;
+
+    color: #334155;
+}
+
+
+.subcategory-top-meta span {
+
+    font-size: 9px;
+
+    color: #64748b;
+}
+
+
+.subcategory-top-percentage {
+
+    margin-top: 6px;
+
+    padding:
+        3px
+        8px;
+
+    border-radius: 8px;
+
+    background: #dbeafe;
+
+    color: #2563eb;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 800px) {
+
+    .subcategory-analytics {
+
+        grid-template-columns:
+            1fr
+            1fr;
+
+        gap: 18px;
+
+        min-height: auto;
+
+        padding:
+            12px
+            10px
+            20px;
+    }
+
+
+    .subcategory-donut-area {
+
+        width: 100%;
+
+        grid-column: 1 / -1;
+
+        height: 115px;
+    }
+
+
+    .subcategory-bars {
+
+        grid-column: 1 / -1;
+    }
+
+
+    .subcategory-highlight {
+
+        grid-column: 1 / -1;
+
+        min-height: 120px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .subcategory-analytics {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .subcategory-donut-area {
+
+        grid-column: auto;
+    }
+
+
+    .subcategory-bars {
+
+        grid-column: auto;
+    }
+
+
+    .subcategory-highlight {
+
+        grid-column: auto;
+    }
+
+}
+
+/* ==========================================
+   TREND WORK ORDER
+   SVG CURVE LAYER
+   ========================================== */
+
+.chart-placeholder {
+
+    position: relative;
+
+}
+
+
+/* SVG berada di belakang bar */
+
+.chart-curve-layer {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    z-index: 1;
+
+    pointer-events: none;
+
+}
+
+
+/* Bar tetap berada di depan */
+
+.chart-bars {
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+/* ==========================================
+   TREND WORK ORDER
+   Y AXIS + GRID
+   ========================================== */
+
+.chart-placeholder {
+    position: relative;
+}
+
+
+/* ==========================================
+   GRID
+   ========================================== */
+
+.trend-grid {
+    position: absolute;
+
+    left: 32px;
+    right: 0;
+
+    top: 12px;
+    bottom: 24px;
+
+    z-index: 0;
+
+    pointer-events: none;
+}
+
+
+.trend-grid-line {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    height: 1px;
+
+    background: #e8eef7;
+}
+
+
+/* Posisi garis */
+
+.trend-grid-40 {
+    top: 0;
+}
+
+.trend-grid-30 {
+    top: 25%;
+}
+
+.trend-grid-20 {
+    top: 50%;
+}
+
+.trend-grid-10 {
+    top: 75%;
+}
+
+.trend-grid-0 {
+    bottom: 0;
+}
+
+
+/* ==========================================
+   ANGKA SISI KIRI
+   ========================================== */
+
+.trend-y-axis {
+    position: absolute;
+
+    left: 0;
+    top: 12px;
+    bottom: 24px;
+
+    width: 28px;
+
+    z-index: 1;
+
+    pointer-events: none;
+}
+
+
+.trend-y-label {
+    position: absolute;
+
+    right: 4px;
+
+    transform:
+        translateY(-50%);
+
+    font-size: 10px;
+
+    line-height: 1;
+
+    color: #64748b;
+
+    font-weight: 500;
+}
+
+
+/* Posisi angka */
+
+.trend-y-40 {
+    top: 0;
+    transform: translateY(0);
+}
+
+.trend-y-30 {
+    top: 25%;
+}
+
+.trend-y-20 {
+    top: 50%;
+}
+
+.trend-y-10 {
+    top: 75%;
+}
+
+.trend-y-0 {
+    bottom: 0;
+    transform: translateY(50%);
+}
+
+/* ==========================================
+   ALIGN BASELINE TREND WORK ORDER
+   Bar harus menyentuh garis 0
+   ========================================== */
+
+.chart-placeholder {
+    position: relative;
+}
+
+.chart-bars {
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+
+
+    width: auto;
+    height: 190px;
+}
+
+
+/* Pastikan setiap bar menempel
+   ke baseline chart */
+
+.chart-bars .chart-bar {
+    align-self: flex-end;
+}
+
+/* ==========================================
+   KPI CARD — FINAL
+   ========================================== */
+
+.kpi-dashboard-enhanced {
+    align-items: stretch;
+    gap: 14px;
+}
+
+
+.kpi-enhanced {
+    position: relative;
+    overflow: hidden;
+
+    min-height: 104px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 15px 12px 14px 16px;
+
+    box-sizing: border-box;
+}
+
+
+/* ==========================================
+   CONTENT
+   ========================================== */
+
+.kpi-main {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    min-width: 0;
+
+    position: relative;
+    z-index: 2;
+}
+
+
+.kpi-content {
+    min-width: 0;
+
+    /*
+     * Sisakan ruang untuk sparkline
+     */
+    padding-right: 82px;
+}
+
+
+.kpi-label {
+    display: block;
+
+    font-size: 12px;
+    line-height: 1.2;
+
+    color: #64748b;
+
+    margin-bottom: 3px;
+}
+
+
+.kpi-value {
+    display: block;
+
+    font-size: 27px;
+    line-height: 1.05;
+
+    font-weight: 700;
+
+    color: #0f172a;
+
+    margin: 0;
+}
+
+
+/* ==========================================
+   COMPARISON
+   ========================================== */
+
+.kpi-comparison {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 1px;
+
+    margin-top: 7px;
+
+    line-height: 1.1;
+}
+
+
+.kpi-change {
+    font-size: 11px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.kpi-period {
+    font-size: 9px;
+
+    color: #94a3b8;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================
+   CHANGE COLORS
+   ========================================== */
+
+.kpi-change.up {
+    color: #16a34a;
+}
+
+
+.kpi-change.down {
+    color: #ef4444;
+}
+
+
+.kpi-change.same {
+    color: #64748b;
+}
+
+
+.kpi-change.new {
+    color: #16a34a;
+}
+
+
+/* ==========================================
+   SPARKLINE
+   ========================================== */
+
+.kpi-sparkline {
+    position: absolute;
+
+    right: 15px;
+    top: 50%;
+
+    width: 76px;
+    height: 38px;
+
+    transform: translateY(-50%);
+
+    overflow: visible;
+
+    pointer-events: none;
+
+    opacity: 0.95;
+
+    z-index: 1;
+}
+
+
+.kpi-sparkline path {
+    fill: none;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+.kpi-sparkline .spark-area {
+    stroke: none;
+
+    opacity: 0.07;
+}
+
+
+/* ==========================================
+   SPARKLINE COLORS
+   ========================================== */
+
+.kpi-enhanced[data-kpi="total"]
+.kpi-sparkline path {
+    stroke: #2563eb;
+}
+
+
+.kpi-enhanced[data-kpi="total"]
+.kpi-sparkline .spark-area {
+    fill: #2563eb;
+}
+
+
+.kpi-enhanced[data-kpi="menunggu"]
+.kpi-sparkline path {
+    stroke: #f59e0b;
+}
+
+
+.kpi-enhanced[data-kpi="menunggu"]
+.kpi-sparkline .spark-area {
+    fill: #f59e0b;
+}
+
+
+.kpi-enhanced[data-kpi="diproses"]
+.kpi-sparkline path {
+    stroke: #2563eb;
+}
+
+
+.kpi-enhanced[data-kpi="diproses"]
+.kpi-sparkline .spark-area {
+    fill: #2563eb;
+}
+
+
+.kpi-enhanced[data-kpi="selesai"]
+.kpi-sparkline path {
+    stroke: #10b981;
+}
+
+
+.kpi-enhanced[data-kpi="selesai"]
+.kpi-sparkline .spark-area {
+    fill: #10b981;
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 700px) {
+
+    .kpi-enhanced {
+        min-height: 100px;
+
+        padding-left: 13px;
+        padding-right: 9px;
+    }
+
+
+    .kpi-content {
+        padding-right: 68px;
+    }
+
+
+    .kpi-value {
+        font-size: 24px;
+    }
+
+
+    .kpi-label {
+        font-size: 11px;
+    }
+
+
+    .kpi-change {
+        font-size: 10px;
+    }
+
+
+    .kpi-period {
+        font-size: 8px;
+    }
+
+
+    .kpi-sparkline {
+        width: 62px;
+        height: 34px;
+
+        right: 12px;
     }
 
 }

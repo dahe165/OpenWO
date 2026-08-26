@@ -1,0 +1,155 @@
+<%
+    const currentPage = Number(pagination.page) || 1;
+    const totalPages = Number(pagination.totalPages) || 0;
+
+    const pageItems = [];
+
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) {
+            pageItems.push(i);
+        }
+    } else if (currentPage <= 4) {
+        pageItems.push(1, 2, 3, 4, 5, "...", totalPages);
+    } else if (currentPage >= totalPages - 3) {
+        pageItems.push(
+            1,
+            "...",
+            totalPages - 4,
+            totalPages - 3,
+            totalPages - 2,
+            totalPages - 1,
+            totalPages
+        );
+    } else {
+        pageItems.push(
+            1,
+            "...",
+            currentPage - 2,
+            currentPage - 1,
+            currentPage,
+            currentPage + 1,
+            currentPage + 2,
+            "...",
+            totalPages
+        );
+    }
+%>
+
+<% if (totalPages > 1) { %>
+
+    <div class="pagination">
+
+        <% if (currentPage > 1) { %>
+            <a
+                href="<%= baseUrl %>?page=<%= currentPage - 1 %>"
+                class="pagination-arrow"
+                aria-label="Halaman sebelumnya"
+            >
+                ←
+            </a>
+        <% } %>
+
+        <% pageItems.forEach(item => { %>
+
+            <% if (item === "...") { %>
+
+                <span
+                    class="pagination-ellipsis"
+                    aria-hidden="true"
+                >
+                    …
+                </span>
+
+            <% } else { %>
+
+                <a
+                    href="<%= baseUrl %>?page=<%= item %>"
+                    class="<%= currentPage === item ? 'active' : '' %>"
+                    <%= currentPage === item ? 'aria-current="page"' : '' %>
+                >
+                    <%= item %>
+                </a>
+
+            <% } %>
+
+        <% }); %>
+
+        <% if (currentPage < totalPages) { %>
+            <a
+                href="<%= baseUrl %>?page=<%= currentPage + 1 %>"
+                class="pagination-arrow"
+                aria-label="Halaman berikutnya"
+            >
+                →
+            </a>
+        <% } %>
+
+    </div>
+
+<% } %>
+
+
+<style>
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 6px;
+
+    margin: 24px 0;
+
+    flex-wrap: wrap;
+}
+
+.pagination a {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #6b7280;
+
+    background: #f8fafc;
+
+    border: 1px solid #e5e7eb;
+
+    transition: 0.2s ease;
+}
+
+
+.pagination a:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+	transform: translateY(0);
+}
+
+
+.pagination a.active {
+    background: #334155;
+
+    border-color: #334155;
+
+    color: #fff;
+
+    box-shadow:
+        0 3px 8px rgba(
+            15,
+            23,
+            42,
+            .12
+        );
+}
+
+.pagination a.pagination-arrow {
+    font-size: 15px;
+}
+</style>

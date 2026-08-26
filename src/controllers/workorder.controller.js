@@ -17,15 +17,26 @@ function create(req, res) {
 
 function store(req, res) {
 
-    const { title, description } = req.body;
+    const {
+        title,
+        description,
+        kategori,
+        subkategori
+    } = req.body;
 
-    const workorder = workorderModel.create({
+    const workorder =
+    workorderModel.create({
 
         judul: title,
 
         deskripsi: description,
 
-        pelaporId: req.user?.id
+        kategori,
+
+        subkategori,
+
+        pelaporId:
+            req.user?.id
 
     });
 
@@ -411,10 +422,8 @@ function complete(req, res) {
     const id =
         Number(req.params.id);
 
-
     const technicianId =
         req.user?.id;
-
 
     const technicianName =
         req.user?.nama;
@@ -422,21 +431,17 @@ function complete(req, res) {
 
     /*
      * =====================================
-     * DESKRIPSI PENYELESAIAN
+     * DATA PENYELESAIAN
      * =====================================
      */
 
     const resolutionDescription =
-        (
-            req.body?.resolutionDescription ||
-            ""
-        ).trim();
+        (req.body?.resolutionDescription || "")
+            .trim();
 
 
     /*
-     * =====================================
-     * VALIDASI WAJIB
-     * =====================================
+     * DESKRIPSI WAJIB
      */
 
     if (!resolutionDescription) {
@@ -455,7 +460,50 @@ function complete(req, res) {
 
     /*
      * =====================================
-     * SELESAIKAN WORK ORDER
+     * FOTO PENYELESAIAN
+     * =====================================
+     */
+
+    let completionPhoto =
+        null;
+
+
+    if (req.file) {
+
+        completionPhoto =
+            `/images/completions/${req.file.filename}`;
+
+    }
+
+
+    console.log(
+        "=== COMPLETE WORK ORDER ==="
+    );
+
+    console.log(
+        "WO ID:",
+        id
+    );
+
+    console.log(
+        "TECHNICIAN:",
+        technicianId
+    );
+
+    console.log(
+        "RESOLUTION:",
+        resolutionDescription
+    );
+
+    console.log(
+        "FILE:",
+        req.file
+    );
+
+
+    /*
+     * =====================================
+     * SIMPAN KE MODEL
      * =====================================
      */
 
@@ -468,7 +516,9 @@ function complete(req, res) {
 
             technicianName,
 
-            resolutionDescription
+            resolutionDescription,
+
+            completionPhoto
 
         );
 

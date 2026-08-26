@@ -16,8 +16,18 @@ function index(req, res) {
     const trend =
         dashboardService.getWorkOrderTrend();
 
+    const lastWeekTrend =
+        dashboardService
+            .getPreviousWorkOrderTrend();
+
     const categoryTrend =
         dashboardService.getCategoryTrend();
+
+    const kpiComparison =
+        dashboardService.getKpiComparison();
+
+    const technicianLoad =
+        dashboardService.getTechnicianLoad();
 
     const stats =
         userModel.getUserStats();
@@ -156,7 +166,11 @@ function index(req, res) {
 
         trend,
 
+        lastWeekTrend,
+
         categoryTrend,
+
+        kpiComparison,
 
         stats,
 
@@ -170,7 +184,9 @@ function index(req, res) {
 
         technicianSummary,
 
-        technicianFeed,
+        technicianFeed,        
+
+        technicianLoad,
 
         pagination: {
 

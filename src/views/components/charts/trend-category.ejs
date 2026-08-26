@@ -1,0 +1,396 @@
+<!-- ==========================================
+     TREND KATEGORI
+     ========================================== -->
+
+<div class="dashboard-panel category-dashboard-panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>
+                📊 Trend Kategori
+            </h2>
+
+            <p>
+                Distribusi Work Order berdasarkan kategori
+            </p>
+
+        </div>
+
+        <!-- LEGEND -->
+        <div
+            class="category-legend"
+            id="categoryLegend"
+        >
+
+            <% categoryTrend.forEach((item, index) => { %>
+
+                <button
+                    type="button"
+                    class="category-legend-item"
+                    data-kategori="<%= item.kategori %>"
+                    data-subkategori='<%- JSON.stringify(item.subkategori) %>'
+                >
+
+                    <span
+                        class="category-legend-dot category-color-<%= index %>"
+                    ></span>
+
+                    <span class="category-legend-name">
+                        <%= item.kategori %>
+                    </span>
+
+                </button>
+
+            <% }); %>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         CATEGORY ANALYTICS
+         ========================================== -->
+
+    <div class="category-analytics">
+
+
+        <!-- ======================================
+             DONUT
+             ====================================== -->
+
+        <div class="category-donut-area">
+
+            <div
+                class="category-donut"
+                id="categoryDonut"
+            >
+
+                <div class="category-donut-center">
+
+                    <strong id="categoryTotal">
+                        <%= categoryTrend.reduce(
+                            (sum, item) =>
+                                sum + item.total,
+                            0
+                        ) %>
+                    </strong>
+
+                    <span>
+                        Total
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>                                             
+
+        <%
+            /*
+            * ==========================================
+            * CATEGORY Y-AXIS SCALE
+            * ==========================================
+            */
+
+            const categoryDataMax =
+                Math.max(
+                    ...categoryTrend.map(
+                        item => item.total
+                    ),
+                    0
+                );
+
+            let categoryStep;
+            let categoryScaleMax;
+
+            if (categoryDataMax <= 100) {
+
+                categoryStep = 25;
+                categoryScaleMax = 100;
+
+            } else if (categoryDataMax <= 200) {
+
+                categoryStep = 50;
+
+                categoryScaleMax =
+                    Math.ceil(
+                        categoryDataMax / 50
+                    ) * 50;
+
+            } else if (categoryDataMax <= 500) {
+
+                categoryStep = 100;
+
+                categoryScaleMax =
+                    Math.ceil(
+                        categoryDataMax / 100
+                    ) * 100;
+
+            } else if (categoryDataMax <= 1000) {
+
+                categoryStep = 200;
+
+                categoryScaleMax =
+                    Math.ceil(
+                        categoryDataMax / 200
+                    ) * 200;
+
+            } else if (categoryDataMax <= 2000) {
+
+                categoryStep = 500;
+
+                categoryScaleMax =
+                    Math.ceil(
+                        categoryDataMax / 500
+                    ) * 500;
+
+            } else if (categoryDataMax <= 5000) {
+
+                categoryStep = 1000;
+
+                categoryScaleMax =
+                    Math.ceil(
+                        categoryDataMax / 1000
+                    ) * 1000;
+
+            } else {
+
+                categoryStep = 2000;
+
+                categoryScaleMax =
+                    Math.ceil(
+                        categoryDataMax / 2000
+                    ) * 2000;
+            }
+        %>
+
+        <!-- ======================================
+             BAR CHART
+             ====================================== -->
+
+        <div class="category-bar-chart">
+
+            <div
+                class="category-grid-line category-grid-zero"
+                style="bottom: 0%;"
+            >
+                <span>0</span>
+            </div>
+
+            <%
+                for (
+                    let tick = categoryStep;
+                    tick <= categoryScaleMax;
+                    tick += categoryStep
+                ) {
+            %>
+
+                <div
+                    class="category-grid-line"
+                    style="
+                        bottom:
+                        <%= (
+                            tick /
+                            categoryScaleMax
+                        ) * 100 %>%;
+                    "
+                >
+                    <span>
+                        <%= tick %>
+                    </span>
+                </div>
+
+            <%
+                }
+            %>
+
+
+            <div class="category-bars-final">
+                
+                <% categoryTrend.forEach(
+                    (item, index) => {
+                %>
+
+                    <div
+                        class="category-final-item"
+                        data-kategori="<%= item.kategori %>"
+                        data-subkategori='<%- JSON.stringify(item.subkategori) %>'
+                    >
+
+                        <div
+                            class="category-final-bar category-color-<%= index %>"
+                            style="
+                                height:
+                                <%= Math.max(
+                                    (item.total /
+                                    categoryScaleMax) * 100,
+                                    item.total > 0
+                                        ? 5
+                                        : 2
+                                ) %>%;
+                            "
+                        >
+
+                            <strong>
+                                <%= item.total %>
+                            </strong>
+
+                        </div>
+
+
+                        <span class="category-final-label">
+                            <%= item.kategori %>
+                        </span>
+
+                    </div>
+
+                <% }); %>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+     TREND SUB KATEGORI
+     ========================================== -->
+
+    <div
+        class="subcategory-chart"
+        id="subcategoryChart"
+        style="display: none;"
+    >
+
+        <!-- HEADER -->
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2 id="subcategoryTitle">
+                    📊 Subkategori
+                </h2>
+
+                <p>
+                    Distribusi Work Order berdasarkan Subkategori
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="subcategory-back"
+                id="subcategoryBack"
+            >
+                ← Kembali
+            </button>
+
+        </div>
+
+
+        <!-- ======================================
+            ANALYTICS SUBKATEGORI
+            ====================================== -->
+
+        <div class="subcategory-analytics">
+
+
+            <!-- ==================================
+                DONUT
+                ================================== -->
+
+            <div class="subcategory-donut-area">
+
+                <div
+                    class="subcategory-donut"
+                    id="subcategoryDonut"
+                >
+
+                    <div
+                        class="subcategory-donut-center"
+                        id="subcategoryDonutCenter"
+                    >
+
+                        <strong
+                            id="subcategoryTotal"
+                        >
+                            0
+                        </strong>
+
+                        <span>
+                            Total
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================
+                BAR SUBKATEGORI
+                ================================== -->
+
+            <div
+                class="subcategory-bars"
+                id="subcategoryBars"
+            ></div>
+
+
+            <!-- ==================================
+                SUBKATEGORI TERBANYAK
+                ================================== -->
+
+            <div
+                class="subcategory-highlight"
+                id="subcategoryHighlight"
+            >
+
+                <div class="subcategory-highlight-icon">
+                    🏆
+                </div>
+
+                <small>
+                    Subkategori terbanyak
+                </small>
+
+                <strong
+                    id="subcategoryTopName"
+                >
+                    -
+                </strong>
+
+                <div class="subcategory-top-meta">
+
+                    <b id="subcategoryTopTotal">
+                        0
+                    </b>
+
+                    <span>
+                        Work Order
+                    </span>
+
+                </div>
+
+                <span
+                    class="subcategory-top-percentage"
+                    id="subcategoryTopPercentage"
+                >
+                    0%
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

@@ -146,9 +146,142 @@ const uploadBranding =
 
     });
 
+/*
+ * =====================================
+ * FOLDER FOTO PENYELESAIAN WO
+ * =====================================
+ */
+
+const completionDir =
+    path.join(
+        __dirname,
+        "../public/images/completions"
+    );
+
+
+if (!fs.existsSync(completionDir)) {
+
+    fs.mkdirSync(
+        completionDir,
+        {
+            recursive: true
+        }
+    );
+
+}
+
+
+/*
+ * =====================================
+ * STORAGE FOTO PENYELESAIAN
+ * =====================================
+ */
+
+const completionStorage =
+    multer.diskStorage({
+
+        destination:
+            (req, file, cb) => {
+
+                cb(
+                    null,
+                    completionDir
+                );
+
+            },
+
+
+        filename:
+            (req, file, cb) => {
+
+                const ext =
+                    path.extname(
+                        file.originalname
+                    ).toLowerCase();
+
+
+                const filename =
+                    `wo-${req.params.id}-${Date.now()}${ext}`;
+
+
+                cb(
+                    null,
+                    filename
+                );
+
+            }
+
+    });
+
+
+/*
+ * =====================================
+ * VALIDASI FOTO PENYELESAIAN
+ * =====================================
+ */
+
+const completionFileFilter =
+    (req, file, cb) => {
+
+        const allowedMimeTypes = [
+            "image/png",
+            "image/jpeg",
+            "image/webp"
+        ];
+
+
+        if (
+            allowedMimeTypes.includes(
+                file.mimetype
+            )
+        ) {
+
+            cb(
+                null,
+                true
+            );
+
+        } else {
+
+            cb(
+                new Error(
+                    "Foto harus berupa PNG, JPG, atau WEBP."
+                )
+            );
+
+        }
+
+    };
+
+
+/*
+ * =====================================
+ * UPLOAD FOTO PENYELESAIAN
+ * =====================================
+ */
+
+const uploadCompletion =
+    multer({
+
+        storage:
+            completionStorage,
+
+        fileFilter:
+            completionFileFilter,
+
+        limits: {
+
+            fileSize:
+                5 * 1024 * 1024
+
+        }
+
+    });
+
 
 module.exports = {
 
-    uploadBranding
+    uploadBranding,
+    uploadCompletion
 
 };

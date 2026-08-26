@@ -19,8 +19,18 @@
 
     </div>
 
+    <%- include("../../components/search-bar", {
+        action: "/admin/users",
+        name: "q",
+        value: q,
+        placeholder: "Cari nama, username, atau role...",
+        liveSearch: true,
+        endpoint: "/admin/users/search",
+        target: "#user-list"
+    }) %>
 
-    <div class="user-list">
+
+    <div class="user-list" id="user-list">
 
         <% if (!users || users.length === 0) { %>
 
@@ -123,6 +133,14 @@
         <% }) %>
 
     </div>
+
+        <%- include("../../components/pagination", {
+            pagination,
+            query: {
+                q
+            },
+            baseUrl: "/admin/users"
+        }) %>
 
 </div>
 

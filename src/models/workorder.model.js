@@ -65,6 +65,9 @@ function mapWorkorder(row) {
         resolutionDescription:
             row.resolution_description,
 
+        completionPhoto:
+            row.completion_photo,
+
         pelapor:
             row.pelapor_nama,
 
@@ -116,6 +119,7 @@ const baseQuery = `
         wo.subkategori,
         wo.status,
         wo.resolution_description,
+        wo.completion_photo,
         wo.pelapor_id,
         pelapor.nama AS pelapor_nama,
 
@@ -586,7 +590,8 @@ function completeWork(
     id,
     technicianId,
     technicianName,
-    resolutionDescription
+    resolutionDescription,
+    completionPhoto
 ) {
 
     const workorder = db.prepare(`
@@ -601,9 +606,17 @@ function completeWork(
 
 
     if (!workorder) {
+
         return null;
+
     }
 
+
+    /*
+     * =====================================
+     * VALIDASI WORKFLOW
+     * =====================================
+     */
 
     if (
         !canTransition(
@@ -616,11 +629,12 @@ function completeWork(
 
     }
 
+
     /*
-    * =====================================
-    * DESKRIPSI PENYELESAIAN WAJIB
-    * =====================================
-    */
+     * =====================================
+     * DESKRIPSI PENYELESAIAN WAJIB
+     * =====================================
+     */
 
     if (
         !resolutionDescription ||
@@ -636,6 +650,12 @@ function completeWork(
         new Date().toISOString();
 
 
+    /*
+     * =====================================
+     * UPDATE WORK ORDER
+     * =====================================
+     */
+
     const update =
         db.prepare(`
             UPDATE work_orders
@@ -643,26 +663,37 @@ function completeWork(
             SET
                 status = ?,
                 resolution_description = ?,
+                completion_photo = ?,
                 updated_at = ?
 
             WHERE id = ?
         `);
 
 
+    /*
+     * =====================================
+     * TIMELINE
+     * =====================================
+     */
+
     const insertTimeline =
         db.prepare(`
             INSERT INTO work_order_timeline (
-
                 work_order_id,
                 status,
                 user_id,
                 created_at
-
             )
 
             VALUES (?, ?, ?, ?)
         `);
 
+
+    /*
+     * =====================================
+     * TRANSACTION
+     * =====================================
+     */
 
     const transaction =
         db.transaction(() => {
@@ -670,6 +701,7 @@ function completeWork(
             update.run(
                 "Selesai",
                 resolutionDescription.trim(),
+                completionPhoto || null,
                 now,
                 id
             );
@@ -685,10 +717,24 @@ function completeWork(
         });
 
 
-    transaction();
+    try {
+
+        transaction();
+
+    } catch (error) {
+
+        console.error(
+            "COMPLETE WORK ERROR:",
+            error
+        );
+
+        return null;
+
+    }
 
 
     return getById(id);
+
 }
 
 

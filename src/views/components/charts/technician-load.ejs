@@ -1,0 +1,52 @@
+<div class="dashboard-panel">
+
+    <div class="panel-header">
+
+        <div>
+            <h2>👨‍🔧 Beban Teknisi</h2>
+            <p>Jumlah Work Order yang sedang ditangani</p>
+        </div>
+
+    </div>
+
+
+    <div class="technician-load">
+
+        <% if (technicianLoad.length === 0) { %>
+
+            <div class="empty-state">
+                Tidak ada Work Order aktif.
+            </div>
+
+        <% } %>
+
+
+        <% technicianLoad.forEach(item => { %>
+
+            <div class="technician-row">
+
+                <span>
+                    <%= item.teknisi %>
+                </span>
+
+
+                <div class="load-bar">
+
+                    <div
+                        style="width: <%= item.percentage %>%"
+                    ></div>
+
+                </div>
+
+
+                <strong>
+                    <%= item.total %> WO
+                </strong>
+
+            </div>
+
+        <% }); %>
+
+    </div>
+
+</div>

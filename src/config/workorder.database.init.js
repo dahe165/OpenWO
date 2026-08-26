@@ -97,6 +97,32 @@ if (!hasResolutionDescription) {
 
 }
 
+/*
+ * =====================================
+ * MIGRASI — FOTO PENYELESAIAN
+ * =====================================
+ */
+
+const hasCompletionPhoto =
+    workOrderColumns.some(
+        column =>
+            column.name ===
+            "completion_photo"
+    );
+
+
+if (!hasCompletionPhoto) {
+
+    db.exec(`
+        ALTER TABLE work_orders
+        ADD COLUMN completion_photo TEXT;
+    `);
+
+    console.log(
+        "DATABASE MIGRATION: kolom completion_photo berhasil ditambahkan."
+    );
+
+}
 
 /*
  * =====================================

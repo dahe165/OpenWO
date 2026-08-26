@@ -1,3 +1,20 @@
+<link rel="stylesheet" href="/css/tooltip.css">
+<style>
+/* ==========================================
+   CATEGORY CHART FINISHING
+   ========================================== */
+.category-bar-chart {
+    margin-left: 18px;
+}
+
+@media (max-width: 768px) {
+    .category-bar-chart {
+        margin-left: 0;
+    }
+}
+</style>
+
+
 <% if (role === "pelapor") { %>
 
     <%- include("../components/welcome-card") %>
@@ -186,327 +203,61 @@
 
 <%- include("../components/quick-action") %>
 
-<div class="dashboard-kpi">
+<!-- ==========================================
+     KPI CARDS
+     ASMAN / MANAGER
+     ========================================== -->
 
-    <div class="kpi-card">
-        <span class="kpi-icon">📋</span>
-        <div>
-            <span class="kpi-label">Total WO</span>
-            <strong><%= summary.total %></strong>
-        </div>
-    </div>
+<div class="dashboard-kpi kpi-dashboard-enhanced">
 
-    <div class="kpi-card">
-        <span class="kpi-icon">🟡</span>
-        <div>
-            <span class="kpi-label">Menunggu</span>
-            <strong><%= summary.menunggu %></strong>
-        </div>
-    </div>
+    <%- include("../components/kpi-card", {
+        key: "total",
+        label: "Total WO",
+        value: summary.total
+    }) %>
 
-    <div class="kpi-card">
-        <span class="kpi-icon">🔵</span>
-        <div>
-            <span class="kpi-label">Diproses</span>
-            <strong><%= summary.diproses %></strong>
-        </div>
-    </div>
+    <%- include("../components/kpi-card", {
+        key: "menunggu",
+        label: "Menunggu",
+        value: summary.menunggu
+    }) %>
 
-    <div class="kpi-card">
-        <span class="kpi-icon">🟢</span>
-        <div>
-            <span class="kpi-label">Selesai</span>
-            <strong><%= summary.selesai %></strong>
-        </div>
-    </div>
+    <%- include("../components/kpi-card", {
+        key: "diproses",
+        label: "Diproses",
+        value: summary.diproses
+    }) %>
+
+    <%- include("../components/kpi-card", {
+        key: "selesai",
+        label: "Selesai",
+        value: summary.selesai
+    }) %>
 
 </div>
 
+<%- include("../components/charts/trend-workorder", {
+    trend: trend
+}) %>
 
-<div class="dashboard-panel">
+<!-- ==========================================
+     TREND KATEGORI
+     ========================================== -->
 
-    <div class="panel-header">
+<%- include("../components/charts/trend-category", {
+    categoryTrend: categoryTrend
+}) %>
 
-        <div>
-            <h2>📈 Tren Work Order</h2>
-            <p>Aktivitas Work Order 7 hari terakhir</p>
-        </div>
 
-    </div>
+<%- include("../components/charts/status-workorder", {
+    summary: summary
+}) %>
 
-    <div class="chart-placeholder">
 
-    <div class="chart-bars">
+<%- include("../components/charts/technician-load", {
+    technicianLoad
+}) %>
 
-        <% 
-            const maxTrend = Math.max(
-                ...trend.map(item => item.total),
-                1
-            );
-        %>
-
-        <% trend.forEach(item => { %>
-
-            <div
-                class="chart-bar"
-                style="height: <%= Math.max(
-                    (item.total / maxTrend) * 100,
-                    item.total > 0 ? 8 : 3
-                ) %>%"
-                data-label="<%= item.label %>"
-                data-total="<%= item.total %>"
-                >
-
-                <strong>
-                    <%= item.total %>
-                </strong>
-
-                <span>
-                    <%= item.label %>
-                </span>
-
-            </div>
-
-        <% }); %>
-
-        <div class="chart-tooltip" id="chartTooltip">
-            <b></b>
-            <small></small>
-        </div>
-
-    </div>
-
-    </div>
-
-</div>
-
-<div class="dashboard-panel">
-
-    <div class="panel-header">
-
-        <div>
-            <h2>📊 Trend Kategori</h2>
-            <p>Distribusi Work Order berdasarkan kategori</p>
-        </div>
-
-    </div>
-
-    <div class="category-chart">
-
-        <% 
-            const maxCategory = Math.max(
-                ...categoryTrend.map(item => item.total),
-                1
-            );
-        %>
-
-        <% categoryTrend.forEach(item => { %>
-
-            <div class="category-bar-wrapper">
-
-                <div
-                    class="category-bar"
-                    data-kategori="<%= item.kategori %>"
-                    data-subkategori='<%- JSON.stringify(item.subkategori) %>'
-                    style="height: <%= Math.max(
-                        (item.total / maxCategory) * 100,
-                        item.total > 0 ? 8 : 3
-                    ) %>%"
-                    >
-
-                    <strong>
-                        <%= item.total %>
-                    </strong>
-
-                </div>
-
-                <span>
-                    <%= item.kategori %>
-                </span>
-
-            </div>
-
-        <% }); %>
-
-    </div>
-
-    <div class="subcategory-chart" id="subcategoryChart" style="display: none;">
-
-        <div class="panel-header">
-
-            <div>
-                <h2 id="subcategoryTitle">
-                    📂 Subkategori
-                </h2>
-
-                <p>
-                    Rincian Work Order
-                </p>
-            </div>
-
-            <button type="button" class="subcategory-back" id="subcategoryBack">
-                ← Kembali
-            </button>
-
-        </div>
-
-        <div class="subcategory-bars" id="subcategoryBars"></div>
-
-    </div>
-
-</div>
-
-<div class="dashboard-panel">
-
-<div class="panel-header">
-
-    <div>
-        <h2>📊 Status Work Order</h2>
-        <p>Distribusi Work Order berdasarkan status</p>
-    </div>
-
-</div>
-
-<div class="status-chart">
-
-    <div class="status-row">
-
-        <div class="status-info">
-            <span>Menunggu</span>
-            <strong><%= summary.menunggu %></strong>
-        </div>
-
-        <div class="status-track">
-            <div
-                class="status-bar status-menunggu"
-                style="width: <%= summary.total> 0
-                    ? (summary.menunggu / summary.total) * 100
-                    : 0 %>%">
-            </div>
-        </div>
-
-    </div>
-
-
-    <div class="status-row">
-
-        <div class="status-info">
-            <span>Ditugaskan</span>
-            <strong><%= summary.ditugaskan %></strong>
-        </div>
-
-        <div class="status-track">
-            <div
-                class="status-bar status-ditugaskan"
-                style="width: <%= summary.total > 0
-                    ? (summary.ditugaskan / summary.total) * 100
-                    : 0 %>%">
-            </div>
-        </div>
-
-    </div>
-
-
-    <div class="status-row">
-
-        <div class="status-info">
-            <span>Diproses</span>
-            <strong><%= summary.diproses %></strong>
-        </div>
-
-        <div class="status-track">
-            <div
-                class="status-bar status-diproses"
-                style="width: <%= summary.total > 0
-                    ? (summary.diproses / summary.total) * 100
-                    : 0 %>%">
-            </div>
-        </div>
-
-    </div>
-
-
-    <div class="status-row">
-
-        <div class="status-info">
-            <span>Selesai</span>
-            <strong><%= summary.selesai %></strong>
-        </div>
-
-        <div class="status-track">
-            <div
-                class="status-bar status-selesai"
-                style="width: <%= summary.total > 0
-                    ? (summary.selesai / summary.total) * 100
-                    : 0 %>%">
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-</div>
-
-<div class="dashboard-panel">
-
-    <div class="panel-header">
-
-        <div>
-            <h2>👨‍🔧 Beban Teknisi</h2>
-            <p>Jumlah Work Order yang sedang ditangani</p>
-        </div>
-
-    </div>
-
-    <div class="technician-load">
-
-        <div class="technician-row">
-            <span>Andi</span>
-
-            <div class="load-bar">
-                <div style="width: 85%"></div>
-            </div>
-
-            <strong>6 WO</strong>
-        </div>
-
-
-        <div class="technician-row">
-            <span>Budi</span>
-
-            <div class="load-bar">
-                <div style="width: 60%"></div>
-            </div>
-
-            <strong>4 WO</strong>
-        </div>
-
-
-        <div class="technician-row">
-            <span>Rudi</span>
-
-            <div class="load-bar">
-                <div style="width: 45%"></div>
-            </div>
-
-            <strong>3 WO</strong>
-        </div>
-
-
-        <div class="technician-row">
-            <span>Joko</span>
-
-            <div class="load-bar">
-                <div style="width: 20%"></div>
-            </div>
-
-            <strong>1 WO</strong>
-        </div>
-
-    </div>
-
-</div>
 
 <% } else if (role === "admin") { %>
 
@@ -517,109 +268,35 @@
 
     <div class="dashboard-kpi">
 
-        <div class="kpi-card">
+        <%- include("../components/kpi-simple", {
+        icon: "👥",
+        label: "Total Pengguna",
+        value: stats.totalUsers
+    }) %>
 
-            <span class="kpi-icon">
-                👥
-            </span>
+    <%- include("../components/kpi-simple", {
+        icon: "👤",
+        label: "Pelapor",
+        value: stats.pelapor
+    }) %>
 
-            <div>
+    <%- include("../components/kpi-simple", {
+        icon: "🧑‍🔧",
+            label: "Teknisi",
+            value: stats.teknisi
+        }) %>
 
-                <span class="kpi-label">
-                    Total Pengguna
-                </span>
+        <%- include("../components/kpi-simple", {
+            icon: "🧑‍💼",
+            label: "Asman",
+            value: stats.asman
+        }) %>
 
-                <strong>
-                    <%= stats.totalUsers %>
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="kpi-card">
-
-            <span class="kpi-icon">
-                👤
-            </span>
-
-            <div>
-
-                <span class="kpi-label">
-                    Pelapor
-                </span>
-
-                <strong>
-                    <%= stats.pelapor %>
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="kpi-card">
-
-            <span class="kpi-icon">
-                🧑‍🔧
-            </span>
-
-            <div>
-
-                <span class="kpi-label">
-                    Teknisi
-                </span>
-
-                <strong>
-                    <%= stats.teknisi %>
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="kpi-card">
-
-            <span class="kpi-icon">
-                🧑‍💼
-            </span>
-
-            <div>
-
-                <span class="kpi-label">
-                    Asman
-                </span>
-
-                <strong>
-                    <%= stats.asman %>
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="kpi-card">
-
-            <span class="kpi-icon">
-                👔
-            </span>
-
-            <div>
-
-                <span class="kpi-label">
-                    Manager
-                </span>
-
-                <strong>
-                    <%= stats.manager %>
-                </strong>
-
-            </div>
-
-        </div>
+        <%- include("../components/kpi-simple", {
+            icon: "👔",
+            label: "Manager",
+            value: stats.manager
+        }) %>
 
     </div>
 
@@ -641,8 +318,7 @@
             </div>
 
         </div>
-
-
+        
         <a
             href="/admin/users"
             class="admin-menu-card"
@@ -854,237 +530,744 @@
 
 <% } else if (role === "teknisi") { %>
 
-    <div class="dashboard-panel">
+<%
+    /*
+     * ==========================================
+     * DASHBOARD TEKNISI — MODERN WORKSPACE
+     * ==========================================
+     *
+     * UI-only redesign.
+     * Tidak mengubah controller, database, workflow,
+     * atau business rule yang sudah berjalan.
+     */
+    const techTotal =
+        Array.isArray(technicianWorkorders)
+            ? technicianWorkorders.length
+            : 0;
 
-        <div class="panel-header">
+    const techActive =
+        Number(technicianSummary.ditugaskan || 0) +
+        Number(technicianSummary.diproses || 0);
+%>
+
+<style>
+/* ==========================================
+   MODERN TECHNICIAN DASHBOARD
+   Scope: role teknisi
+   ========================================== */
+
+.tech-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.tech-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 24px 26px;
+    border: 1px solid #e5eaf3;
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at 88% 18%, rgba(59,130,246,.10), transparent 30%),
+        linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .045);
+}
+
+.tech-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+}
+
+.tech-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #2563eb;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.tech-hero h1 {
+    margin: 0;
+    font-size: clamp(22px, 2vw, 30px);
+    line-height: 1.2;
+    color: #0f172a;
+}
+
+.tech-hero p {
+    margin: 8px 0 0;
+    max-width: 620px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+.tech-date {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.tech-hero-mark {
+    position: absolute;
+    top: 50%;
+    right: 26px;
+    width: 96px;
+    height: 96px;
+    display: grid;
+    place-items: center;
+    transform: translateY(-50%);
+    border-radius: 28px;
+    background: rgba(37, 99, 235, .08);
+    color: #2563eb;
+    font-size: 42px;
+}
+
+.tech-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.tech-kpi {
+    min-height: 108px;
+    padding: 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    border: 1px solid #e6ebf2;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .035);
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.tech-kpi:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, .07);
+}
+
+.tech-kpi-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    font-size: 19px;
+}
+
+.tech-kpi-icon.total {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.tech-kpi-icon.assigned {
+    background: #fff7e8;
+    color: #d97706;
+}
+
+.tech-kpi-icon.progress {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.tech-kpi-icon.done {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.tech-kpi-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 11px;
+    color: #64748b;
+}
+
+.tech-kpi-value {
+    display: block;
+    font-size: 25px;
+    line-height: 1;
+    font-weight: 750;
+    color: #0f172a;
+}
+
+.tech-kpi-note {
+    display: block;
+    margin-top: 7px;
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+.tech-summary {
+    overflow: hidden;
+    border: 1px solid #e6ebf2;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 7px 22px rgba(15, 23, 42, .04);
+}
+
+.tech-summary-head {
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.tech-summary-title {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.tech-summary-title-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.tech-summary-title h2 {
+    margin: 0;
+    font-size: 15px;
+    color: #0f172a;
+}
+
+.tech-summary-title p {
+    margin: 3px 0 0;
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.tech-summary-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 13px;
+    border-radius: 9px;
+    background: #2563eb;
+    color: #fff !important;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.tech-summary-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.tech-summary-stat {
+    min-height: 82px;
+    padding: 16px 20px;
+    border-right: 1px solid #edf1f6;
+}
+
+.tech-summary-stat:last-child {
+    border-right: 0;
+}
+
+.tech-summary-stat-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+.tech-summary-stat-value {
+    display: block;
+    font-size: 18px;
+    font-weight: 750;
+    color: #0f172a;
+}
+
+.tech-summary-stat-note {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    color: #64748b;
+}
+
+.tech-feed-card {
+    overflow: hidden;
+    border: 1px solid #e6ebf2;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 7px 22px rgba(15, 23, 42, .04);
+}
+
+.tech-feed-head {
+    padding: 17px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.tech-feed-head h2 {
+    margin: 0;
+    font-size: 15px;
+    color: #0f172a;
+}
+
+.tech-feed-head a {
+    font-size: 11px;
+    font-weight: 700;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.tech-feed-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.tech-feed-row {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) auto 24px;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f3f7;
+    transition: background .18s ease;
+}
+
+.tech-feed-row:last-child {
+    border-bottom: 0;
+}
+
+.tech-feed-row:hover {
+    background: #f8fbff;
+}
+
+.tech-feed-icon {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 17px;
+}
+
+.tech-feed-main {
+    min-width: 0;
+}
+
+.tech-feed-number {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.tech-feed-title {
+    display: block;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tech-feed-meta {
+    display: block;
+    margin-top: 4px;
+    overflow: hidden;
+    font-size: 10px;
+    color: #64748b;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tech-feed-arrow {
+    color: #94a3b8;
+    font-size: 16px;
+}
+
+.tech-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 74px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.tech-status.status-ditugaskan {
+    background: #fff7e8;
+    color: #b45309;
+}
+
+.tech-status.status-diproses {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.tech-status.status-selesai {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.tech-empty {
+    padding: 38px 20px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.tech-pagination {
+    padding: 14px 20px;
+    border-top: 1px solid #edf1f6;
+}
+
+@media (max-width: 900px) {
+    .tech-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tech-summary-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tech-summary-stat:nth-child(2) {
+        border-right: 0;
+    }
+
+    .tech-summary-stat:nth-child(-n+2) {
+        border-bottom: 1px solid #edf1f6;
+    }
+
+    .tech-hero-mark {
+        opacity: .45;
+    }
+}
+
+@media (max-width: 650px) {
+    .tech-hero {
+        padding: 20px;
+    }
+
+    .tech-hero-mark {
+        display: none;
+    }
+
+    .tech-kpis {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .tech-kpi {
+        min-height: 96px;
+        padding: 14px;
+    }
+
+    .tech-summary-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .tech-summary-action {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .tech-feed-row {
+        grid-template-columns: 36px minmax(0, 1fr) auto;
+        gap: 10px;
+        padding: 13px 14px;
+    }
+
+    .tech-feed-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 15px;
+    }
+
+    .tech-feed-arrow {
+        display: none;
+    }
+}
+
+@media (max-width: 420px) {
+    .tech-kpis,
+    .tech-summary-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .tech-summary-stat {
+        border-right: 0 !important;
+        border-bottom: 1px solid #edf1f6;
+    }
+
+    .tech-summary-stat:last-child {
+        border-bottom: 0;
+    }
+}
+</style>
+
+<div class="tech-workspace">
+
+    <%- include("../components/welcome-card") %>
+
+    <section class="tech-kpis">
+
+        <article class="tech-kpi">
+            <div class="tech-kpi-icon total">📋</div>
 
             <div>
+                <span class="tech-kpi-label">Total Work Order</span>
 
-                <h2>👨‍🔧 Dashboard Teknisi</h2>
+                <strong class="tech-kpi-value">
+                    <%= techTotal %>
+                </strong>
 
-                <p>
-                    Ringkasan Work Order yang menjadi tanggung jawab Anda
-                </p>
+                <small class="tech-kpi-note">
+                    Semua WO Anda
+                </small>
+            </div>
+        </article>
 
+
+        <article class="tech-kpi">
+            <div class="tech-kpi-icon assigned">📌</div>
+
+            <div>
+                <span class="tech-kpi-label">Ditugaskan</span>
+
+                <strong class="tech-kpi-value">
+                    <%= technicianSummary.ditugaskan %>
+                </strong>
+
+                <small class="tech-kpi-note">
+                    Siap dikerjakan
+                </small>
+            </div>
+        </article>
+
+
+        <article class="tech-kpi">
+            <div class="tech-kpi-icon progress">⚙️</div>
+
+            <div>
+                <span class="tech-kpi-label">Diproses</span>
+
+                <strong class="tech-kpi-value">
+                    <%= technicianSummary.diproses %>
+                </strong>
+
+                <small class="tech-kpi-note">
+                    Sedang dikerjakan
+                </small>
+            </div>
+        </article>
+
+
+        <article class="tech-kpi">
+            <div class="tech-kpi-icon done">✓</div>
+
+            <div>
+                <span class="tech-kpi-label">Selesai</span>
+
+                <strong class="tech-kpi-value">
+                    <%= technicianSummary.selesai %>
+                </strong>
+
+                <small class="tech-kpi-note">
+                    Pekerjaan selesai
+                </small>
+            </div>
+        </article>
+
+    </section>    
+
+    <%- include("../components/quick-action") %>
+
+    <section class="tech-summary">
+
+        <div class="tech-summary-stats">
+
+            <div class="tech-summary-stat">
+                <span class="tech-summary-stat-label">Total</span>
+
+                <strong class="tech-summary-stat-value">
+                    <%= techTotal %>
+                </strong>
+
+                <small class="tech-summary-stat-note">
+                    Semua WO Anda
+                </small>
+            </div>
+
+
+            <div class="tech-summary-stat">
+                <span class="tech-summary-stat-label">WO Aktif</span>
+
+                <strong class="tech-summary-stat-value">
+                    <%= techActive %>
+                </strong>
+
+                <small class="tech-summary-stat-note">
+                    Ditugaskan + diproses
+                </small>
+            </div>
+
+
+            <div class="tech-summary-stat">
+                <span class="tech-summary-stat-label">
+                    Sedang Dikerjakan
+                </span>
+
+                <strong class="tech-summary-stat-value">
+                    <%= technicianSummary.diproses %>
+                </strong>
+
+                <small class="tech-summary-stat-note">
+                    Status Diproses
+                </small>
+            </div>
+
+
+            <div class="tech-summary-stat">
+                <span class="tech-summary-stat-label">Selesai</span>
+
+                <strong class="tech-summary-stat-value">
+                    <%= technicianSummary.selesai %>
+                </strong>
+
+                <small class="tech-summary-stat-note">
+                    Status Selesai
+                </small>
             </div>
 
         </div>
 
-
-        <!-- KPI -->
-
-        <div class="dashboard-kpi">
-
-            <div class="kpi-card">
-
-                <span class="kpi-icon">
-                    📋
-                </span>
-
-                <div>
-
-                    <span class="kpi-label">
-                        Ditugaskan
-                    </span>
-
-                    <strong>
-                        <%= technicianSummary.ditugaskan %>
-                    </strong>
-
-                </div>
-
-            </div>
+    </section>
 
 
-            <div class="kpi-card">
+    <section class="tech-feed-card">
 
-                <span class="kpi-icon">
-                    🔵
-                </span>
+        <div class="tech-feed-head">
 
-                <div>
+            <h2>Work Order Terbaru</h2>
 
-                    <span class="kpi-label">
-                        Diproses
-                    </span>
-
-                    <strong>
-                        <%= technicianSummary.diproses %>
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="kpi-card">
-
-                <span class="kpi-icon">
-                    🟢
-                </span>
-
-                <div>
-
-                    <span class="kpi-label">
-                        Selesai
-                    </span>
-
-                    <strong>
-                        <%= technicianSummary.selesai %>
-                    </strong>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Ringkasan Work Order -->
-
-        <div class="technician-summary-card">
-
-            <div class="technician-summary-content">
-
-                <div class="technician-summary-icon">
-                    📋
-                </div>
-
-                <div>
-
-                    <h2>
-                        Ringkasan Work Order Saya
-                    </h2>
-
-                    <p>
-                        Lihat dan kerjakan Work Order yang menjadi
-                        tanggung jawab Anda.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <a
-                href="/workorder"
-                class="btn-view-workorders"
-            >
-                Lihat Semua Work Order
-                <span>→</span>
+            <a href="/workorder">
+                Lihat Semua →
             </a>
 
         </div>
 
-    </div>
 
-    <div class="technician-feed">
+        <div class="tech-feed-list">
 
-        <% if (technicianFeed.length === 0) { %>
+            <% if (
+                technicianFeed.length === 0
+            ) { %>
 
-            <div class="technician-feed-empty">
-                Belum ada Work Order.
-            </div>
-
-        <% } else { %>
-
-            <% technicianFeed.forEach(wo => { %>
-
-                <div class="technician-feed-item">
-
-                    <div class="technician-feed-main">
-
-                        <strong>
-                            <%= wo.nomor %>
-                        </strong>
-
-                        <h3>
-                            <%= wo.judul %>
-                        </h3>
-
-                        <span>
-                            <%= wo.kategori %>
-                            <% if (wo.subkategori) { %>
-                                • <%= wo.subkategori %>
-                            <% } %>
-                        </span>
-
-                    </div>
-
-
-                    <div class="technician-feed-meta">
-
-                        <span class="wo-status status-<%= wo.status.toLowerCase() %>">
-                            <%= wo.status %>
-                        </span>
-
-                        <small>
-                            <%= wo.update %>
-                        </small>
-
-                    </div>
-
+                <div class="tech-empty">
+                    Belum ada Work Order yang menjadi tanggung jawab Anda.
                 </div>
 
-            <% }); %>
+            <% } else { %>
 
-        <% } %>
+                <% technicianFeed.forEach(wo => { %>
 
-    </div>
+                    <article class="tech-feed-row">
 
+                        <div class="tech-feed-icon">
 
-        <% if (pagination.totalPages > 1) { %>
+                            <%
+                                const techIcon =
+                                    wo.kategori === "Incident"
+                                        ? "⚠️"
+                                        : wo.kategori === "Service Request"
+                                            ? "🔧"
+                                            : "🛠️";
+                            %>
 
-            <div class="pagination">
+                            <%= techIcon %>
 
-                <% if (pagination.page > 1) { %>
-
-                    <a
-                        href="/dashboard?page=<%= pagination.page - 1 %>"
-                        class="pagination-arrow"
-                    >
-                        ←
-                    </a>
-
-                <% } %>
-
-
-                <% for (
-                    let i = 1;
-                    i <= pagination.totalPages;
-                    i++
-                ) { %>
-
-                    <a
-                        href="/dashboard?page=<%= i %>"
-                        class="<%= pagination.page === i
-                            ? 'active'
-                            : '' %>"
-                    >
-                        <%= i %>
-                    </a>
-
-                <% } %>
+                        </div>
 
 
-                <% if (
-                    pagination.page < pagination.totalPages
-                ) { %>
+                        <div class="tech-feed-main">
 
-                    <a
-                        href="/dashboard?page=<%= pagination.page + 1 %>"
-                        class="pagination-arrow"
-                    >
-                        →
-                    </a>
+                            <span class="tech-feed-number">
+                                <%= wo.nomor %>
+                            </span>
 
-                <% } %>
+                            <strong class="tech-feed-title">
+                                <%= wo.judul %>
+                            </strong>
 
-            </div>
+                            <span class="tech-feed-meta">
+                                <%= wo.kategori %>
 
-        <% } %>
+                                <% if (wo.subkategori) { %>
+                                    • <%= wo.subkategori %>
+                                <% } %>
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <span
+                                class="tech-status status-<%= String(wo.status || '').toLowerCase() %>"
+                            >
+                                <%= wo.status %>
+                            </span>
+
+                        </div>
+
+
+                        <div class="tech-feed-arrow">
+                            →
+                        </div>
+
+                    </article>
+
+                <% }); %>
+
+            <% } %>
+
+        </div>
+
+    </section>
+
+
+        <%- include("../components/pagination", {
+            pagination: pagination,
+            baseUrl: "/dashboard"
+        }) %>
+
+</div>
+
+
+
+
 
 <% } %>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script src="/js/tooltip.js"></script>
 
 <script>
 const chartBars = document.querySelectorAll(".chart-bar");
@@ -1123,93 +1306,1631 @@ chartBars.forEach(bar => {
 
 });
 
+/* ==========================================
+   TREND WORK ORDER
+   SVG COMPARISON — FINAL
+   CURRENT  : 19–25
+   PREVIOUS : 12–18
 
-const categoryBars =
-    document.querySelectorAll(".category-bar");
+   KOORDINAT FINAL:
+   Grid browser menjadi sumber koordinat.
+   Tidak lagi menggunakan paddingY tebakan.
+   ========================================== */
 
-const subcategoryChart =
-    document.getElementById("subcategoryChart");
+const trendCurve =
+    document.querySelector(
+        ".chart-curve-layer"
+    );
 
-const subcategoryBars =
-    document.getElementById("subcategoryBars");
+if (trendCurve) {
 
-const subcategoryTitle =
-    document.getElementById("subcategoryTitle");
+    const svgWidth = 1000;
+    const svgHeight = 220;
+    const maxTrend = 40;
 
-const subcategoryBack =
-    document.getElementById("subcategoryBack");
+    /*
+     * Data 7 hari sebelumnya
+     * 12 → 18
+     */
+    const trendData = [
+        <% lastWeekTrend.forEach((item, index) => { %>
+            {
+                label:
+                    "<%= item.label %>",
+                total:
+                    <%= item.total %>
+            }
+            <% if (
+                index < lastWeekTrend.length - 1
+            ) { %>
+                ,
+            <% } %>
+        <% }); %>
+    ];
+
+    /*
+     * BAR periode saat ini.
+     * X curve mengikuti posisi BAR aktual.
+     */
+    const chartBars =
+        Array.from(
+            document.querySelectorAll(
+                ".chart-bars .chart-bar"
+            )
+        );
+
+    /*
+     * GRID AKTUAL BROWSER
+     *
+     * 40 dan 0 menjadi anchor utama.
+     * Dengan begitu SVG tidak perlu menebak
+     * padding atau tinggi area chart.
+     */
+    const grid40 =
+        document.querySelector(
+            ".trend-grid-40"
+        );
+
+    const grid0 =
+        document.querySelector(
+            ".trend-grid-0"
+        );
+
+    /*
+     * ======================================
+     * SINKRONISASI BAR DENGAN GRID AKTUAL
+     * ======================================
+     *
+     * Tinggi .chart-bars tidak selalu sama dengan
+     * jarak visual Grid 0 → Grid 40. Karena itu
+     * persentase tinggi bar saja tidak cukup untuk
+     * menjamin puncak bar tepat berada pada garis nilai.
+     *
+     * Kita gunakan jarak Grid aktual browser sebagai
+     * satu-satunya referensi tinggi plot.
+     */
+    function syncTrendBars() {
+
+        if (
+            !grid40 ||
+            !grid0
+        ) {
+            return;
+        }
+
+        const grid40Rect =
+            grid40.getBoundingClientRect();
+
+        const grid0Rect =
+            grid0.getBoundingClientRect();
+
+        const screenY40 =
+            grid40Rect.top +
+            grid40Rect.height / 2;
+
+        const screenY0 =
+            grid0Rect.top +
+            grid0Rect.height / 2;
+
+        const plotHeight =
+            screenY0 - screenY40;
+
+        if (
+            !Number.isFinite(plotHeight) ||
+            plotHeight <= 0
+        ) {
+            return;
+        }
+
+        chartBars.forEach(bar => {
+
+            const total =
+                Number(
+                    bar.dataset.total || 0
+                );
+
+            const safeTotal =
+                Math.max(
+                    0,
+                    Math.min(
+                        maxTrend,
+                        total
+                    )
+                );
+
+            const height =
+                (
+                    safeTotal /
+                    maxTrend
+                ) * plotHeight;
+
+            bar.style.height =
+                `${height}px`;
+        });
+    }
 
 
-categoryBars.forEach(bar => {
+    function renderTrendCurve() {
 
-    bar.addEventListener("click", () => {
+        if (
+            !grid40 ||
+            !grid0 ||
+            !trendCurve
+        ) {
+            return;
+        }
 
-        const kategori =
-            bar.dataset.kategori;
+        /*
+         * Bar dan curve memakai sistem koordinat
+         * vertikal yang sama.
+         */
+        syncTrendBars();
 
-        const subkategori =
-            JSON.parse(bar.dataset.subkategori);
+        /*
+         * Bersihkan hasil render sebelumnya.
+         * Penting ketika resize terjadi.
+         */
+        while (
+            trendCurve.firstChild
+        ) {
+            trendCurve.removeChild(
+                trendCurve.firstChild
+            );
+        }
 
-        subcategoryTitle.textContent =
-            `📂 ${kategori}`;
+        const svgRect =
+            trendCurve.getBoundingClientRect();
 
-        subcategoryBars.innerHTML = "";
+        const grid40Rect =
+            grid40.getBoundingClientRect();
 
-        const values =
-            Object.entries(subkategori);
+        const grid0Rect =
+            grid0.getBoundingClientRect();
 
-        const max =
-            Math.max(
-                ...values.map(item => item[1]),
-                1
+        /*
+         * Titik tengah garis grid.
+         * Ini adalah posisi FAKTUAL yang terlihat
+         * di browser, bukan hasil asumsi CSS.
+         */
+        const screenY40 =
+            grid40Rect.top +
+            grid40Rect.height / 2;
+
+        const screenY0 =
+            grid0Rect.top +
+            grid0Rect.height / 2;
+
+        const gridDistance =
+            screenY0 - screenY40;
+
+        if (
+            !Number.isFinite(gridDistance) ||
+            gridDistance <= 0 ||
+            svgRect.width <= 0 ||
+            svgRect.height <= 0
+        ) {
+            return;
+        }
+
+        /*
+         * Konversi posisi layar → koordinat SVG.
+         */
+        function screenToSvgY(
+            screenY
+        ) {
+            const relativeY =
+                screenY - svgRect.top;
+
+            return (
+                relativeY /
+                svgRect.height
+            ) * svgHeight;
+        }
+
+        /*
+         * Nilai data → posisi layar.
+         *
+         * 40 = posisi grid 40
+         * 0  = posisi grid 0
+         */
+        function valueToScreenY(
+            value
+        ) {
+            const safeValue =
+                Math.max(
+                    0,
+                    Math.min(
+                        maxTrend,
+                        Number(value) || 0
+                    )
+                );
+
+            return (
+                screenY0 -
+                (
+                    safeValue /
+                    maxTrend
+                ) *
+                gridDistance
+            );
+        }
+
+        /*
+         * Buat titik curve.
+         * X mengikuti tengah BAR periode saat ini.
+         * Y mengikuti GRID aktual browser.
+         */
+        const points =
+            trendData
+                .map(
+                    (item, index) => {
+
+                        const bar =
+                            chartBars[index];
+
+                        if (!bar) {
+                            return null;
+                        }
+
+                        const barRect =
+                            bar.getBoundingClientRect();
+
+                        const barCenterX =
+                            barRect.left +
+                            barRect.width / 2;
+
+                        const relativeX =
+                            barCenterX -
+                            svgRect.left;
+
+                        const x =
+                            (
+                                relativeX /
+                                svgRect.width
+                            ) *
+                            svgWidth;
+
+                        const screenY =
+                            valueToScreenY(
+                                item.total
+                            );
+
+                        const y =
+                            screenToSvgY(
+                                screenY
+                            );
+
+                        return {
+                            x,
+                            y,
+                            label:
+                                item.label,
+                            total:
+                                item.total
+                        };
+                    }
+                )
+                .filter(Boolean);
+
+        if (
+            points.length === 0
+        ) {
+            return;
+        }
+
+        /*
+         * ======================================
+         * BUAT CURVE BEZIER
+         * ======================================
+         */
+        let curvePath =
+            `M ${points[0].x} ${points[0].y}`;
+
+        for (
+            let i = 1;
+            i < points.length;
+            i++
+        ) {
+
+            const previous =
+                points[i - 1];
+
+            const current =
+                points[i];
+
+            const distance =
+                current.x -
+                previous.x;
+
+            const controlPoint1X =
+                previous.x +
+                distance * 0.45;
+
+            const controlPoint2X =
+                current.x -
+                distance * 0.45;
+
+            curvePath +=
+                ` C ` +
+                `${controlPoint1X} ${previous.y}, ` +
+                `${controlPoint2X} ${current.y}, ` +
+                `${current.x} ${current.y}`;
+        }
+
+        /*
+         * ======================================
+         * GRADIENT
+         * ======================================
+         */
+        const defs =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "defs"
             );
 
-        values.forEach(([nama, total]) => {
+        const gradient =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "linearGradient"
+            );
+
+        gradient.setAttribute(
+            "id",
+            "trendCurveGradient"
+        );
+
+        gradient.setAttribute(
+            "x1",
+            "0%"
+        );
+
+        gradient.setAttribute(
+            "y1",
+            "0%"
+        );
+
+        gradient.setAttribute(
+            "x2",
+            "0%"
+        );
+
+        gradient.setAttribute(
+            "y2",
+            "100%"
+        );
+
+        const stopTop =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "stop"
+            );
+
+        stopTop.setAttribute(
+            "offset",
+            "0%"
+        );
+
+        stopTop.setAttribute(
+            "stop-color",
+            "#2563eb"
+        );
+
+        stopTop.setAttribute(
+            "stop-opacity",
+            "0.065"
+        );
+
+        const stopBottom =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "stop"
+            );
+
+        stopBottom.setAttribute(
+            "offset",
+            "100%"
+        );
+
+        stopBottom.setAttribute(
+            "stop-color",
+            "#2563eb"
+        );
+
+        stopBottom.setAttribute(
+            "stop-opacity",
+            "0.003"
+        );
+
+        gradient.appendChild(
+            stopTop
+        );
+
+        gradient.appendChild(
+            stopBottom
+        );
+
+        defs.appendChild(
+            gradient
+        );
+
+        trendCurve.appendChild(
+            defs
+        );
+
+        /*
+         * ======================================
+         * AREA
+         * Baseline juga mengikuti grid 0 aktual.
+         * ======================================
+         */
+        const baseline =
+            screenToSvgY(
+                screenY0
+            );
+
+        const areaPath =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "path"
+            );
+
+        const areaPathData =
+            curvePath +
+            ` L ${points[points.length - 1].x} ${baseline}` +
+            ` L ${points[0].x} ${baseline}` +
+            ` Z`;
+
+        areaPath.setAttribute(
+            "d",
+            areaPathData
+        );
+
+        areaPath.setAttribute(
+            "fill",
+            "url(#trendCurveGradient)"
+        );
+
+        areaPath.setAttribute(
+            "stroke",
+            "none"
+        );
+
+        trendCurve.appendChild(
+            areaPath
+        );
+
+        /*
+         * ======================================
+         * GARIS CURVE
+         * ======================================
+         */
+        const path =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "path"
+            );
+
+        path.setAttribute(
+            "d",
+            curvePath
+        );
+
+        path.setAttribute(
+            "fill",
+            "none"
+        );
+
+        path.setAttribute(
+            "stroke",
+            "#2563eb"
+        );
+
+        path.setAttribute(
+            "stroke-width",
+            "1.8"
+        );
+
+        path.setAttribute(
+            "stroke-linecap",
+            "round"
+        );
+
+        path.setAttribute(
+            "stroke-linejoin",
+            "round"
+        );
+
+        /*
+         * Curve adalah periode pembanding,
+         * sehingga dibuat lebih samar.
+         */
+        path.setAttribute(
+            "opacity",
+            "0.35"
+        );
+
+        trendCurve.appendChild(
+            path
+        );
+    }
+
+    /*
+     * Render setelah layout browser selesai.
+     */
+    requestAnimationFrame(
+        renderTrendCurve
+    );
+
+    /*
+     * Responsive:
+     * chart dihitung ulang ketika ukuran
+     * container berubah.
+     */
+    if (
+        typeof ResizeObserver !==
+        "undefined"
+    ) {
+        const trendResizeObserver =
+            new ResizeObserver(() => {
+                requestAnimationFrame(
+                    renderTrendCurve
+                );
+            });
+
+        trendResizeObserver.observe(
+            trendCurve
+        );
+    } else {
+        window.addEventListener(
+            "resize",
+            () => {
+                requestAnimationFrame(
+                    renderTrendCurve
+                );
+            }
+        );
+    }
+}
+
+/* ==========================================
+   TREND KATEGORI
+   DONUT + BAR CHART
+   ========================================== */
+
+const categoryDonut =
+    document.getElementById(
+        "categoryDonut"
+    );
+
+const categoryLegendItems =
+    document.querySelectorAll(
+        ".category-legend-item"
+    );
+
+const categoryBarsFinal =
+    document.querySelectorAll(
+        ".category-final-item"
+    );
+
+
+/* ==========================================
+   DATA KATEGORI
+   ========================================== */
+
+const categoryColors = [
+    "#2563eb",
+    "#10b981",
+    "#7c3aed",
+    "#f59e0b",
+    "#ef4444",
+    "#06b6d4"
+];
+
+
+const categories =
+    Array.from(
+        categoryLegendItems
+    ).map(
+        (item, index) => {           
+
+            const value =
+                item
+                    .closest(".category-dashboard-panel")
+                    ?.querySelector(
+                        `.category-final-item[data-kategori="${CSS.escape(item.dataset.kategori)}"]`
+                    );
+
+            const total =
+                Number(
+                    value
+                        ?.querySelector(
+                            ".category-final-bar strong"
+                        )
+                        ?.textContent
+                        .trim() || 0
+                );
+
+
+            return {
+
+                kategori:
+                    item.dataset.kategori,
+
+                total,
+
+                subkategori:
+                    JSON.parse(
+                        item.dataset.subkategori ||
+                        "{}"
+                    ),
+
+                color:
+                    categoryColors[
+                        index %
+                        categoryColors.length
+                    ]
+
+            };
+
+        }
+    );
+
+/* ==========================================
+   HITUNG TOTAL KATEGORI
+   ========================================== */
+
+const categoryTotal =
+    categories.reduce(
+        (sum, item) =>
+            sum + item.total,
+        0
+    );
+
+
+/* ==========================================
+   HITUNG PERSENTASE
+   ========================================== */
+
+categories.forEach(
+    item => {
+
+        item.percentage =
+            categoryTotal > 0
+                ? (
+                    item.total /
+                    categoryTotal
+                ) * 100
+                : 0;
+
+    }
+);
+
+
+/* ==========================================
+   DEBUG SEMENTARA
+   ========================================== */
+
+console.table(
+    categories.map(
+        item => ({
+
+            Kategori:
+                item.kategori,
+
+            Jumlah:
+                item.total,
+
+            Persentase:
+                `${item.percentage.toFixed(2)}%`
+
+        })
+    )
+);
+
+
+/* ==========================================
+   DONUT
+   ========================================== */
+
+if (
+    categoryDonut &&
+    categories.length
+) {
+
+    const total =
+        categories.reduce(
+            (sum, item) =>
+                sum + item.total,
+            0
+        );
+
+
+    let current =
+        0;
+
+
+    const segments =
+        categories.map(
+            item => {
+
+                const percentage =
+                    total > 0
+                        ? (
+                            item.total /
+                            total
+                        ) * 100
+                        : 0;
+
+
+                const start =
+                    current;
+
+
+                current +=
+                    percentage;
+
+
+                return {
+
+                    ...item,
+
+                    start,
+
+                    end:
+                        current,
+
+                    percentage
+
+                };
+
+            }
+        );
+
+
+    const gradient =
+        segments
+            .map(
+                segment =>
+                    `${segment.color} ` +
+                    `${segment.start}% ` +
+                    `${segment.end}%`
+            )
+            .join(", ");
+
+
+    categoryDonut.style.background =
+        `conic-gradient(${gradient})`;
+
+    /* ==========================================
+        LABEL PERSENTASE PADA DONUT
+        ========================================== */
+
+        categoryDonut
+            .querySelectorAll(".donut-percentage")
+            .forEach(
+                label => label.remove()
+            );
+
+
+        segments.forEach(
+            segment => {
+
+                const label =
+                    document.createElement(
+                        "span"
+                    );
+
+                label.className =
+                    "donut-percentage";
+
+
+                label.textContent =
+                    `${segment.percentage.toFixed(1)}%`;
+
+
+                /*
+                * Titik tengah slice.
+                */
+                const middle =
+                    (
+                        segment.start +
+                        segment.end
+                    ) / 2;
+
+
+                /*
+                * Ubah persentase menjadi sudut.
+                *
+                * -90° membuat titik awal
+                * berada di posisi atas.
+                */
+                const angle =
+                    (
+                        middle / 100
+                    ) * 360 - 90;
+
+
+                /*
+                * Slice kecil diberi jarak
+                * sedikit keluar agar teks
+                * tidak bertumpuk.
+                */
+                const isSmall =
+                    segment.percentage < 5;
+
+
+                const radius =
+                    isSmall
+                        ? 67
+                        : 43;
+
+
+                const radians =
+                    angle *
+                    Math.PI /
+                    180;
+
+
+                const x =
+                    Math.cos(radians) *
+                    radius;
+
+
+                const y =
+                    Math.sin(radians) *
+                    radius;
+
+
+                label.style.left =
+                    `calc(50% + ${x}px)`;
+
+
+                label.style.top =
+                    `calc(50% + ${y}px)`;
+
+
+                label.classList.toggle(
+                    "small",
+                    isSmall
+                );
+
+
+                categoryDonut.appendChild(
+                    label
+                );
+
+            }
+        );
+
+
+    /*
+     * Klik donut.
+     */
+    categoryDonut.addEventListener(
+        "click",
+        event => {
+
+            const rect =
+                categoryDonut
+                    .getBoundingClientRect();
+
+
+            const centerX =
+                rect.left +
+                rect.width / 2;
+
+
+            const centerY =
+                rect.top +
+                rect.height / 2;
+
+
+            const x =
+                event.clientX -
+                centerX;
+
+
+            const y =
+                event.clientY -
+                centerY;
+
+
+            const distance =
+                Math.sqrt(
+                    x * x +
+                    y * y
+                );
+
+
+            /*
+             * Klik bagian tengah
+             * tidak melakukan apa-apa.
+             */
+            if (
+                distance <
+                rect.width * 0.29
+            ) {
+
+                return;
+
+            }
+
+
+            let angle =
+                Math.atan2(
+                    y,
+                    x
+                ) *
+                180 /
+                Math.PI;
+
+
+            angle += 90;
+
+
+            if (
+                angle < 0
+            ) {
+
+                angle += 360;
+
+            }
+
+
+            const percent =
+                angle / 360 * 100;
+
+
+            const selected =
+                segments.find(
+                    segment =>
+                        percent >=
+                            segment.start &&
+                        percent <
+                            segment.end
+                );
+
+
+            if (
+                selected
+            ) {
+
+                showCategorySubcategory(
+                    selected
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   LEGEND
+   ========================================== */
+
+categoryLegendItems.forEach(
+    (item, index) => {
+
+        const color =
+            categoryColors[
+                index %
+                categoryColors.length
+            ];
+
+
+        const dot =
+            item.querySelector(
+                ".category-legend-dot"
+            );
+
+
+        if (dot) {
+
+            dot.style.background =
+                color;
+
+        }
+
+
+        item.addEventListener(
+            "click",
+            () => {
+
+                showCategorySubcategory(
+                    categories[index]
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* ==========================================
+   BAR CLICK
+   ========================================== */
+
+categoryBarsFinal.forEach(
+    bar => {
+
+        bar.addEventListener(
+            "click",
+            () => {
+
+                const kategori =
+                    bar.dataset.kategori;
+
+
+                const selected =
+                    categories.find(
+                        item =>
+                            item.kategori ===
+                            kategori
+                    );
+
+
+                if (
+                    selected
+                ) {
+
+                    showCategorySubcategory(
+                        selected
+                    );
+
+                }
+
+            }
+        );
+
+    }
+);
+
+/* ==========================================
+   SUBKATEGORI
+   DONUT + HORIZONTAL BAR + HIGHLIGHT
+   ========================================== */
+
+function showCategorySubcategory(
+    category
+) {
+
+    if (
+        !subcategoryChart ||
+        !subcategoryBars ||
+        !subcategoryTitle
+    ) {
+        return;
+    }
+
+
+    /* ======================================
+       AMBIL DATA
+       ====================================== */
+
+    const values =
+        Object.entries(
+            category.subkategori || {}
+        );
+
+
+    /* ======================================
+       HITUNG TOTAL
+       ====================================== */
+
+    const subcategoryTotal =
+        values.reduce(
+            (sum, item) =>
+                sum + Number(item[1] || 0),
+            0
+        );
+
+
+    /* ======================================
+       HITUNG PERSENTASE
+       ====================================== */
+
+    const subcategories =
+        values.map(
+            ([nama, jumlah]) => {
+
+                const total =
+                    Number(jumlah || 0);
+
+
+                const percentage =
+                    subcategoryTotal > 0
+                        ? (
+                            total /
+                            subcategoryTotal
+                        ) * 100
+                        : 0;
+
+
+                return {
+
+                    nama,
+
+                    total,
+
+                    percentage
+
+                };
+
+            }
+        );
+
+
+    /* ======================================
+       URUTKAN TERBESAR → TERKECIL
+       ====================================== */
+
+    subcategories.sort(
+        (a, b) =>
+            b.total - a.total
+    );
+
+
+    /* ======================================
+       DEBUG
+       ====================================== */
+
+    console.group(
+        `📊 SUBKATEGORI: ${category.kategori}`
+    );
+
+
+    console.table(
+        subcategories.map(
+            item => ({
+
+                "Sub Kategori":
+                    item.nama,
+
+                "Jumlah":
+                    item.total,
+
+                "Persentase":
+                    `${item.percentage.toFixed(2)}%`
+
+            })
+        )
+    );
+
+    console.groupEnd();
+
+
+    /* ======================================
+       JUDUL
+       ====================================== */
+
+    subcategoryTitle.textContent =
+        `📊 Subkategori — ${category.kategori}`;
+
+
+    /* ======================================
+       TOTAL DONUT
+       ====================================== */
+
+    const subcategoryTotalElement =
+        document.getElementById(
+            "subcategoryTotal"
+        );
+
+
+    if (
+        subcategoryTotalElement
+    ) {
+
+        subcategoryTotalElement.textContent =
+            subcategoryTotal;
+
+    }
+
+
+    /* ======================================
+       WARNA
+       ====================================== */
+
+    const subcategoryColors = [
+        "#2563eb",
+        "#10b981",
+        "#7c3aed",
+        "#f59e0b",
+        "#ef4444",
+        "#06b6d4",
+        "#ec4899",
+        "#64748b"
+    ];
+
+
+    /* ======================================
+       DONUT
+       ====================================== */
+
+    const subcategoryDonut =
+        document.getElementById(
+            "subcategoryDonut"
+        );
+
+
+    if (
+        subcategoryDonut &&
+        subcategories.length
+    ) {
+
+        /*
+         * Hapus label persentase lama.
+         */
+
+        subcategoryDonut
+            .querySelectorAll(
+                ".subcategory-donut-percentage"
+            )
+            .forEach(
+                label =>
+                    label.remove()
+            );
+
+
+        let current =
+            0;
+
+
+        const segments =
+            subcategories.map(
+                (item, index) => {
+
+                    const start =
+                        current;
+
+
+                    current +=
+                        item.percentage;
+
+
+                    return {
+
+                        ...item,
+
+                        start,
+
+                        end:
+                            current,
+
+                        color:
+                            subcategoryColors[
+                                index %
+                                subcategoryColors.length
+                            ]
+
+                    };
+
+                }
+            );
+
+
+        /*
+         * Buat conic-gradient.
+         */
+
+        const gradient =
+            segments
+                .map(
+                    segment =>
+                        `${segment.color} ` +
+                        `${segment.start}% ` +
+                        `${segment.end}%`
+                )
+                .join(", ");
+
+
+        subcategoryDonut.style.background =
+            `conic-gradient(${gradient})`;
+
+
+        /* ==================================
+           LABEL PERSENTASE DONUT
+           ================================== */
+
+        segments.forEach(
+            segment => {
+
+                const label =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                label.className =
+                    "subcategory-donut-percentage";
+
+
+                label.textContent =
+                    `${segment.percentage.toFixed(1)}%`;
+
+
+                const middle =
+                    (
+                        segment.start +
+                        segment.end
+                    ) / 2;
+
+
+                const angle =
+                    (
+                        middle / 100
+                    ) * 360 - 90;
+
+
+                /*
+                 * Slice kecil sedikit keluar.
+                 */
+
+                const isSmall =
+                    segment.percentage < 5;
+
+
+                const radius =
+                    isSmall
+                        ? 60
+                        : 38;
+
+
+                const radians =
+                    angle *
+                    Math.PI /
+                    180;
+
+
+                const x =
+                    Math.cos(radians) *
+                    radius;
+
+
+                const y =
+                    Math.sin(radians) *
+                    radius;
+
+
+                label.style.left =
+                    `calc(50% + ${x}px)`;
+
+
+                label.style.top =
+                    `calc(50% + ${y}px)`;
+
+
+                label.classList.toggle(
+                    "small",
+                    isSmall
+                );
+
+
+                subcategoryDonut.appendChild(
+                    label
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ======================================
+       RENDER BAR HORIZONTAL
+       ====================================== */
+
+    subcategoryBars.innerHTML =
+        "";
+
+
+    const max =
+        Math.max(
+            ...subcategories.map(
+                item => item.total
+            ),
+            1
+        );
+
+
+    subcategories.forEach(
+        (item, index) => {
 
             const wrapper =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
+
 
             wrapper.className =
                 "subcategory-bar-wrapper";
 
-            const barElement =
-                document.createElement("div");
+            wrapper.style.setProperty(
+                "--subcategory-color",
+                subcategoryColors[
+                    index %
+                    subcategoryColors.length
+                ]
+            );
 
-            barElement.className =
-                "subcategory-bar";
 
-            barElement.style.height =
-                `${Math.max(
-                    (total / max) * 100,
-                    8
-                )}%`;
+            /*
+             * Persentase untuk CSS
+             * pseudo-element.
+             */
 
-            barElement.innerHTML =
-                `<strong>${total}</strong>`;
+            wrapper.dataset.percentage =
+                `${item.percentage.toFixed(1)}%`;
+
+
+            /* ==============================
+               LABEL
+               ============================== */
 
             const label =
-                document.createElement("span");
+                document.createElement(
+                    "span"
+                );
 
-            label.textContent = nama;
 
-            wrapper.appendChild(barElement);
-            wrapper.appendChild(label);
+            label.textContent =
+                item.nama;
 
-            subcategoryBars.appendChild(wrapper);
 
-        });
+            /* ==============================
+               BAR
+               ============================== */
 
-        subcategoryChart.style.display =
-            "block";
+            const bar =
+                document.createElement(
+                    "div"
+                );
 
-        subcategoryChart.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest"
-        });
 
+            bar.className =
+                "subcategory-bar";
+
+
+            /*
+             * Bar horizontal menggunakan
+             * proporsi terhadap subkategori
+             * terbesar.
+             */
+
+            const progress =
+                max > 0
+                    ? (
+                        item.total /
+                        max
+                    ) * 100
+                    : 0;
+
+
+            bar.style.setProperty(
+                "--subcategory-progress",
+                `${progress}%`
+            );
+
+
+            /*
+             * Tetap masukkan jumlah.
+             */
+
+            bar.innerHTML =
+                `<strong>${item.total}</strong>`;
+
+
+            /*
+             * Warna bar mengikuti urutan.
+             */
+
+            bar.style.setProperty(
+                "--subcategory-color",
+                subcategoryColors[
+                    index %
+                    subcategoryColors.length
+                ]
+            );
+
+
+            wrapper.appendChild(
+                label
+            );
+
+
+            wrapper.appendChild(
+                bar
+            );
+
+
+            subcategoryBars.appendChild(
+                wrapper
+            );
+
+        }
+    );
+
+
+    /* ======================================
+       SUBKATEGORI TERBANYAK
+       ====================================== */
+
+    const topCategory =
+        subcategories[0];
+
+
+    const topName =
+        document.getElementById(
+            "subcategoryTopName"
+        );
+
+
+    const topTotal =
+        document.getElementById(
+            "subcategoryTopTotal"
+        );
+
+
+    const topPercentage =
+        document.getElementById(
+            "subcategoryTopPercentage"
+        );
+
+
+    if (
+        topCategory
+    ) {
+
+        if (
+            topName
+        ) {
+
+            topName.textContent =
+                topCategory.nama;
+
+        }
+
+
+        if (
+            topTotal
+        ) {
+
+            topTotal.textContent =
+                topCategory.total;
+
+        }
+
+
+        if (
+            topPercentage
+        ) {
+
+            topPercentage.textContent =
+                `${topCategory.percentage.toFixed(1)}%`;
+
+        }
+
+    }
+
+
+    /* ======================================
+       TAMPILKAN PANEL
+       ====================================== */
+
+    subcategoryChart.style.display =
+        "block";
+
+
+    subcategoryChart.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
     });
 
-});
+}
 
 
 if (subcategoryBack) {
@@ -1226,5 +2947,293 @@ if (subcategoryBack) {
 
 }
 
+/* ==========================================
+   KPI COMPARISON + SPARKLINE
+   ========================================== */
 
+const kpiComparison =
+    <%- JSON.stringify(
+        typeof kpiComparison !== "undefined"
+            ? kpiComparison
+            : {}
+    ) %>;
+
+
+function renderKpiSparkline(svg, trend) {
+
+    if (
+        !svg ||
+        !Array.isArray(trend) ||
+        trend.length === 0
+    ) {
+        return;
+    }
+
+
+    const width = 120;
+    const height = 42;
+
+    const paddingX = 0;
+    const paddingY = 0;
+
+
+    const values =
+        trend.map(
+            item => Number(item.total || 0)
+        );
+
+
+    const max =
+        Math.max(
+            ...values,
+            1
+        );
+
+
+    const points =
+        values.map(
+            (value, index) => {
+
+                const x =
+                    paddingX +
+                    (
+                        index /
+                        Math.max(
+                            values.length - 1,
+                            1
+                        )
+                    ) *
+                    (
+                        width -
+                        paddingX * 2
+                    );
+
+
+                const y =
+                    height -
+                    paddingY -
+                    (
+                        value / max
+                    ) *
+                    (
+                        height -
+                        paddingY * 2
+                    );
+
+
+                return {
+                    x,
+                    y
+                };
+
+            }
+        );
+
+
+    let pathData = "";
+
+
+    points.forEach(
+        (point, index) => {
+
+            if (index === 0) {
+
+                pathData =
+                    `M ${point.x} ${point.y}`;
+
+                return;
+
+            }
+
+
+            const previous =
+                points[index - 1];
+
+
+            const distance =
+                point.x -
+                previous.x;
+
+
+            const cp1x =
+                previous.x +
+                distance * 0.45;
+
+
+            const cp2x =
+                point.x -
+                distance * 0.45;
+
+
+            pathData +=
+                ` C ` +
+                `${cp1x} ${previous.y}, ` +
+                `${cp2x} ${point.y}, ` +
+                `${point.x} ${point.y}`;
+
+        }
+    );
+
+
+    const baseline =
+        height -
+        paddingY;
+
+
+    const areaPath =
+        pathData +
+        ` L ${points[points.length - 1].x} ${baseline}` +
+        ` L ${points[0].x} ${baseline}` +
+        ` Z`;
+
+
+    svg.innerHTML = `
+
+        <path
+            class="spark-area"
+            d="${areaPath}"
+        ></path>
+
+        <path
+            d="${pathData}"
+        ></path>
+
+    `;
+
+}
+
+
+function renderKpiComparison(
+    card,
+    data
+) {
+
+    if (!card || !data) {
+        return;
+    }
+
+
+    const changeElement =
+        card.querySelector(
+            ".kpi-change"
+        );
+
+
+    if (!changeElement) {
+        return;
+    }
+
+
+    const change =
+        data.change;
+
+
+    if (
+        change === null ||
+        change === undefined
+    ) {
+
+        changeElement.textContent =
+            "Baru";
+
+        changeElement.className =
+            "kpi-change new";
+
+        return;
+
+    }
+
+
+    const rounded =
+        Math.abs(change).toFixed(1);
+
+
+    if (change > 0) {
+
+        changeElement.textContent =
+            `↑ ${rounded}%`;
+
+        changeElement.className =
+            "kpi-change up";
+
+        return;
+
+    }
+
+
+    if (change < 0) {
+
+        changeElement.textContent =
+            `↓ ${rounded}%`;
+
+        changeElement.className =
+            "kpi-change down";
+
+        return;
+
+    }
+
+
+    changeElement.textContent =
+        "0%";
+
+    changeElement.className =
+        "kpi-change same";
+
+}
+
+
+document
+    .querySelectorAll(
+        ".kpi-enhanced"
+    )
+    .forEach(
+        card => {
+
+            const key =
+                card.dataset.kpi;
+
+
+            const data =
+                kpiComparison[key];
+
+
+            if (!data) {
+                return;
+            }
+
+
+            /* ==============================
+               PERSENTASE PERBANDINGAN
+               ============================== */
+
+            renderKpiComparison(
+                card,
+                data
+            );
+
+
+            /* ==============================
+               SPARKLINE 7 HARI TERAKHIR
+               ============================== */
+
+            const svg =
+                card.querySelector(
+                    ".kpi-sparkline"
+                );
+
+
+            renderKpiSparkline(
+                svg,
+                data.trend
+            );
+
+        }
+    );
+
+</script>
+
+<script type="text/javascript">
+$("#jqtips a[title]").tooltip({effect: 'bouncy'});
+$("#jqtips img[title]").tooltip({effect: 'bouncy'});
 </script>

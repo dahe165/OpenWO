@@ -18,7 +18,10 @@ const settingsController = require("../controllers/settings.controller");
 
 const {requireRole} = require("../middleware/role.middleware");
 
-const {uploadBranding} = require("../middleware/upload.middleware");
+const {
+    uploadBranding,
+    uploadCompletion
+} = require("../middleware/upload.middleware");
 
 router.get("/dashboard", dashboardController.index);
 
@@ -105,6 +108,7 @@ router.post(
 router.post(
     "/workorder/:id/complete",
     requireRole("teknisi"),
+    uploadCompletion.single("completionPhoto"),
     workorderController.complete
 );
 
@@ -130,6 +134,12 @@ router.get(
     "/admin/users",
     requireRole("admin", "superuser"),
     adminController.index
+);
+
+router.get(
+    "/admin/users/search",
+    requireRole("admin", "superuser"),
+    adminController.search
 );
 
 router.get(

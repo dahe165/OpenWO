@@ -12,6 +12,13 @@
 
         </div>
 
+        <%- include("../components/button/floating", {
+            href: "/workorder/create",
+            icon: "＋",
+            text: "Buat Work Order",
+            label: "Buat Work Order"
+        }) %>
+
         <div class="search-box">
 
         <input
@@ -422,50 +429,160 @@
                         </div> --->
 
                     </div>
-                    <!--
-                    <a
-                        href="/workorder?id=<%= wo.id %>"
-                        class="btn-open"
-                        data-id="<%= wo.id %>">
-                        
-                        Lihat Detail →
-                    </a>
-                    --->
+                    
                 <% } %>
 
                 <!-- INFORMASI WO Tambahkan Pelapor & Teknisi -->
 
-                <div class="wo-assignment-info">
+                <% if (wo.id === activeId) { %>
+                    
+                    <% if (wo.status === "Selesai") { %>
 
-                    <div class="wo-person">
+                    <!-- ================================= -->
+                    <!-- HASIL PENYELESAIAN -->
+                    <!-- ================================= -->
 
-                        <span class="wo-person-label">
-                            Pelapor
-                        </span>
+                    <div class="completion-result">
 
-                        <strong>
-                            👨‍🔧<%= wo.pelapor || "-" %>
-                        </strong>
+                        <div class="completion-result-header">
+
+                            <span class="completion-result-icon">
+                                📝
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Hasil Penyelesaian
+                                </strong>
+
+                                <small>
+                                    Laporan pekerjaan teknisi
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- HASIL & FOTO -->
+                        <!-- ================================= -->
+
+                        <div class="completion-result-grid">
+
+
+                            <!-- DESKRIPSI -->
+                            <div class="completion-result-block">
+
+                                <span class="result-label">
+                                    Deskripsi Penyelesaian
+                                </span>
+
+                                <div class="completion-result-description">
+
+                                    <% if (wo.resolutionDescription) { %>
+
+                                        <p>
+                                            <%= wo.resolutionDescription %>
+                                        </p>
+
+                                    <% } else { %>
+
+                                        <p class="result-empty">
+                                            Belum ada laporan penyelesaian.
+                                        </p>
+
+                                    <% } %>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- FOTO -->
+                            <div class="completion-result-block">
+
+                                <span class="result-label">
+                                    📷 Bukti Pekerjaan
+                                </span>
+
+                                <div class="completion-result-photo">
+
+                                    <% if (wo.completionPhoto) { %>
+
+                                        <img
+                                            src="<%= wo.completionPhoto %>"
+                                            alt="Foto penyelesaian"
+                                            class="completion-photo-thumb"
+                                        >
+
+                                    <% } else { %>
+
+                                        <div class="photo-empty">
+
+                                            <span>📷</span>
+
+                                            <small>
+                                                Belum ada foto penyelesaian.
+                                            </small>
+
+                                        </div>
+
+                                    <% } %>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
 
                     </div>
 
-                    <div class="wo-person">
+                    <% } %>
 
-                        <span class="wo-person-label">
-                            Teknisi
-                        </span>
+                <% } else { %>
 
-                        <strong>
-                            👨‍🔧<%= wo.teknisi || "Belum ditugaskan" %>
-                        </strong>
+                    <!-- ================================= -->
+                    <!-- INFORMASI RINGKASAN WO -->
+                    <!-- ================================= -->
+
+                    <div class="wo-assignment-info">
+
+                        <div class="wo-person">
+
+                            <span class="wo-person-label">
+                                Pelapor:
+                            </span>
+
+                            <strong>
+                                <%= wo.pelapor || "-" %>
+                            </strong>
+
+                        </div>
+
+
+                        <div class="wo-person">
+
+                            <span class="wo-person-label">
+                                Teknisi:
+                            </span>
+
+                            <strong>
+                                <%= wo.teknisi || "Belum ditugaskan" %>
+                            </strong>
+
+                        </div>
 
                     </div>
 
-                </div>
+                <% } %>                    
 
                 <!-- AKSI WO -->
 
-                <div class="wo-actions">
+                <div class="wo-actions">                    
+                    
                     <% if (
                         role === "asman" &&
                         wo.status === "Diterima"
@@ -509,7 +626,7 @@
                         </form>
 
                     <% } %>
-
+                    
                     <!------>
 
                     <% if (
@@ -721,9 +838,7 @@
 
                         </div>
 
-                    <% } %>
-
-                    
+                    <% } %>                    
 
                     <% if (
                         role === "manager" &&
@@ -747,7 +862,7 @@
 
                         </div>
 
-                    <% } %>
+                    <% } %>                    
 
                 </div>
 

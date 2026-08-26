@@ -30,3 +30,90 @@
     </div>
 
 </div>
+
+<script>
+(function () {
+
+    const data = {
+
+        Incident: [
+            "Hardware",
+            "Network",
+            "Software",
+            "Access"
+        ],
+
+        "Service Request": [
+            "Hardware",
+            "Software",
+            "Access",
+            "Account"
+        ],
+
+        "Preventive Maintenance": [
+            "Hardware",
+            "Network",
+            "Software"
+        ]
+
+    };
+
+
+    const kategori =
+        document.getElementById("kategori");
+
+    const subkategori =
+        document.getElementById("subkategori");
+
+
+    if (!kategori || !subkategori) {
+        return;
+    }
+
+
+    kategori.addEventListener(
+        "change",
+        function () {
+
+            const selected =
+                this.value;
+
+
+            subkategori.innerHTML =
+                '<option value="">Pilih Sub Kategori</option>';
+
+
+            if (
+                !selected ||
+                !data[selected]
+            ) {
+
+                subkategori.disabled = true;
+
+                return;
+            }
+
+
+            subkategori.disabled = false;
+
+
+            data[selected].forEach(
+                function (item) {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value = item;
+
+                    option.textContent = item;
+
+                    subkategori.appendChild(option);
+
+                }
+            );
+
+        }
+    );
+
+})();
+</script>
