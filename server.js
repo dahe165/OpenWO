@@ -1,3 +1,9 @@
+// =====================================
+// DATABASE INITIALIZATION
+// =====================================
+
+require("./init-database");
+
 const http = require("http");
 
 const expressApp =

@@ -9,7 +9,9 @@
             ← Kembali
         </a>
 
-        <h1>Tambah Pengguna</h1>
+        <h1>
+            Tambah Pengguna
+        </h1>
 
         <p>
             Tambahkan akun pengguna baru ke OpenWO.
@@ -23,6 +25,9 @@
         method="POST"
         class="user-form"
     >
+
+
+        <!-- NAMA LENGKAP -->
 
         <div class="form-group">
 
@@ -41,6 +46,8 @@
 
         </div>
 
+
+        <!-- USERNAME -->
 
         <div class="form-group">
 
@@ -63,6 +70,8 @@
 
         </div>
 
+
+        <!-- ROLE -->
 
         <div class="form-group">
 
@@ -105,6 +114,56 @@
         </div>
 
 
+        <!-- DIVISI -->
+
+        <div class="form-group">
+
+            <label for="seksi">
+                Seksi
+            </label>
+
+            <input
+                type="text"
+                id="seksi"
+                name="seksi"
+                placeholder="Contoh: Jaringan & Infrastruktur"
+                required
+                autocomplete="organization"
+            >
+
+            <small>
+                Seksi tempat pengguna berada.
+            </small>
+
+        </div>
+
+
+        <!-- ORGANISASI -->
+
+        <div class="form-group">
+
+            <label for="bagian">
+                Bagian
+            </label>
+
+            <input
+                type="text"
+                id="bagian"
+                name="bagian"
+                placeholder="Contoh: STI"
+                required
+                autocomplete="organization"
+            >
+
+            <small>
+                Departemen atau bagian pengguna.
+            </small>
+
+        </div>
+
+
+        <!-- ACTION -->
+
         <div class="form-actions">
 
             <a
@@ -133,7 +192,9 @@
 .admin-user-form {
 
     width: 100%;
+
     max-width: 650px;
+
     margin: 0 auto;
 
 }
@@ -321,8 +382,6 @@
 
 }
 
-
-/* Mobile */
 
 @media (max-width: 600px) {
 

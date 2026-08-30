@@ -1,5 +1,8 @@
 const db = require("../config/database");
 
+const slaEventService =
+    require("../services/sla-event.service");
+
 const { canTransition } =
     require("../config/workorder.workflow");
 
@@ -23,6 +26,9 @@ function mapWorkorder(row) {
             wt.created_at AS tanggal,
             wt.reason,
             u.nama AS user,
+            u.seksi AS seksi,
+            u.bagian AS bagian,
+
             CASE
                 WHEN u.role = 'pelapor'
                     THEN 'Pelapor'
@@ -60,6 +66,8 @@ function mapWorkorder(row) {
 
         subkategori: row.subkategori,
 
+        prioritas: row.prioritas,
+
         status: row.status,
 
         resolutionDescription:
@@ -71,14 +79,29 @@ function mapWorkorder(row) {
         pelapor:
             row.pelapor_nama,
 
+        pelaporSeksi:
+            row.pelapor_seksi,
+
+        pelaporBagian:
+            row.pelapor_bagian,
+
         pelaporId:
             row.pelapor_id,
+
+        createdBy:
+            row.created_by,
 
         teknisiId:
             row.teknisi_id,
 
         teknisi:
             row.teknisi_nama,
+
+        teknisiSeksi:
+            row.teknisi_seksi,
+
+        teknisiBagian:
+            row.teknisi_bagian,
 
         eskalasi:
             Boolean(row.eskalasi),
@@ -117,14 +140,20 @@ const baseQuery = `
         wo.deskripsi,
         wo.kategori,
         wo.subkategori,
+        wo.prioritas,
         wo.status,
         wo.resolution_description,
         wo.completion_photo,
         wo.pelapor_id,
+        wo.created_by,
         pelapor.nama AS pelapor_nama,
+        pelapor.seksi AS pelapor_seksi,
+        pelapor.bagian AS pelapor_bagian,
 
         wo.teknisi_id,
         teknisi.nama AS teknisi_nama,
+        teknisi.seksi AS teknisi_seksi,
+        teknisi.bagian AS teknisi_bagian,
 
         wo.eskalasi,
         wo.eskalasi_level,
@@ -300,6 +329,7 @@ function acceptByAsman(
             );
 
 
+
             /*
              * Catat penerimaan
              * oleh Asman
@@ -312,8 +342,29 @@ function acceptByAsman(
                 now
             );
 
-        });
+            /*
+            * Catat SLA Event
+            */
 
+            slaEventService.recordEvent({
+
+                workOrderId:
+                    id,
+
+                event:
+                    slaEventService
+                        .SLA_EVENTS
+                        .ACCEPTED,
+
+                userId:
+                    asmanId,
+
+                occurredAt:
+                    now
+
+            });
+
+        });
 
     try {
 
@@ -449,6 +500,28 @@ function assignByAsman(
                 now
             );
 
+            /*
+            * Catat SLA Event
+            */
+
+            slaEventService.recordEvent({
+
+                workOrderId:
+                    id,
+
+                event:
+                    slaEventService
+                        .SLA_EVENTS
+                        .ASSIGNED,
+
+                userId:
+                    asmanId,
+
+                occurredAt:
+                    now
+
+            });
+
         });
 
 
@@ -569,6 +642,28 @@ function startWork(
                 technicianId,
                 now
             );
+
+            /*
+            * Catat SLA Event
+            */
+
+            slaEventService.recordEvent({
+
+                workOrderId:
+                    id,
+
+                event:
+                    slaEventService
+                        .SLA_EVENTS
+                        .STARTED,
+
+                userId:
+                    technicianId,
+
+                occurredAt:
+                    now
+
+            });
 
         });
 
@@ -1256,6 +1351,12 @@ function verifyByManager(
 
 function create(data) {
 
+    /*
+     * =====================================
+     * PELAPOR
+     * =====================================
+     */
+
     const pelaporId =
         Number(data.pelaporId);
 
@@ -1266,6 +1367,61 @@ function create(data) {
         );
 
     }
+
+
+    /*
+     * =====================================
+     * PEMBUAT WO
+     * =====================================
+     */
+
+    const createdBy =
+        Number(data.createdBy);
+
+    if (!createdBy) {
+
+        throw new Error(
+            "Pembuat Work Order tidak valid."
+        );
+
+    }
+
+
+    /*
+     * =====================================
+     * VALIDASI PEMBUAT
+     * =====================================
+     *
+     * User yang membuat WO harus benar-benar
+     * ada di tabel users.
+     *
+     */
+
+    const creator =
+        db.prepare(`
+            SELECT
+                id,
+                nama,
+                role
+            FROM users
+            WHERE id = ?
+        `).get(createdBy);
+
+
+    if (!creator) {
+
+        throw new Error(
+            "Pembuat Work Order tidak ditemukan."
+        );
+
+    }
+
+
+    /*
+     * =====================================
+     * GENERATE ID
+     * =====================================
+     */
 
     const nextIdRow =
         db.prepare(`
@@ -1283,13 +1439,31 @@ function create(data) {
         nextIdRow.nextId;
 
 
+    /*
+     * =====================================
+     * GENERATE NOMOR WO
+     * =====================================
+     */
+
     const nomor =
         `WO-2026-${String(nextId).padStart(5, "0")}`;
 
 
+    /*
+     * =====================================
+     * WAKTU
+     * =====================================
+     */
+
     const now =
         new Date().toISOString();
 
+
+    /*
+     * =====================================
+     * INSERT WORK ORDER
+     * =====================================
+     */
 
     const insertWorkorder =
         db.prepare(`
@@ -1301,8 +1475,10 @@ function create(data) {
                 deskripsi,
                 kategori,
                 subkategori,
+                prioritas,
                 status,
                 pelapor_id,
+                created_by,
                 teknisi_id,
                 eskalasi,
                 eskalasi_level,
@@ -1325,11 +1501,24 @@ function create(data) {
                 ?,
                 ?,
                 ?,
+                ?,
+                ?,
                 ?
 
             )
         `);
 
+
+    /*
+     * =====================================
+     * INSERT TIMELINE
+     * =====================================
+     *
+     * Timeline "Dibuat" sekarang mencatat
+     * orang yang benar-benar membuat WO,
+     * bukan otomatis pelapor.
+     *
+     */
 
     const insertTimeline =
         db.prepare(`
@@ -1346,8 +1535,18 @@ function create(data) {
         `);
 
 
+    /*
+     * =====================================
+     * TRANSACTION
+     * =====================================
+     */
+
     const transaction =
         db.transaction(() => {
+
+            /*
+             * Simpan Work Order
+             */
 
             insertWorkorder.run(
 
@@ -1365,9 +1564,14 @@ function create(data) {
                 data.subkategori ||
                     "Network",
 
+                data.prioritas ||
+                    null,
+
                 "Menunggu",
 
                 pelaporId,
+
+                createdBy,
 
                 null,
 
@@ -1382,13 +1586,19 @@ function create(data) {
             );
 
 
+            /*
+             * Catat Timeline "Dibuat"
+             *
+             * user_id = pembuat WO
+             */
+
             insertTimeline.run(
 
                 nextId,
 
                 "Dibuat",
 
-                pelaporId,
+                createdBy,
 
                 now
 
@@ -1397,9 +1607,24 @@ function create(data) {
         });
 
 
+    /*
+     * =====================================
+     * JALANKAN TRANSACTION
+     * =====================================
+     */
+
     transaction();
 
-return getById(nextId);
+
+    /*
+     * =====================================
+     * KEMBALIKAN WO
+     * =====================================
+     */
+
+    return getById(
+        nextId
+    );
 
 }
 

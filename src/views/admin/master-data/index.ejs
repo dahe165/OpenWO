@@ -1,0 +1,325 @@
+<style>
+    /* =====================================================
+       MASTER DATA HUB
+       ===================================================== */
+
+    .master-data-page {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .master-data-header {
+        margin-bottom: 28px;
+    }
+
+    .master-data-title {
+        margin: 0;
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .master-data-description {
+        margin: 7px 0 0;
+        color: #6b7280;
+    }
+
+
+    /* =====================================================
+       GRID
+       ===================================================== */
+
+    .master-data-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(auto-fit, minmax(280px, 1fr));
+
+        gap: 20px;
+    }
+
+
+    /* =====================================================
+       CARD
+       ===================================================== */
+
+    .master-data-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+
+        padding: 22px;
+
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+
+        text-decoration: none;
+        color: inherit;
+
+        box-shadow:
+            0 4px 18px rgba(0, 0, 0, .05);
+
+        transition: .2s ease;
+    }
+
+    .master-data-card:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, .08);
+
+        color: inherit;
+    }
+
+
+    /* =====================================================
+       ICON
+       ===================================================== */
+
+    .master-data-icon {
+        width: 48px;
+        height: 48px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        border-radius: 12px;
+
+        background: #eff6ff;
+
+        font-size: 1.45rem;
+    }
+
+
+    /* =====================================================
+       CONTENT
+       ===================================================== */
+
+    .master-data-content {
+        flex: 1;
+    }
+
+    .master-data-content h2 {
+        margin: 0 0 5px;
+
+        font-size: 1rem;
+        font-weight: 700;
+
+        color: #111827;
+    }
+
+    .master-data-content p {
+        margin: 0;
+
+        color: #6b7280;
+
+        font-size: .84rem;
+
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+       ARROW
+       ===================================================== */
+
+    .master-data-arrow {
+        margin-left: auto;
+
+        color: #9ca3af;
+
+        font-size: 1.2rem;
+    }
+
+
+    /* =====================================================
+       COMING SOON
+       ===================================================== */
+
+    .master-data-card-disabled {
+        cursor: default;
+        opacity: .65;
+    }
+
+    .master-data-card-disabled:hover {
+        transform: none;
+
+        box-shadow:
+            0 4px 18px rgba(0, 0, 0, .05);
+    }
+
+    .master-data-badge {
+        display: inline-flex;
+
+        margin-top: 8px;
+
+        padding: 4px 8px;
+
+        border-radius: 999px;
+
+        background: #f3f4f6;
+
+        color: #6b7280;
+
+        font-size: .7rem;
+        font-weight: 600;
+    }
+
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (max-width: 600px) {
+
+        .master-data-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .master-data-card {
+            padding: 18px;
+        }
+
+    }
+</style>
+
+
+<div class="master-data-page">
+
+
+    <!-- =================================================
+         HEADER
+         ================================================= -->
+
+    <div class="master-data-header">
+
+        <h1 class="master-data-title">
+            Master Data
+        </h1>
+
+        <p class="master-data-description">
+            Kelola data dasar yang digunakan dalam
+            operasional Work Order OpenWO.
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         MASTER DATA GRID
+         ================================================= -->
+
+    <div class="master-data-grid">
+
+
+        <!-- =============================================
+             KATEGORI & SUBKATEGORI
+             ============================================= -->
+
+        <a
+            href="/admin/categories"
+            class="master-data-card"
+        >
+
+            <div class="master-data-icon">
+                📂
+            </div>
+
+
+            <div class="master-data-content">
+
+                <h2>
+                    Kategori & Subkategori
+                </h2>
+
+                <p>
+                    Kelola klasifikasi kategori dan
+                    subkategori Work Order.
+                </p>
+
+            </div>
+
+
+            <div class="master-data-arrow">
+                →
+            </div>
+
+        </a>
+
+
+        <!-- =============================================
+             PRIORITAS
+             ============================================= -->
+
+        <a 
+            href="/admin/priorities"
+            class="master-data-card"
+        >
+
+            <div class="master-data-icon">
+                ⚡
+            </div>
+
+
+            <div class="master-data-content">
+
+                <h2>
+                    Prioritas
+                </h2>
+
+                <p>
+                    Kelola tingkat prioritas
+                    Work Order.
+                </p>
+
+            </div>
+
+                <div class="master-data-arrow">
+                    →
+                </div>
+
+        </a>
+
+
+        <!-- =============================================
+             SLA
+             ============================================= -->
+
+        <div
+            class="
+                master-data-card
+                master-data-card-disabled
+            "
+        >
+
+            <div class="master-data-icon">
+                🕐
+            </div>
+
+
+            <div class="master-data-content">
+
+                <h2>
+                    SLA
+                </h2>
+
+                <p>
+                    Kelola target waktu penyelesaian
+                    Work Order.
+                </p>
+
+                <span class="master-data-badge">
+                    Segera Hadir
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>

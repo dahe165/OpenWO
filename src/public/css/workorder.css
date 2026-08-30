@@ -3166,6 +3166,29 @@ font-size:14px;
     color: #1f2937;
 }
 
+.wo-person-org {
+
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+
+    color: #6b7280;
+
+}
+
+
+.wo-org-separator {
+
+    margin: 0 4px;
+
+    color: #9ca3af;
+
+}
+
 .asman-verification-action {
     display: flex;
     flex-direction: column-reverse;
@@ -4276,6 +4299,18 @@ font-size:14px;
     --category-color: #06b6d4;
 }
 
+/* ==========================================
+   CATEGORY CHART FINISHING
+   ========================================== */
+.category-bar-chart {
+    margin-left: 18px;
+}
+
+@media (max-width: 768px) {
+    .category-bar-chart {
+        margin-left: 0;
+    }
+}
 
 /* ==========================================
    BAR CHART
@@ -5763,3 +5798,5 @@ font-size:14px;
     }
 
 }
+<!---priority--->
+

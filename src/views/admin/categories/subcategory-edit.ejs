@@ -1,0 +1,236 @@
+<style>
+    .subcategory-edit-page {
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .subcategory-edit-header {
+        margin-bottom: 24px;
+    }
+
+    .subcategory-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #2563eb;
+        text-decoration: none;
+        font-size: .88rem;
+        font-weight: 600;
+    }
+
+    .subcategory-back:hover {
+        color: #1d4ed8;
+    }
+
+    .subcategory-edit-title {
+        margin: 14px 0 5px;
+        font-size: 1.6rem;
+        font-weight: 700;
+    }
+
+    .subcategory-edit-description {
+        margin: 0;
+        color: #6b7280;
+    }
+
+    .subcategory-edit-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, .05);
+        overflow: hidden;
+    }
+
+    .subcategory-edit-body {
+        padding: 24px;
+    }
+
+    .subcategory-info {
+        padding: 14px 16px;
+        margin-bottom: 22px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+    }
+
+    .subcategory-info-label {
+        display: block;
+        margin-bottom: 4px;
+        color: #6b7280;
+        font-size: .76rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .subcategory-info-value {
+        color: #111827;
+        font-weight: 700;
+    }
+
+    .subcategory-edit-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 24px;
+        background: #fafafa;
+        border-top: 1px solid #eef0f3;
+    }
+
+    @media (max-width: 600px) {
+
+        .subcategory-edit-body {
+            padding: 18px;
+        }
+
+        .subcategory-edit-actions {
+            padding: 14px 18px;
+        }
+
+        .subcategory-edit-actions .btn {
+            flex: 1;
+        }
+
+    }
+</style>
+
+
+<div class="subcategory-edit-page">
+
+
+    <!-- =========================================
+         HEADER
+         ========================================= -->
+
+    <div class="subcategory-edit-header">
+
+        <a
+            href="/admin/categories"
+            class="subcategory-back"
+        >
+            ← Kembali ke Master Kategori
+        </a>
+
+        <h1 class="subcategory-edit-title">
+            Edit Subkategori
+        </h1>
+
+        <p class="subcategory-edit-description">
+            Perbarui nama atau urutan subkategori.
+        </p>
+
+    </div>
+
+
+    <!-- =========================================
+         FORM CARD
+         ========================================= -->
+
+    <div class="subcategory-edit-card">
+
+        <div class="subcategory-edit-body">
+
+            <!-- KATEGORI INDUK -->
+
+            <div class="subcategory-info">
+
+                <span class="subcategory-info-label">
+                    Kategori
+                </span>
+
+                <span class="subcategory-info-value">
+                    Kategori #<%= subcategory.category_id %>
+                </span>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <form
+                id="subcategory-edit-form"
+                method="POST"
+                action="/admin/subcategories/<%= subcategory.id %>"
+            >
+
+                <!-- NAMA -->
+
+                <div class="mb-3">
+
+                    <label
+                        for="nama"
+                        class="form-label fw-semibold"
+                    >
+                        Nama Subkategori
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nama"
+                        name="nama"
+                        class="form-control"
+                        value="<%= subcategory.nama %>"
+                        required
+                        autofocus
+                    >
+
+                </div>
+
+
+                <!-- URUTAN -->
+
+                <div class="mb-2">
+
+                    <label
+                        for="urutan"
+                        class="form-label fw-semibold"
+                    >
+                        Urutan
+                    </label>
+
+                    <input
+                        type="number"
+                        id="urutan"
+                        name="urutan"
+                        class="form-control"
+                        value="<%= subcategory.urutan %>"
+                        min="0"
+                    >
+
+                </div>
+
+                <div class="form-text">
+                    Urutan menentukan posisi subkategori.
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =========================================
+             ACTION
+             ========================================= -->
+
+        <div class="subcategory-edit-actions">
+
+            <a
+                href="/admin/categories"
+                class="btn btn-light"
+            >
+                Batal
+            </a>
+
+            <button
+                type="submit"
+                form="subcategory-edit-form"
+                class="btn btn-primary"
+            >
+                Simpan Perubahan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

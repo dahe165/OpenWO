@@ -15,10 +15,14 @@ function requireRole(...allowedRoles) {
 
         if (!allowedRoles.includes(user.role)) {
 
-            return res.status(403).json({
-                success: false,
-                message: "Anda tidak memiliki akses untuk tindakan ini."
-            });
+            return res
+                .status(403)
+                .render(
+                    "errors/403",
+                    {
+                        layout: false
+                    }
+                );
 
         }
 

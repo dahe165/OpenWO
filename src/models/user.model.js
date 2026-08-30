@@ -1,6 +1,85 @@
 const db =
     require("../config/database");
 
+const crypto =
+    require("crypto");
+
+function hashPassword(password) {
+
+    if (
+        typeof password !== "string" ||
+        !password
+    ) {
+        throw new Error(
+            "Password wajib diisi."
+        );
+    }
+
+    const salt =
+        crypto.randomBytes(16)
+            .toString("hex");
+
+    const hash =
+        crypto.scryptSync(
+            password,
+            salt,
+            64
+        ).toString("hex");
+
+    return `scrypt$${salt}$${hash}`;
+}
+
+function verifyPassword(
+    password,
+    storedHash
+) {
+
+    if (
+        typeof password !== "string" ||
+        !password ||
+        typeof storedHash !== "string"
+    ) {
+        return false;
+    }
+
+    const parts =
+        storedHash.split("$");
+
+    if (
+        parts.length !== 3 ||
+        parts[0] !== "scrypt"
+    ) {
+        return false;
+    }
+
+    const salt =
+        parts[1];
+
+    const storedHashBuffer =
+        Buffer.from(
+            parts[2],
+            "hex"
+        );
+
+    const derivedHash =
+        crypto.scryptSync(
+            password,
+            salt,
+            64
+        );
+
+    if (
+        storedHashBuffer.length !==
+        derivedHash.length
+    ) {
+        return false;
+    }
+
+    return crypto.timingSafeEqual(
+        storedHashBuffer,
+        derivedHash
+    );
+}
 
 function getAll() {
 
@@ -10,13 +89,16 @@ function getAll() {
                 id,
                 nama,
                 username,
-                role
+                role,
+                seksi,
+                bagian
             FROM users
             ORDER BY id
         `)
         .all();
 
 }
+
 
 function getPaginated({
     page = 1,
@@ -30,20 +112,26 @@ function getPaginated({
             1
         );
 
+
     const perPage =
         Math.max(
             Number(limit) || 15,
             1
         );
 
+
     const offset =
         (currentPage - 1) * perPage;
 
+
     const keyword =
-        String(search || "").trim();
+        String(
+            search || ""
+        ).trim();
 
 
     let where = "";
+
     let params = [];
 
 
@@ -56,8 +144,10 @@ function getPaginated({
                 OR role LIKE ?
         `;
 
+
         const pattern =
             `%${keyword}%`;
+
 
         params = [
             pattern,
@@ -69,36 +159,43 @@ function getPaginated({
 
 
     const total =
-        db.prepare(`
-            SELECT COUNT(*) AS total
-            FROM users
-            ${where}
-        `)
-        .get(...params)
-        .total;
+        db
+            .prepare(`
+                SELECT
+                    COUNT(*) AS total
+                FROM users
+                ${where}
+            `)
+            .get(
+                ...params
+            )
+            .total;
 
 
     const users =
-        db.prepare(`
-            SELECT
-                id,
-                nama,
-                username,
-                role
-            FROM users
+        db
+            .prepare(`
+                SELECT
+                    id,
+                    nama,
+                    username,
+                    role,
+                    seksi,
+                    bagian
+                FROM users
 
-            ${where}
+                ${where}
 
-            ORDER BY id
+                ORDER BY id
 
-            LIMIT ?
-            OFFSET ?
-        `)
-        .all(
-            ...params,
-            perPage,
-            offset
-        );
+                LIMIT ?
+                OFFSET ?
+            `)
+            .all(
+                ...params,
+                perPage,
+                offset
+            );
 
 
     const totalPages =
@@ -127,7 +224,10 @@ function getPaginated({
 
 }
 
-function findByUsername(username) {
+
+function findByUsername(
+    username
+) {
 
     return db
         .prepare(`
@@ -135,16 +235,23 @@ function findByUsername(username) {
                 id,
                 nama,
                 username,
-                role
+                password_hash,
+                role,
+                seksi,
+                bagian
             FROM users
             WHERE username = ?
         `)
-        .get(username);
+        .get(
+            username
+        );
 
 }
 
 
-function findById(id) {
+function findById(
+    id
+) {
 
     return db
         .prepare(`
@@ -152,13 +259,18 @@ function findById(id) {
                 id,
                 nama,
                 username,
-                role
+                role,
+                seksi,
+                bagian
             FROM users
             WHERE id = ?
         `)
-        .get(id);
+        .get(
+            id
+        );
 
 }
+
 
 function updateProfile(
     id,
@@ -170,33 +282,41 @@ function updateProfile(
 
 
     if (!cleanNama) {
+
         return null;
+
     }
 
 
     const result =
-        db.prepare(`
-            UPDATE users
+        db
+            .prepare(`
+                UPDATE users
 
-            SET
-                nama = ?
+                SET
+                    nama = ?
 
-            WHERE id = ?
-        `).run(
-            cleanNama,
-            id
-        );
+                WHERE id = ?
+            `)
+            .run(
+                cleanNama,
+                id
+            );
 
 
     if (
         result.changes === 0
     ) {
+
         return null;
+
     }
 
 
     return findById(id);
+
 }
+
 
 function getTechnicians() {
 
@@ -206,7 +326,9 @@ function getTechnicians() {
                 id,
                 nama,
                 username,
-                role
+                role,
+                seksi,
+                bagian
             FROM users
             WHERE role = 'teknisi'
             ORDER BY nama
@@ -215,82 +337,121 @@ function getTechnicians() {
 
 }
 
-function create(data) {
+
+function create(
+    data
+) {
 
     const result =
-        db.prepare(`
-            INSERT INTO users (
-                nama,
-                username,
-                role
-            )
-            VALUES (?, ?, ?)
-        `)
-        .run(
-            data.nama,
-            data.username,
-            data.role
-        );
+        db
+            .prepare(`
+                INSERT INTO users (
+                    nama,
+                    username,
+                    role,
+                    seksi,
+                    bagian
+                )
+                VALUES (
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?
+                )
+            `)
+            .run(
+                data.nama,
+                data.username,
+                data.role,
+                data.seksi || null,
+                data.bagian || null
+            );
+
 
     return findById(
-        Number(result.lastInsertRowid)
+        Number(
+            result.lastInsertRowid
+        )
     );
 
 }
 
-function update(id, data) {
 
-    db.prepare(`
-        UPDATE users
+function update(
+    id,
+    data
+) {
 
-        SET
-            nama = ?,
-            role = ?
+    db
+        .prepare(`
+            UPDATE users
 
-        WHERE id = ?
-    `)
-    .run(
-        data.nama,
-        data.role,
-        id
-    );
+            SET
+                nama = ?,
+                role = ?,
+                seksi = ?,
+                bagian = ?
+
+            WHERE id = ?
+        `)
+        .run(
+            data.nama,
+            data.role,
+            data.seksi || null,
+            data.bagian || null,
+            id
+        );
+
 
     return findById(id);
 
 }
 
-function remove(id) {
+
+function remove(
+    id
+) {
 
     const result =
-        db.prepare(`
-            DELETE FROM users
-            WHERE id = ?
-        `)
-        .run(id);
+        db
+            .prepare(`
+                DELETE FROM users
+                WHERE id = ?
+            `)
+            .run(id);
 
-    return result.changes > 0;
+
+    return (
+        result.changes > 0
+    );
 
 }
+
 
 function getUserStats() {
 
     const total =
-        db.prepare(`
-            SELECT COUNT(*) AS total
-            FROM users
-        `).get().total;
+        db
+            .prepare(`
+                SELECT
+                    COUNT(*) AS total
+                FROM users
+            `)
+            .get()
+            .total;
 
 
     const rows =
-        db.prepare(`
-            SELECT
-                role,
-                COUNT(*) AS total
-
-            FROM users
-
-            GROUP BY role
-        `).all();
+        db
+            .prepare(`
+                SELECT
+                    role,
+                    COUNT(*) AS total
+                FROM users
+                GROUP BY role
+            `)
+            .all();
 
 
     const stats = {
@@ -310,26 +471,55 @@ function getUserStats() {
     };
 
 
-    rows.forEach(row => {
+    rows.forEach(
+        row => {
 
-        if (
-            Object.prototype.hasOwnProperty.call(
-                stats,
-                row.role
-            )
-        ) {
+            if (
+                Object.prototype.hasOwnProperty.call(
+                    stats,
+                    row.role
+                )
+            ) {
 
-            stats[row.role] =
-                row.total;
+                stats[row.role] =
+                    row.total;
+
+            }
 
         }
-
-    });
+    );
 
 
     return stats;
 
 }
+
+
+function setPassword(
+    id,
+    password
+) {
+
+    const passwordHash =
+        hashPassword(password);
+
+    const result =
+        db
+            .prepare(`
+                UPDATE users
+                SET password_hash = ?
+                WHERE id = ?
+            `)
+            .run(
+                passwordHash,
+                id
+            );
+
+    return (
+        result.changes > 0
+    );
+}
+
 
 module.exports = {
 
@@ -351,6 +541,10 @@ module.exports = {
 
     update,
 
-    remove
+    remove,
+
+    hashPassword,
+    verifyPassword,
+    setPassword
 
 };

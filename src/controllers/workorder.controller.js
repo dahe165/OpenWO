@@ -2,53 +2,306 @@ const { getIO } = require("../socket");
 
 const workorderModel = require("../models/workorder.model");
 
+const categoryModel = require("../models/category.model");
+
+const priorityModel = require("../models/priority.model");
+
 const userModel = require("../models/user.model");
 
 const { formatRelativeTime } = require("../utils/time.util");
 
 function create(req, res) {
 
-    res.render("workorder/create", {
-        title: "Buat Work Order",
-        layout: "layouts/app"
-    });
+    const role =
+        req.user?.role;
+
+
+    /*
+     * =====================================
+     * CEK SIAPA YANG BOLEH MEMILIH PELAPOR
+     * =====================================
+     */
+
+    const canCreateForOther =
+        role === "teknisi" ||
+        role === "admin";
+
+    const categories =
+    categoryModel.getActiveCategories()
+        .map(category => {
+
+            return {
+                ...category,
+
+                subcategories:
+                    categoryModel
+                        .getActiveSubcategories(
+                            category.id
+                        )
+            };
+
+        });
+
+    const priorities =
+    priorityModel.getActivePriorities();
+
+    /*
+     * =====================================
+     * DAFTAR CALON PELAPOR
+     * =====================================
+     *
+     * Hanya ambil jika memang diperlukan.
+     *
+     */
+
+    let users = [];
+
+    if (canCreateForOther) {
+
+        users =
+            userModel.getAll()
+                .filter(
+                    user =>
+                        user.role === "pelapor"
+                );
+
+    }
+
+
+    /*
+     * =====================================
+     * RENDER
+     * =====================================
+     */
+
+    res.render(
+        "workorder/create",
+        {
+
+            title:
+                "Buat Work Order",
+
+            layout:
+                "layouts/app",
+
+            users,
+
+            canCreateForOther,
+
+            categories,
+
+            priorities
+
+        }
+    );
 
 }
 
 function store(req, res) {
 
+    /*
+     * =====================================
+     * DATA FORM
+     * =====================================
+     */
+
     const {
         title,
         description,
         kategori,
-        subkategori
+        subkategori,
+        prioritas,
+        pelaporId: submittedPelaporId
     } = req.body;
 
+
+    /*
+     * =====================================
+     * USER YANG LOGIN
+     * =====================================
+     */
+
+    const currentUser =
+        req.user;
+
+
+    if (!currentUser?.id) {
+
+        return res.status(401).send(
+            "User belum login."
+        );
+
+    }
+
+
+    const currentUserId =
+        Number(currentUser.id);
+
+
+    const currentRole =
+        currentUser.role;
+
+
+    /*
+     * =====================================
+     * TENTUKAN PELAPOR
+     * =====================================
+     *
+     * PELAPOR:
+     *   Pelapor otomatis dirinya sendiri.
+     *
+     * TEKNISI / ADMIN:
+     *   Boleh memilih Pelapor.
+     *
+     */
+
+    let pelaporId;
+
+
+    if (currentRole === "pelapor") {
+
+        pelaporId =
+            currentUserId;
+
+    }
+
+    else if (
+        currentRole === "teknisi" ||
+        currentRole === "admin"
+    ) {
+
+        pelaporId =
+            Number(submittedPelaporId);
+
+
+        if (!pelaporId) {
+
+            return res.status(400).send(
+                "Pelapor Work Order wajib dipilih."
+            );
+
+        }
+
+    }
+
+    else {
+
+        return res.status(403).send(
+            "Role Anda tidak diperbolehkan membuat Work Order."
+        );
+
+    }
+
+
+    /*
+     * =====================================
+     * VALIDASI PELAPOR
+     * =====================================
+     */
+
+    const users =
+        userModel.getAll();
+
+
+    const pelapor =
+        users.find(
+            user =>
+                Number(user.id) ===
+                pelaporId
+        );
+
+
+    if (!pelapor) {
+
+        return res.status(400).send(
+            "Pelapor tidak ditemukan."
+        );
+
+    }
+
+
+    /*
+     * =====================================
+     * PASTIKAN YANG DIPILIH
+     * ADALAH PELAPOR
+     * =====================================
+     */
+
+    if (
+        currentRole !== "pelapor" &&
+        pelapor.role !== "pelapor"
+    ) {
+
+        return res.status(400).send(
+            "User yang dipilih bukan Pelapor."
+        );
+
+    }
+
+
+    /*
+     * =====================================
+     * PEMBUAT WORK ORDER
+     * =====================================
+     *
+     * SELALU user yang sedang login.
+     *
+     * Tidak mengambil dari req.body.
+     *
+     */
+
+    const createdBy =
+        currentUserId;
+
+
+    /*
+     * =====================================
+     * CREATE WORK ORDER
+     * =====================================
+     */
+
     const workorder =
-    workorderModel.create({
+        workorderModel.create({
 
-        judul: title,
+            judul:
+                title,
 
-        deskripsi: description,
+            deskripsi:
+                description,
 
-        kategori,
+            kategori,
 
-        subkategori,
+            subkategori,
 
-        pelaporId:
-            req.user?.id
+            prioritas,
 
-    });
+            pelaporId,
 
-    res.render("workorder/success", {
+            createdBy
 
-        title: "Work Order Berhasil",
+        });
 
-        layout: "layouts/app",
 
-        workorder
+    /*
+     * =====================================
+     * SUCCESS
+     * =====================================
+     */
 
-    });
+    res.render(
+        "workorder/success",
+        {
+
+            title:
+                "Work Order Berhasil",
+
+            layout:
+                "layouts/app",
+
+            workorder
+
+        }
+    );
 
 }
 

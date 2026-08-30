@@ -1,3 +1,38 @@
+<style>
+.wo-header-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.wo-header-icon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+    margin-top: 2px;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.wo-header-main .wo-title-area {
+    flex: 1;
+    min-width: 0;
+}
+
+@media (max-width: 600px) {
+    .wo-header-main { gap: 8px; }
+    .wo-header-icon {
+        width: 30px; min-width: 30px; height: 30px; font-size: 21px;
+    }
+}
+</style>
+
 <div class="container py-4">    
 
         <div class="mb-4">
@@ -72,9 +107,10 @@
 
             <div class="wo-header">
 
-                <div class="wo-title-area">
+                <div class="wo-header-main">
 
-                    <%
+                    <span class="wo-header-icon">
+                        <%
                         let woIcon = "🛠️";
 
                         if (wo.kategori === "Incident") {
@@ -107,52 +143,62 @@
                         ) {
                             woIcon = "🖨️";
                         }
-                    %>
+                        %>
+                        <%= woIcon %>
+                    </span>
 
-                    <div class="wo-title">
+                    <div class="wo-title-area">
 
-                        <span class="wo-title-icon">
-                            <%= woIcon %>
-                        </span>
+                        <div class="wo-title">
 
-                        <span>
-                            <%= wo.judul %>
-                        </span>
+                            <span>
+                                <%= wo.judul %>
+                            </span>
 
-                    </div>
+                            <% if (wo.id !== activeId && wo.prioritas) { %>
 
-                    <div class="wo-meta">
+                                <span class="wo-priority">
+                                    · <%= wo.prioritas %>
+                                </span>
 
-                        <span class="wo-number">
-                            <%= wo.nomor %>
-                        </span>
+                            <% } %>
 
-                        <span class="wo-meta-separator">
-                            |
-                        </span>
+                        </div>
 
-                        <span class="wo-category">
-                            <%= wo.kategori %>
-                        </span>
+                        <div class="wo-meta">
 
-                        <span class="wo-meta-separator">
-                            |
-                        </span>
+                            <span class="wo-number">
+                                <%= wo.nomor %>
+                            </span>
 
-                        <span class="wo-created">
-                            <%= new Date(
-                                wo.createdAt
-                            ).toLocaleString(
-                                "id-ID",
-                                {
-                                    day: "2-digit",
-                                    month: "short",
-                                    year: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit"
-                                }
-                            ) %>
-                        </span>
+                            <span class="wo-meta-separator">
+                                |
+                            </span>
+
+                            <span class="wo-category">
+                                <%= wo.kategori %>
+                            </span>
+
+                            <span class="wo-meta-separator">
+                                |
+                            </span>
+
+                            <span class="wo-created">
+                                <%= new Date(
+                                    wo.createdAt
+                                ).toLocaleString(
+                                    "id-ID",
+                                    {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit"
+                                    }
+                                ) %>
+                            </span>
+
+                        </div>
 
                     </div>
 
@@ -183,6 +229,55 @@
                 </div>
 
             </div>
+
+                    <% if (
+                        wo.id === activeId &&
+                        Number(wo.createdBy) !== Number(wo.pelaporId)
+                    ) { %>
+
+                        <div class="wo-person timeline-reporter">
+
+                            <span class="wo-person-label">
+                                Pelapor:
+                            </span>
+
+                            <strong>
+                                <%= wo.pelapor || "-" %>
+                            </strong>
+
+                            <% if (
+                                wo.pelaporSeksi ||
+                                wo.pelaporBagian
+                            ) { %>
+
+                                <small class="wo-person-org">
+
+                                    <% if (wo.pelaporSeksi) { %>
+                                        <%= wo.pelaporSeksi %>
+                                    <% } %>
+
+                                    <% if (
+                                        wo.pelaporSeksi &&
+                                        wo.pelaporBagian
+                                    ) { %>
+
+                                        <span class="wo-org-separator">
+                                            •
+                                        </span>
+
+                                    <% } %>
+
+                                    <% if (wo.pelaporBagian) { %>
+                                        <%= wo.pelaporBagian %>
+                                    <% } %>
+
+                                </small>
+
+                            <% } %>
+
+                        </div>
+
+                    <% } %>
 
             <!------>
 
@@ -239,7 +334,7 @@
 
                         <div class="timeline-heading">
                             <span class="timeline-heading-icon">⚙️</span>
-                            <span>Proses Pekerjaan</span>
+                            <span>Timeline</span>
                         </div>
 
 
@@ -279,6 +374,26 @@
                                             <small>
                                                 <%= event.role %>
                                             </small>
+
+                                            <% if (event.seksi || event.bagian) { %>
+
+                                                <small class="timeline-org">
+
+                                                    <% if (event.seksi) { %>
+                                                        <%= event.seksi %>
+                                                    <% } %>
+
+                                                    <% if (event.seksi && event.bagian) { %>
+                                                        <span class="timeline-org-separator">•</span>
+                                                    <% } %>
+
+                                                    <% if (event.bagian) { %>
+                                                        <%= event.bagian %>
+                                                    <% } %>
+
+                                                </small>
+
+                                            <% } %>
 
                                             <small>
                                                 <%= new Date(
@@ -550,32 +665,114 @@
 
                     <div class="wo-assignment-info">
 
-                        <div class="wo-person">
+                    <!-- ============================= -->
+                    <!-- PELAPOR -->
+                    <!-- ============================= -->
 
-                            <span class="wo-person-label">
-                                Pelapor:
-                            </span>
+                    <div class="wo-person">
 
-                            <strong>
-                                <%= wo.pelapor || "-" %>
-                            </strong>
+                        <span class="wo-person-label">
+                            Pelapor:
+                        </span>
 
-                        </div>
+                        <strong>
+                            <%= wo.pelapor || "-" %>
+                        </strong>
 
 
-                        <div class="wo-person">
+                        <% if (
+                            wo.pelaporSeksi ||
+                            wo.pelaporBagian
+                        ) { %>
 
-                            <span class="wo-person-label">
-                                Teknisi:
-                            </span>
+                            <small class="wo-person-org">
 
-                            <strong>
-                                <%= wo.teknisi || "Belum ditugaskan" %>
-                            </strong>
+                                <% if (wo.pelaporSeksi) { %>
 
-                        </div>
+                                    <%= wo.pelaporSeksi %>
+
+                                <% } %>
+
+
+                                <% if (
+                                    wo.pelaporSeksi &&
+                                    wo.pelaporBagian
+                                ) { %>
+
+                                    <span class="wo-org-separator">
+                                        •
+                                    </span>
+
+                                <% } %>
+
+
+                                <% if (wo.pelaporBagian) { %>
+
+                                    <%= wo.pelaporBagian %>
+
+                                <% } %>
+
+                            </small>
+
+                        <% } %>
 
                     </div>
+
+
+                    <!-- ============================= -->
+                    <!-- TEKNISI -->
+                    <!-- ============================= -->
+
+                    <div class="wo-person">
+
+                        <span class="wo-person-label">
+                            Teknisi:
+                        </span>
+
+                        <strong>
+                            <%= wo.teknisi || "Belum ditugaskan" %>
+                        </strong>
+
+
+                        <% if (
+                            wo.teknisiSeksi ||
+                            wo.teknisiBagian
+                        ) { %>
+
+                            <small class="wo-person-org">
+
+                                <% if (wo.teknisiSeksi) { %>
+
+                                    <%= wo.teknisiSeksi %>
+
+                                <% } %>
+
+
+                                <% if (
+                                    wo.teknisiSeksi &&
+                                    wo.teknisiBagian
+                                ) { %>
+
+                                    <span class="wo-org-separator">
+                                        •
+                                    </span>
+
+                                <% } %>
+
+
+                                <% if (wo.teknisiBagian) { %>
+
+                                    <%= wo.teknisiBagian %>
+
+                                <% } %>
+
+                            </small>
+
+                        <% } %>
+
+                    </div>
+
+                </div>
 
                 <% } %>                    
 

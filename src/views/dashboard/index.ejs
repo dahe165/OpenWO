@@ -1,20 +1,3 @@
-<link rel="stylesheet" href="/css/tooltip.css">
-<style>
-/* ==========================================
-   CATEGORY CHART FINISHING
-   ========================================== */
-.category-bar-chart {
-    margin-left: 18px;
-}
-
-@media (max-width: 768px) {
-    .category-bar-chart {
-        margin-left: 0;
-    }
-}
-</style>
-
-
 <% if (role === "pelapor") { %>
 
     <%- include("../components/welcome-card") %>
@@ -318,8 +301,9 @@
             </div>
 
         </div>
-        
-        <a
+
+        <div id="jqtips">
+        <a  title="TEST AJE BRO...!"
             href="/admin/users"
             class="admin-menu-card"
         >
@@ -339,6 +323,43 @@
                     <p>
                         Tambah, edit, dan kelola akun
                         pengguna OpenWO.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <span class="admin-menu-arrow">
+                →
+            </span>
+
+        </a>
+        </div>
+
+        <!-- =====================================================
+            MASTER DATA
+            ===================================================== -->
+
+        <a
+            href="/admin/master-data"
+            class="admin-menu-card"
+        >            
+
+            <div class="technician-summary-content">
+                
+                <div class="technician-summary-icon">
+                    📂
+                </div>
+
+                <div>
+
+                    <h2>
+                        Master Data
+                    </h2>
+
+                    <p>
+                        Kelola data dasar dan konfigurasi
+                        operasional OpenWO.
                     </p>
 
                 </div>
@@ -1265,9 +1286,6 @@
 
 
 <% } %>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-<script src="/js/tooltip.js"></script>
 
 <script>
 const chartBars = document.querySelectorAll(".chart-bar");
@@ -3231,9 +3249,4 @@ document
         }
     );
 
-</script>
-
-<script type="text/javascript">
-$("#jqtips a[title]").tooltip({effect: 'bouncy'});
-$("#jqtips img[title]").tooltip({effect: 'bouncy'});
 </script>

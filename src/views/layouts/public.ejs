@@ -8,7 +8,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title><%= title || "OpenWO" %></title>
+    <title><%= typeof title !== "undefined" ? title : "OpenWO" %></title>
 
 </head>
 

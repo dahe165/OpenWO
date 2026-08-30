@@ -10,6 +10,7 @@ function index(req, res) {
             1
         );
 
+
     const q =
         String(
             req.query.q || ""
@@ -51,6 +52,7 @@ function index(req, res) {
 
 }
 
+
 function search(req, res) {
 
     const page =
@@ -59,45 +61,80 @@ function search(req, res) {
             1
         );
 
+
     const q =
         String(
             req.query.q || ""
         ).trim();
 
+
     const result =
         userModel.getPaginated({
+
             page,
+
             limit: 15,
+
             search: q
+
         });
 
+
     res.json({
+
         success: true,
-        users: result.users,
-        pagination: result.pagination
-    });
 
-}
+        users:
+            result.users,
 
-function create(req, res) {
-
-    res.render("admin/users/create", {
-
-        title: "Tambah Pengguna",
-
-        layout: "layouts/app"
+        pagination:
+            result.pagination
 
     });
 
 }
 
 
-function store(req, res) {
+function create(
+    req,
+    res
+) {
+
+    res.render(
+        "admin/users/create",
+        {
+
+            title:
+                "Tambah Pengguna",
+
+            layout:
+                "layouts/app"
+
+        }
+    );
+
+}
+
+
+function store(
+    req,
+    res
+) {
 
     const {
+
         nama,
+
         username,
-        role
+
+        role,
+
+        seksi,
+
+        bagian,
+
+        password
+
     } = req.body;
 
 
@@ -107,9 +144,11 @@ function store(req, res) {
         !role
     ) {
 
-        return res.status(400).send(
-            "Semua data pengguna wajib diisi."
-        );
+        return res
+            .status(400)
+            .send(
+                "Nama, username, dan role wajib diisi."
+            );
 
     }
 
@@ -119,14 +158,22 @@ function store(req, res) {
         userModel.create({
 
             nama,
+
             username,
-            role
+
+            role,
+
+            seksi,
+
+            bagian
 
         });
+
 
         res.redirect(
             "/admin/users"
         );
+
 
     } catch (error) {
 
@@ -135,19 +182,27 @@ function store(req, res) {
             error
         );
 
-        res.status(400).send(
-            "Username sudah digunakan."
-        );
+
+        res
+            .status(400)
+            .send(
+                "Username sudah digunakan."
+            );
 
     }
 
 }
 
 
-function edit(req, res) {
+function edit(
+    req,
+    res
+) {
 
     const id =
-        Number(req.params.id);
+        Number(
+            req.params.id
+        );
 
 
     const user =
@@ -156,60 +211,120 @@ function edit(req, res) {
 
     if (!user) {
 
-        return res.status(404).send(
-            "User tidak ditemukan."
-        );
+        return res
+            .status(404)
+            .send(
+                "User tidak ditemukan."
+            );
 
     }
 
 
-    res.render("admin/users/edit", {
+    res.render(
+        "admin/users/edit",
+        {
 
-        title: "Edit Pengguna",
+            title:
+                "Edit Pengguna",
 
-        layout: "layouts/app",
+            layout:
+                "layouts/app",
 
-        user
+            user
 
-    });
+        }
+    );
 
 }
 
 
-function update(req, res) {
+function update(
+    req,
+    res
+) {
 
     const id =
-        Number(req.params.id);
+        Number(
+            req.params.id
+        );
+
 
     const {
+
         nama,
-        role
+
+        role,
+
+        seksi,
+
+        bagian,
+
+        password
+
     } = req.body;
+
 
     if (
         !nama ||
         !role
     ) {
 
-        return res.status(400).send(
-            "Nama dan role wajib diisi."
-        );
+        return res
+            .status(400)
+            .send(
+                "Nama dan role wajib diisi."
+            );
 
     }
+
 
     try {
 
         userModel.update(
+
             id,
+
             {
+
                 nama,
-                role
+
+                role,
+
+                seksi,
+
+                bagian
+
             }
+
         );
+
+        if (
+            typeof password === "string" &&
+            password.trim()
+        ) {
+
+            if (password.length < 8) {
+
+                return res
+                    .status(400)
+                    .send(
+                        "Password baru minimal 8 karakter."
+                    );
+
+            }
+
+            userModel.setPassword(
+                id,
+                password
+            );
+
+        }
+
 
         res.redirect(
             "/admin/users"
         );
+
 
     } catch (error) {
 
@@ -218,19 +333,27 @@ function update(req, res) {
             error
         );
 
-        res.status(400).send(
-            "Gagal memperbarui pengguna."
-        );
+
+        res
+            .status(400)
+            .send(
+                "Gagal memperbarui pengguna."
+            );
 
     }
 
 }
 
 
-function remove(req, res) {
+function remove(
+    req,
+    res
+) {
 
     const id =
-        Number(req.params.id);
+        Number(
+            req.params.id
+        );
 
 
     /*
@@ -243,9 +366,11 @@ function remove(req, res) {
         id === req.user?.id
     ) {
 
-        return res.status(400).send(
-            "Akun yang sedang digunakan tidak dapat dihapus."
-        );
+        return res
+            .status(400)
+            .send(
+                "Akun yang sedang digunakan tidak dapat dihapus."
+            );
 
     }
 
@@ -262,9 +387,11 @@ function remove(req, res) {
 
     if (!targetUser) {
 
-        return res.status(404).send(
-            "User tidak ditemukan."
-        );
+        return res
+            .status(404)
+            .send(
+                "User tidak ditemukan."
+            );
 
     }
 
@@ -285,15 +412,20 @@ function remove(req, res) {
 
         const totalAdmin =
             allUsers.filter(
-                user => user.role === "admin"
+                user =>
+                    user.role === "admin"
             ).length;
 
 
-        if (totalAdmin <= 1) {
+        if (
+            totalAdmin <= 1
+        ) {
 
-            return res.status(400).send(
-                "Akun Admin terakhir tidak dapat dihapus."
-            );
+            return res
+                .status(400)
+                .send(
+                    "Akun Admin terakhir tidak dapat dihapus."
+                );
 
         }
 
@@ -312,9 +444,11 @@ function remove(req, res) {
 
     if (!success) {
 
-        return res.status(404).send(
-            "User tidak ditemukan."
-        );
+        return res
+            .status(404)
+            .send(
+                "User tidak ditemukan."
+            );
 
     }
 
@@ -324,6 +458,7 @@ function remove(req, res) {
     );
 
 }
+
 
 module.exports = {
 

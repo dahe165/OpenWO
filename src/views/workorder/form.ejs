@@ -1,5 +1,56 @@
 <form action="/workorder" method="POST">
 
+    <% if (canCreateForOther) { %>
+
+        <!-- =====================================
+             PELAPOR
+             ===================================== -->
+
+        <div class="wo-form-field">
+
+            <label
+                for="pelaporId"
+                class="form-label"
+            >
+                Pelapor
+            </label>
+
+            <select
+                id="pelaporId"
+                name="pelaporId"
+                class="form-select"
+                required
+            >
+
+                <option value="">
+                    Pilih Pelapor
+                </option>
+
+                <% users.forEach(function(user) { %>
+
+                    <option
+                        value="<%= user.id %>"
+                    >
+                        <%= user.nama %>
+                        <% if (user.seksi || user.bagian) { %>
+                            —
+                            <%= user.seksi || "" %>
+                            <% if (user.seksi && user.bagian) { %>
+                                •
+                            <% } %>
+                            <%= user.bagian || "" %>
+                        <% } %>
+                    </option>
+
+                <% }); %>
+
+            </select>
+
+        </div>
+
+    <% } %>
+
+
     <!-- =====================================
          JUDUL
          ===================================== -->
@@ -43,17 +94,13 @@
                     Pilih Kategori
                 </option>
 
-                <option value="Incident">
-                    Incident
-                </option>
+                <% categories.forEach(function(category) { %>
 
-                <option value="Service Request">
-                    Service Request
-                </option>
+                    <option value="<%= category.nama %>">
+                        <%= category.nama %>
+                    </option>
 
-                <option value="Preventive Maintenance">
-                    Preventive Maintenance
-                </option>
+                <% }); %>
 
             </select>
 
@@ -78,15 +125,54 @@
                 required
                 disabled
             >
+
                 <option value="">
                     Pilih Sub Kategori
                 </option>
+
             </select>
 
         </div>
 
     </div>
 
+        <!-- =====================================
+         PRIORITAS
+         ===================================== -->
+
+    <div class="wo-form-field">
+
+        <label
+            for="prioritas"
+            class="form-label"
+        >
+            Prioritas
+        </label>
+
+        <select
+            id="prioritas"
+            name="prioritas"
+            class="form-select"
+            required
+        >
+
+            <option value="">
+                Pilih Prioritas
+            </option>
+
+            <% priorities.forEach(function(priority) { %>
+
+                <option
+                    value="<%= priority.nama %>"
+                >
+                    <%= priority.nama %>
+                </option>
+
+            <% }); %>
+
+        </select>
+
+    </div>
 
     <!-- =====================================
          DESKRIPSI

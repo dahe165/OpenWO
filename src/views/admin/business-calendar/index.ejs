@@ -1,0 +1,488 @@
+<div class="page-container">
+
+    <div class="page-header">
+
+        <div>
+            <h1>🗓️ Kalender Layanan</h1>
+
+            <p>
+                <%= calendar.nama %>
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- INFO KALENDER -->
+    <!-- ========================================= -->
+
+    <div class="calendar-info">
+
+        <div class="calendar-info-item">
+
+            <span class="label">
+                Timezone
+            </span>
+
+            <strong>
+                <%= calendar.timezone %>
+            </strong>
+
+        </div>
+
+
+        <div class="calendar-info-item">
+
+            <span class="label">
+                Status
+            </span>
+
+            <strong>
+                <%= calendar.aktif === 1
+                    ? "Aktif"
+                    : "Tidak Aktif"
+                %>
+            </strong>
+
+        </div>
+
+
+        <div class="calendar-info-item">
+
+            <span class="label">
+                Interval Kerja
+            </span>
+
+            <strong>
+                <%= calendar.businessHours.length %>
+                interval
+            </strong>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- CALENDAR GRID -->
+    <!-- ========================================= -->
+
+    <%
+        const namaBulan = [
+            "",
+            "Januari",
+            "Februari",
+            "Maret",
+            "April",
+            "Mei",
+            "Juni",
+            "Juli",
+            "Agustus",
+            "September",
+            "Oktober",
+            "November",
+            "Desember"
+        ];
+
+        const firstDay =
+            new Date(
+                calendarYear,
+                calendarMonth - 1,
+                1
+            );
+
+        /*
+        * JavaScript:
+        * 0 = Minggu
+        * 1 = Senin
+        *
+        * Kita ubah supaya:
+        * 0 = Senin
+        * ...
+        * 6 = Minggu
+        */
+
+        const startDay =
+            (firstDay.getDay() + 6) % 7;
+
+        const daysInMonth =
+            new Date(
+                calendarYear,
+                calendarMonth,
+                0
+            ).getDate();
+
+
+        const previousMonth =
+            calendarMonth === 1
+                ? 12
+                : calendarMonth - 1;
+
+        const previousYear =
+            calendarMonth === 1
+                ? calendarYear - 1
+                : calendarYear;
+
+
+        const nextMonth =
+            calendarMonth === 12
+                ? 1
+                : calendarMonth + 1;
+
+        const nextYear =
+            calendarMonth === 12
+                ? calendarYear + 1
+                : calendarYear;
+    %>
+
+
+    <div class="calendar-card">
+
+        <div class="calendar-navigation">
+
+            <a
+                href="/admin/business-calendar?year=<%= previousYear %>&month=<%= previousMonth %>"
+                class="calendar-nav-button"
+            >
+                ‹
+            </a>
+
+
+            <h2>
+                <%= namaBulan[calendarMonth] %>
+                <%= calendarYear %>
+            </h2>
+
+
+            <a
+                href="/admin/business-calendar?year=<%= nextYear %>&month=<%= nextMonth %>"
+                class="calendar-nav-button"
+            >
+                ›
+            </a>
+
+        </div>
+
+
+        <div class="calendar-weekdays">
+
+            <div>Sen</div>
+            <div>Sel</div>
+            <div>Rab</div>
+            <div>Kam</div>
+            <div>Jum</div>
+            <div>Sab</div>
+            <div>Min</div>
+
+        </div>
+
+
+        <div class="calendar-grid">
+
+            <% for (
+                let blank = 0;
+                blank < startDay;
+                blank++
+            ) { %>
+
+                <div class="calendar-day calendar-empty"></div>
+
+            <% } %>
+
+
+            <% for (
+                let day = 1;
+                day <= daysInMonth;
+                day++
+            ) {
+
+                const date =
+                    new Date(
+                        calendarYear,
+                        calendarMonth - 1,
+                        day
+                    );
+
+                const jsDay =
+                    date.getDay();
+
+                const hari =
+                    jsDay === 0
+                        ? 7
+                        : jsDay;
+
+                const businessHours =
+                    calendar.businessHours.filter(
+                        item => item.hari === hari
+                    );
+
+                const isBusinessDay =
+                    businessHours.length > 0;
+
+                const dateString =
+                    `${calendarYear}-${String(calendarMonth).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+                const exception =
+                    calendar.exceptions.find(
+                        item =>
+                            item.tanggal === dateString
+                    );
+
+            %>
+
+
+                <div class="
+                    calendar-day
+                    <%= exception
+                        ? (
+                            exception.tipe === "LIBUR"
+                                ? "calendar-holiday"
+                                : "calendar-special"
+                        )
+                        : (
+                            isBusinessDay
+                                ? "calendar-working"
+                                : "calendar-off"
+                        )
+                    %>
+                ">
+
+                    <div class="calendar-day-number">
+                        <%= day %>
+                    </div>
+
+
+                    <% if (exception) { %>
+
+                        <div class="calendar-day-label">
+
+                            <%= exception.tipe === "LIBUR"
+                                ? "Hari Libur"
+                                : "Kerja Khusus"
+                            %>
+
+                        </div>
+
+
+                        <div class="calendar-day-name">
+
+                            <%= exception.nama %>
+
+                        </div>
+
+
+                        <% } else if (isBusinessDay) { %>
+
+                            <div class="calendar-day-label">
+                                Jam kerja
+                            </div>
+
+                        <% } else { %>
+
+                        <div class="calendar-day-label">
+                            Libur
+                        </div>
+
+                    <% } %>
+
+                </div>
+
+
+            <% } %>
+
+        </div>
+
+
+        <div class="calendar-legend">
+
+            <span>
+                <i class="legend-working"></i>
+                Hari kerja
+            </span>
+
+            <span>
+                <i class="legend-off"></i>
+                Libur
+            </span>
+
+            <span>
+                <i class="legend-exception"></i>
+                Hari khusus
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- JAM KERJA -->
+    <!-- ========================================= -->
+
+    <div class="calendar-card">
+
+        <div class="calendar-card-header">
+
+            <div>
+
+                <h2>Jam Kerja</h2>
+
+                <p>
+                    Waktu layanan yang digunakan
+                    untuk perhitungan SLA.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="business-hours-list">
+
+            <% 
+                const namaHari = [
+                    "",
+                    "Senin",
+                    "Selasa",
+                    "Rabu",
+                    "Kamis",
+                    "Jumat",
+                    "Sabtu",
+                    "Minggu"
+                ];
+            %>
+
+
+            <% for (let hari = 1; hari <= 7; hari++) { %>
+
+                <%
+                    const hours =
+                        calendar.businessHours.filter(
+                            item => item.hari === hari
+                        );
+                %>
+
+
+                <div class="business-day">
+
+                    <div class="business-day-name">
+
+                        <strong>
+                            <%= namaHari[hari] %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="business-day-hours">
+
+                        <% if (hours.length === 0) { %>
+
+                            <span class="day-off">
+                                Libur
+                            </span>
+
+                        <% } else { %>
+
+                            <% hours.forEach(hour => { %>
+
+                                <span class="hour-badge">
+
+                                    <%= hour.jam_mulai %>
+                                    –
+                                    <%= hour.jam_selesai %>
+
+                                </span>
+
+                            <% }); %>
+
+                        <% } %>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- CALENDAR EXCEPTIONS -->
+    <!-- ========================================= -->
+
+    <div class="calendar-card">
+
+        <div class="calendar-card-header">
+
+            <div>
+
+                <h2>Hari Khusus</h2>
+
+                <p>
+                    Hari libur dan hari kerja khusus.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <% if (calendar.exceptions.length === 0) { %>
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    🗓️
+                </div>
+
+                <strong>
+                    Belum ada hari khusus
+                </strong>
+
+                <p>
+                    Hari libur atau hari kerja khusus
+                    belum ditambahkan.
+                </p>
+
+            </div>
+
+        <% } else { %>
+
+            <div class="exception-list">
+
+                <% calendar.exceptions.forEach(exception => { %>
+
+                    <div class="exception-item">
+
+                        <div>
+
+                            <strong>
+                                <%= exception.tanggal %>
+                            </strong>
+
+                            <span>
+                                <%= exception.nama %>
+                            </span>
+
+                        </div>
+
+
+                        <span class="exception-type">
+
+                            <%= exception.tipe %>
+
+                        </span>
+
+                    </div>
+
+                <% }); %>
+
+            </div>
+
+        <% } %>
+
+    </div>
+
+</div>

@@ -1,0 +1,259 @@
+<style>
+    .category-edit-page {
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .category-edit-header {
+        margin-bottom: 24px;
+    }
+
+    .category-edit-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #2563eb;
+        text-decoration: none;
+        font-size: .88rem;
+        font-weight: 600;
+    }
+
+    .category-edit-back:hover {
+        color: #1d4ed8;
+    }
+
+    .category-edit-title {
+        margin: 14px 0 5px;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .category-edit-description {
+        margin: 0;
+        color: #6b7280;
+    }
+
+    .category-edit-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, .05);
+        overflow: hidden;
+    }
+
+    .category-edit-body {
+        padding: 24px;
+    }
+
+    .category-status-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        margin-bottom: 22px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+    }
+
+    .category-status-label {
+        font-size: .76rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .category-status-active {
+        color: #047857;
+        font-weight: 700;
+    }
+
+    .category-status-inactive {
+        color: #6b7280;
+        font-weight: 700;
+    }
+
+    .category-edit-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 24px;
+        background: #fafafa;
+        border-top: 1px solid #eef0f3;
+    }
+
+    @media (max-width: 600px) {
+
+        .category-edit-body {
+            padding: 18px;
+        }
+
+        .category-edit-actions {
+            padding: 14px 18px;
+        }
+
+        .category-edit-actions .btn {
+            flex: 1;
+        }
+
+    }
+</style>
+
+
+<div class="category-edit-page">
+
+
+    <!-- =========================================
+         HEADER
+         ========================================= -->
+
+    <div class="category-edit-header">
+
+        <a
+            href="/admin/categories"
+            class="category-edit-back"
+        >
+            ← Kembali ke Master Kategori
+        </a>
+
+        <h1 class="category-edit-title">
+            Edit Kategori
+        </h1>
+
+        <p class="category-edit-description">
+            Perbarui nama atau urutan kategori.
+        </p>
+
+    </div>
+
+
+    <!-- =========================================
+         FORM CARD
+         ========================================= -->
+
+    <div class="category-edit-card">
+
+        <div class="category-edit-body">
+
+
+            <!-- STATUS -->
+
+            <div class="category-status-info">
+
+                <span class="category-status-label">
+                    Status
+                </span>
+
+
+                <% if (category.aktif) { %>
+
+                    <span class="category-status-active">
+                        ● Aktif
+                    </span>
+
+                <% } else { %>
+
+                    <span class="category-status-inactive">
+                        ● Tidak Aktif
+                    </span>
+
+                <% } %>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <form
+                id="category-edit-form"
+                method="POST"
+                action="/admin/categories/<%= category.id %>"
+            >
+
+
+                <!-- NAMA -->
+
+                <div class="mb-3">
+
+                    <label
+                        for="nama"
+                        class="form-label fw-semibold"
+                    >
+                        Nama Kategori
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nama"
+                        name="nama"
+                        class="form-control"
+                        value="<%= category.nama %>"
+                        required
+                        autofocus
+                    >
+
+                </div>
+
+
+                <!-- URUTAN -->
+
+                <div class="mb-2">
+
+                    <label
+                        for="urutan"
+                        class="form-label fw-semibold"
+                    >
+                        Urutan
+                    </label>
+
+                    <input
+                        type="number"
+                        id="urutan"
+                        name="urutan"
+                        class="form-control"
+                        value="<%= category.urutan %>"
+                        min="0"
+                    >
+
+                </div>
+
+                <div class="form-text">
+                    Urutan menentukan posisi kategori pada daftar.
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+        <!-- =========================================
+             ACTION
+             ========================================= -->
+
+        <div class="category-edit-actions">
+
+            <a
+                href="/admin/categories"
+                class="btn btn-light"
+            >
+                Batal
+            </a>
+
+
+            <button
+                type="submit"
+                form="category-edit-form"
+                class="btn btn-primary"
+            >
+                Simpan Perubahan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

@@ -9,7 +9,11 @@
             ← Kembali
         </a>
 
-        <h1>Edit Pengguna</h1>
+
+        <h1>
+            Edit Pengguna
+        </h1>
+
 
         <p>
             Perbarui informasi pengguna OpenWO.
@@ -24,11 +28,15 @@
         class="user-form"
     >
 
+
+        <!-- NAMA -->
+
         <div class="form-group">
 
             <label for="nama">
                 Nama Lengkap
             </label>
+
 
             <input
                 type="text"
@@ -42,11 +50,14 @@
         </div>
 
 
+        <!-- USERNAME -->
+
         <div class="form-group">
 
             <label for="username">
                 Username
             </label>
+
 
             <input
                 type="text"
@@ -57,6 +68,7 @@
                 autocomplete="off"
             >
 
+
             <small>
                 🔒 Username adalah identitas permanen
                 dan tidak dapat diubah.
@@ -65,11 +77,14 @@
         </div>
 
 
+        <!-- ROLE -->
+
         <div class="form-group">
 
             <label for="role">
                 Role
             </label>
+
 
             <select
                 id="role"
@@ -79,35 +94,49 @@
 
                 <option
                     value="pelapor"
-                    <%= user.role === "pelapor" ? "selected" : "" %>
+                    <%= user.role === "pelapor"
+                        ? "selected"
+                        : "" %>
                 >
                     Pelapor
                 </option>
 
+
                 <option
                     value="teknisi"
-                    <%= user.role === "teknisi" ? "selected" : "" %>
+                    <%= user.role === "teknisi"
+                        ? "selected"
+                        : "" %>
                 >
                     Teknisi
                 </option>
 
+
                 <option
                     value="asman"
-                    <%= user.role === "asman" ? "selected" : "" %>
+                    <%= user.role === "asman"
+                        ? "selected"
+                        : "" %>
                 >
                     Asman
                 </option>
 
+
                 <option
                     value="manager"
-                    <%= user.role === "manager" ? "selected" : "" %>
+                    <%= user.role === "manager"
+                        ? "selected"
+                        : "" %>
                 >
                     Manager
                 </option>
 
+
                 <option
                     value="admin"
-                    <%= user.role === "admin" ? "selected" : "" %>
+                    <%= user.role === "admin"
+                        ? "selected"
+                        : "" %>
                 >
                     Admin
                 </option>
@@ -117,6 +146,87 @@
         </div>
 
 
+        <!-- DIVISI -->
+
+        <div class="form-group">
+
+            <label for="seksi">
+                Seksi
+            </label>
+
+
+            <input
+                type="text"
+                id="seksi"
+                name="seksi"
+                value="<%= user.seksi || '' %>"
+                placeholder="Contoh: Jaringan & Insfratuktur"
+                required
+                autocomplete="organization"
+            >
+
+
+            <small>
+                Seksi tempat pengguna berada.
+            </small>
+
+        </div>
+
+
+        <!-- ORGANISASI -->
+
+        <div class="form-group">
+
+            <label for="bagian">
+                Bagian
+            </label>
+
+
+            <input
+                type="text"
+                id="bagian"
+                name="bagian"
+                value="<%= user.bagian || '' %>"
+                placeholder="Contoh: STI"
+                required
+                autocomplete="organization"
+            >
+
+
+            <small>
+                Departemen atau bagian pengguna.
+            </small>
+
+        </div>
+
+
+        <!-- PASSWORD -->
+
+        <div class="form-group">
+
+            <label for="password">
+                Password Baru
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Kosongkan jika tidak ingin mengubah"
+                minlength="8"
+                autocomplete="new-password"
+            >
+
+            <small>
+                Isi hanya jika ingin mengganti password.
+                Minimal 8 karakter.
+            </small>
+
+        </div>
+
+
+        <!-- ACTION -->
+
         <div class="form-actions">
 
             <a
@@ -125,6 +235,7 @@
             >
                 Batal
             </a>
+
 
             <button
                 type="submit"
@@ -145,7 +256,9 @@
 .admin-user-form {
 
     width: 100%;
+
     max-width: 650px;
+
     margin: 0 auto;
 
 }
@@ -365,6 +478,7 @@
     }
 
 }
+
 
 .form-group input.input-readonly {
 

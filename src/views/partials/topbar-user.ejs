@@ -1,0 +1,86 @@
+<div class="topbar-user">
+
+    <%
+        const currentUser =
+            user || {};
+
+        const currentName =
+            currentUser.nama || "Pengguna";
+
+        const currentRole =
+            currentUser.role || "pengguna";
+
+        const currentAvatar =
+            currentName
+                .split(" ")
+                .filter(Boolean)
+                .map(word => word[0])
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+    %>
+
+
+    <div class="topbar-profile">
+
+        <button
+            type="button"
+            class="topbar-user"
+            id="profileToggle"
+            aria-expanded="false"
+        >
+
+            <div class="user-avatar">
+                <%= currentAvatar %>
+            </div>
+
+            <div class="user-info">
+
+                <strong>
+                    <%= currentName %>
+                </strong>
+
+                <small>
+                    <%= currentRole.charAt(0).toUpperCase() +
+                        currentRole.slice(1) %>
+                </small>
+
+            </div>
+
+            <span class="profile-chevron">
+                ▾
+            </span>
+
+        </button>
+
+
+        <div
+            class="profile-dropdown"
+            id="profileDropdown"
+        >
+
+            <a href="/profile">
+                👤
+                <span>Profil Saya</span>
+            </a>
+
+            <a href="/setting">
+                ⚙️
+                <span>Pengaturan</span>
+            </a>
+
+            <div class="profile-divider"></div>
+
+            <a
+                href="/logout"
+                class="profile-logout"
+            >
+                🚪
+                <span>Keluar</span>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

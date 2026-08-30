@@ -34,33 +34,22 @@
 <script>
 (function () {
 
-    const data = {
+    /*
+     * =====================================
+     * MASTER DATA
+     * =====================================
+     *
+     * Data kategori dan subkategori
+     * berasal dari database melalui controller.
+     */
 
-        Incident: [
-            "Hardware",
-            "Network",
-            "Software",
-            "Access"
-        ],
-
-        "Service Request": [
-            "Hardware",
-            "Software",
-            "Access",
-            "Account"
-        ],
-
-        "Preventive Maintenance": [
-            "Hardware",
-            "Network",
-            "Software"
-        ]
-
-    };
+    const categories =
+        <%- JSON.stringify(categories || []) %>;
 
 
     const kategori =
         document.getElementById("kategori");
+
 
     const subkategori =
         document.getElementById("subkategori");
@@ -79,38 +68,81 @@
                 this.value;
 
 
+            /*
+             * Reset subkategori
+             */
+
             subkategori.innerHTML =
                 '<option value="">Pilih Sub Kategori</option>';
 
 
-            if (
-                !selected ||
-                !data[selected]
-            ) {
+            subkategori.disabled = true;
 
-                subkategori.disabled = true;
 
+            if (!selected) {
                 return;
             }
 
 
-            subkategori.disabled = false;
+            /*
+             * Cari kategori berdasarkan nama.
+             */
+
+            const category =
+                categories.find(
+                    function (item) {
+                        return item.nama === selected;
+                    }
+                );
 
 
-            data[selected].forEach(
+            if (
+                !category ||
+                !Array.isArray(
+                    category.subcategories
+                )
+            ) {
+                return;
+            }
+
+
+            /*
+             * Masukkan subkategori aktif.
+             */
+
+            category.subcategories.forEach(
                 function (item) {
 
                     const option =
-                        document.createElement("option");
+                        document.createElement(
+                            "option"
+                        );
 
-                    option.value = item;
+                    option.value =
+                        item.nama;
 
-                    option.textContent = item;
+                    option.textContent =
+                        item.nama;
 
-                    subkategori.appendChild(option);
+                    subkategori.appendChild(
+                        option
+                    );
 
                 }
             );
+
+
+            /*
+             * Aktifkan dropdown
+             * jika tersedia subkategori.
+             */
+
+            if (
+                category.subcategories.length > 0
+            ) {
+                subkategori.disabled =
+                    false;
+            }
 
         }
     );

@@ -1,0 +1,308 @@
+<style>
+    /* =====================================================
+       PRIORITY EDIT
+       ===================================================== */
+
+    .priority-form-page {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .priority-form-header {
+        margin-bottom: 24px;
+    }
+
+    .priority-form-title {
+        margin: 0;
+
+        font-size: 1.7rem;
+        font-weight: 700;
+
+        color: #111827;
+    }
+
+    .priority-form-description {
+        margin: 7px 0 0;
+
+        color: #6b7280;
+    }
+
+
+    /* =====================================================
+       CARD
+       ===================================================== */
+
+    .priority-form-card {
+        padding: 28px;
+
+        background: white;
+
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+
+        box-shadow:
+            0 4px 18px rgba(0, 0, 0, .05);
+    }
+
+
+    /* =====================================================
+       FIELD
+       ===================================================== */
+
+    .priority-form-group {
+        margin-bottom: 20px;
+    }
+
+    .priority-form-label {
+        display: block;
+
+        margin-bottom: 7px;
+
+        color: #374151;
+
+        font-size: .88rem;
+        font-weight: 600;
+    }
+
+    .priority-form-input {
+        width: 100%;
+        box-sizing: border-box;
+
+        padding: 11px 13px;
+
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+
+        background: white;
+
+        font-size: .9rem;
+    }
+
+    .priority-form-input:focus {
+        outline: none;
+
+        border-color: #2563eb;
+
+        box-shadow:
+            0 0 0 3px rgba(37, 99, 235, .10);
+    }
+
+    .priority-form-help {
+        margin-top: 6px;
+
+        color: #6b7280;
+
+        font-size: .76rem;
+    }
+
+
+    /* =====================================================
+       STATUS
+       ===================================================== */
+
+    .priority-current-status {
+        margin-top: 8px;
+
+        color: #047857;
+
+        font-size: .8rem;
+        font-weight: 600;
+    }
+
+
+    /* =====================================================
+       ACTIONS
+       ===================================================== */
+
+    .priority-form-actions {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 12px;
+
+        margin-top: 28px;
+        padding-top: 20px;
+
+        border-top: 1px solid #e5e7eb;
+    }
+
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (max-width: 600px) {
+
+        .priority-form-card {
+            padding: 20px;
+        }
+
+        .priority-form-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+        .priority-form-actions a,
+        .priority-form-actions button {
+            width: 100%;
+        }
+
+    }
+</style>
+
+
+<div class="priority-form-page">
+
+
+    <!-- =================================================
+         HEADER
+         ================================================= -->
+
+    <div class="priority-form-header">
+
+        <h1 class="priority-form-title">
+            Edit Prioritas
+        </h1>
+
+        <p class="priority-form-description">
+            Ubah nama atau urutan prioritas Work Order.
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         FORM
+         ================================================= -->
+
+    <div class="priority-form-card">
+
+        <form
+            method="POST"
+            action="/admin/priorities/<%= priority.id %>"
+        >
+
+
+            <!-- =========================================
+                 NAMA
+                 ========================================= -->
+
+            <div class="priority-form-group">
+
+                <label
+                    for="nama"
+                    class="priority-form-label"
+                >
+                    Nama Prioritas
+                </label>
+
+                <input
+                    type="text"
+                    id="nama"
+                    name="nama"
+                    class="priority-form-input"
+                    value="<%= priority.nama %>"
+                    maxlength="100"
+                    required
+                    autofocus
+                >
+
+                <div class="priority-form-help">
+                    Nama prioritas yang ditampilkan pada Work Order.
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 URUTAN
+                 ========================================= -->
+
+            <div class="priority-form-group">
+
+                <label
+                    for="urutan"
+                    class="priority-form-label"
+                >
+                    Urutan
+                </label>
+
+                <input
+                    type="number"
+                    id="urutan"
+                    name="urutan"
+                    class="priority-form-input"
+                    value="<%= priority.urutan %>"
+                    min="0"
+                    step="1"
+                    required
+                >
+
+                <div class="priority-form-help">
+                    Semakin kecil angka, semakin awal ditampilkan.
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 STATUS
+                 ========================================= -->
+
+            <div class="priority-form-group">
+
+                <label class="priority-form-label">
+                    Status
+                </label>
+
+                <% if (priority.aktif === 1) { %>
+
+                    <div class="priority-current-status">
+                        ● Aktif
+                    </div>
+
+                <% } else { %>
+
+                    <div
+                        class="priority-current-status"
+                        style="color:#6b7280;"
+                    >
+                        ● Tidak Aktif
+                    </div>
+
+                <% } %>
+
+            </div>
+
+
+            <!-- =========================================
+                 ACTION
+                 ========================================= -->
+
+            <div class="priority-form-actions">
+
+                <a
+                    href="/admin/priorities"
+                    class="btn btn-outline-secondary"
+                >
+                    Batal
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Simpan Perubahan
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>

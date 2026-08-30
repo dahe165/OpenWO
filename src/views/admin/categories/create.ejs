@@ -1,0 +1,112 @@
+<div class="category-page">
+
+    <div class="mb-4">
+
+        <a
+            href="/admin/categories"
+            class="text-decoration-none"
+        >
+            ← Kembali ke Master Kategori
+        </a>
+
+        <h1 class="category-title mt-3">
+            Tambah Kategori
+        </h1>
+
+        <p class="category-description">
+            Tambahkan kategori baru untuk Work Order.
+        </p>
+
+    </div>
+
+
+    <div
+        class="card border-0 shadow-sm"
+        style="max-width: 650px;"
+    >
+
+        <div class="card-body p-4">
+
+            <form
+                method="POST"
+                action="/admin/categories"
+            >
+
+                <!-- NAMA -->
+
+                <div class="mb-3">
+
+                    <label
+                        for="nama"
+                        class="form-label fw-semibold"
+                    >
+                        Nama Kategori
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nama"
+                        name="nama"
+                        class="form-control"
+                        placeholder="Contoh: Hardware"
+                        required
+                        autofocus
+                    >
+
+                </div>
+
+
+                <!-- URUTAN -->
+
+                <div class="mb-4">
+
+                    <label
+                        for="urutan"
+                        class="form-label fw-semibold"
+                    >
+                        Urutan
+                    </label>
+
+                    <input
+                        type="number"
+                        id="urutan"
+                        name="urutan"
+                        class="form-control"
+                        value="0"
+                        min="0"
+                    >
+
+                    <div class="form-text">
+                        Menentukan posisi kategori pada daftar.
+                    </div>
+
+                </div>
+
+
+                <!-- ACTION -->
+
+                <div class="d-flex gap-2">
+
+                    <a
+                        href="/admin/categories"
+                        class="btn btn-light"
+                    >
+                        Batal
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Simpan Kategori
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

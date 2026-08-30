@@ -1,10 +1,12 @@
 function index(req, res) {
 
-    res.render("home/index", {
-
-        title: "Beranda"
-
-    });
+    res.render(
+        "home/index",
+        {
+            layout: false,
+            title: "Beranda"
+        }
+    );
 
 }
 

@@ -126,6 +126,60 @@ if (!hasCompletionPhoto) {
 
 /*
  * =====================================
+ * MIGRASI — DIBUAT OLEH
+ * =====================================
+ */
+
+const hasCreatedBy =
+    workOrderColumns.some(
+        column =>
+            column.name ===
+            "created_by"
+    );
+
+
+if (!hasCreatedBy) {
+
+    db.exec(`
+        ALTER TABLE work_orders
+        ADD COLUMN created_by INTEGER;
+    `);
+
+    console.log(
+        "DATABASE MIGRATION: kolom created_by berhasil ditambahkan."
+    );
+
+}
+
+/*
+ * =====================================
+ * MIGRASI — PRIORITAS
+ * =====================================
+ */
+
+const hasPriority =
+    workOrderColumns.some(
+        column =>
+            column.name ===
+            "prioritas"
+    );
+
+
+if (!hasPriority) {
+
+    db.exec(`
+        ALTER TABLE work_orders
+        ADD COLUMN prioritas TEXT;
+    `);
+
+    console.log(
+        "DATABASE MIGRATION: kolom prioritas berhasil ditambahkan."
+    );
+
+}
+
+/*
+ * =====================================
  * Tabel Timeline
  * =====================================
  */
@@ -152,6 +206,44 @@ db.exec(`
 
     );
 `);
+
+/*
+ * =====================================
+ * Tabel SLA Event
+ * =====================================
+ */
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS work_order_sla_events (
+
+        id INTEGER PRIMARY KEY,
+
+        work_order_id INTEGER NOT NULL,
+
+        event TEXT NOT NULL,
+
+        user_id INTEGER,
+
+        reason TEXT,
+
+        metadata TEXT,
+
+        occurred_at TEXT NOT NULL,
+
+        created_at TEXT NOT NULL,
+
+        FOREIGN KEY (work_order_id)
+            REFERENCES work_orders(id)
+            ON DELETE CASCADE,
+
+        FOREIGN KEY (user_id)
+            REFERENCES users(id)
+    );
+`);
+
+console.log(
+    "✅ Tabel work_order_sla_events siap."
+);
 
 /*
  * =====================================
