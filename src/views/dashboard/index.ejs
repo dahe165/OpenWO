@@ -231,16 +231,27 @@
     categoryTrend: categoryTrend
 }) %>
 
+<div class="dashboard-analytics-row">
 
-<%- include("../components/charts/status-workorder", {
-    summary: summary
-}) %>
+    <div class="dashboard-analytics-card">
+        <%- include("../components/charts/status-workorder", {
+            summary: summary
+        }) %>   
+    </div>
 
+    <div class="dashboard-analytics-card">
+        <%- include("../components/charts/technician-load", {
+            technicianLoad
+        }) %>
+    </div>
 
-<%- include("../components/charts/technician-load", {
-    technicianLoad
-}) %>
+    <div class="dashboard-analytics-card">
+        <%- include("../components/sla/sla-health", {
+            sla: slaHealth
+        }) %>
+    </div>
 
+</div>
 
 <% } else if (role === "admin") { %>
 

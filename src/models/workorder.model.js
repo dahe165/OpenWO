@@ -674,6 +674,326 @@ function startWork(
     return getById(id);
 }
 
+/*
+ * =====================================
+ * START WAITING
+ * =====================================
+ */
+
+function startWaiting(
+    id,
+    technicianId,
+    reason
+) {
+
+    const workorder =
+        db.prepare(`
+            ${baseQuery}
+
+            WHERE wo.id = ?
+            AND wo.teknisi_id = ?
+        `).get(
+            id,
+            technicianId
+        );
+
+
+    if (!workorder) {
+        return null;
+    }
+
+
+    /*
+     * Hanya WO Diproses
+     * yang boleh masuk Waiting.
+     */
+
+    if (
+        workorder.status !==
+        "Diproses"
+    ) {
+
+        return null;
+
+    }
+
+
+    if (
+        !canTransition(
+            workorder.status,
+            "Waiting"
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    /*
+     * Alasan Waiting wajib.
+     */
+
+    if (
+        !reason ||
+        !reason.trim()
+    ) {
+
+        return null;
+
+    }
+
+
+    const now =
+        new Date().toISOString();
+
+
+    const transaction =
+        db.transaction(() => {
+
+            /*
+             * Ubah status WO
+             */
+
+            db.prepare(`
+                UPDATE work_orders
+
+                SET
+                    status = ?,
+                    updated_at = ?
+
+                WHERE id = ?
+            `).run(
+                "Waiting",
+                now,
+                id
+            );
+
+
+            /*
+             * Catat Timeline
+             */
+
+            db.prepare(`
+                INSERT INTO work_order_timeline (
+                    work_order_id,
+                    status,
+                    user_id,
+                    reason,
+                    created_at
+                )
+
+                VALUES (?, ?, ?, ?, ?)
+            `).run(
+                id,
+                "Waiting",
+                technicianId,
+                reason.trim(),
+                now
+            );
+
+
+            /*
+             * Catat SLA Event
+             */
+
+            slaEventService.recordEvent({
+
+                workOrderId:
+                    id,
+
+                event:
+                    slaEventService
+                        .SLA_EVENTS
+                        .WAITING_STARTED,
+
+                userId:
+                    technicianId,
+
+                occurredAt:
+                    now
+
+            });
+
+        });
+
+
+    try {
+
+        transaction();
+
+    } catch (error) {
+
+        console.error(
+            "START WAITING ERROR:",
+            error
+        );
+
+        return null;
+
+    }
+
+
+    return getById(id);
+
+}
+
+/*
+ * =====================================
+ * RESUME WAITING
+ * =====================================
+ */
+
+function resumeWaiting(
+    id,
+    technicianId
+) {
+
+    const workorder =
+        db.prepare(`
+            ${baseQuery}
+
+            WHERE wo.id = ?
+            AND wo.teknisi_id = ?
+        `).get(
+            id,
+            technicianId
+        );
+
+
+    if (!workorder) {
+
+        return null;
+
+    }
+
+
+    /*
+     * Hanya WO Waiting
+     * yang boleh dilanjutkan.
+     */
+
+    if (
+        workorder.status !==
+        "Waiting"
+    ) {
+
+        return null;
+
+    }
+
+
+    if (
+        !canTransition(
+            workorder.status,
+            "Diproses"
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    const now =
+        new Date().toISOString();
+
+
+    const update =
+        db.prepare(`
+            UPDATE work_orders
+
+            SET
+                status = ?,
+                updated_at = ?
+
+            WHERE id = ?
+        `);
+
+
+    const insertTimeline =
+        db.prepare(`
+            INSERT INTO work_order_timeline (
+                work_order_id,
+                status,
+                user_id,
+                created_at
+            )
+
+            VALUES (?, ?, ?, ?)
+        `);
+
+
+    const transaction =
+        db.transaction(() => {
+
+            /*
+             * Kembali ke Diproses
+             */
+
+            update.run(
+                "Diproses",
+                now,
+                id
+            );
+
+
+            /*
+             * Catat pekerjaan dilanjutkan
+             */
+
+            insertTimeline.run(
+                id,
+                "Dikerjakan",
+                technicianId,
+                now
+            );
+
+
+            /*
+             * Catat SLA Event
+             */
+
+            slaEventService.recordEvent({
+
+                workOrderId:
+                    id,
+
+                event:
+                    slaEventService
+                        .SLA_EVENTS
+                        .WAITING_ENDED,
+
+                userId:
+                    technicianId,
+
+                occurredAt:
+                    now
+
+            });
+
+        });
+
+
+    try {
+
+        transaction();
+
+    } catch (error) {
+
+        console.error(
+            "RESUME WAITING ERROR:",
+            error
+        );
+
+        return null;
+
+    }
+
+
+    return getById(id);
+
+}
 
 /*
  * =====================================
@@ -808,6 +1128,30 @@ function completeWork(
                 technicianId,
                 now
             );
+
+            /*
+            * =====================================
+            * CATAT SLA EVENT
+            * =====================================
+            */
+
+            slaEventService.recordEvent({
+
+                workOrderId:
+                    id,
+
+                event:
+                    slaEventService
+                        .SLA_EVENTS
+                        .COMPLETED,
+
+                userId:
+                    technicianId,
+
+                occurredAt:
+                    now
+
+            });
 
         });
 
@@ -1604,6 +1948,30 @@ function create(data) {
 
             );
 
+            /*
+            * =====================================
+            * CATAT SLA EVENT CREATED
+            * =====================================
+            */
+
+            slaEventService.recordEvent({
+
+                workOrderId:
+                    nextId,
+
+                event:
+                    slaEventService
+                        .SLA_EVENTS
+                        .CREATED,
+
+                userId:
+                    createdBy,
+
+                occurredAt:
+                    now
+
+            });
+
         });
 
 
@@ -1767,6 +2135,10 @@ module.exports = {
     assignByAsman,
 
     startWork,
+
+    startWaiting,
+
+    resumeWaiting,
 
     completeWork,
 

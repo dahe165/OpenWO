@@ -4,6 +4,9 @@ const dashboardService = require("../services/dashboard.service");
 
 const userModel =  require("../models/user.model");
 
+const slaDashboardService =
+    require("../services/sla-dashboard.service");
+
 const db = require("../config/database");
 
 // controller lainnya...
@@ -28,6 +31,9 @@ function index(req, res) {
 
     const technicianLoad =
         dashboardService.getTechnicianLoad();
+
+    const slaHealth =
+        slaDashboardService.getSlaHealth();
 
     const stats =
         userModel.getUserStats();
@@ -187,6 +193,8 @@ function index(req, res) {
         technicianFeed,        
 
         technicianLoad,
+
+        slaHealth,
 
         pagination: {
 

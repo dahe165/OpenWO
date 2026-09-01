@@ -13,8 +13,13 @@ const WORKFLOW = {
     ],
 
     Diproses: [
+        "Waiting",
         "Selesai"
     ],
+
+    Waiting: [
+    "Diproses"
+],
 
     Selesai: [
         "Verifikasi Asman"

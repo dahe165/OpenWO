@@ -1992,8 +1992,8 @@ font-size:14px;
 
 .wo-actions {
     display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
+    flex-direction: row-reverse;
+    justify-content: space-between;
     gap: 20px;
     width: 100%;
     margin-top: 0px;
@@ -3625,7 +3625,7 @@ font-size:14px;
 
     display: flex;
 
-    justify-content: flex-end;
+    justify-content: flex-start;
 
     margin-top: 18px;
 
@@ -5798,5 +5798,26 @@ font-size:14px;
     }
 
 }
-<!---priority--->
 
+
+.dashboard-analytics-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.dashboard-analytics-card {
+    min-width: 0;
+}
+
+.dashboard-analytics-card > * {
+    height: 100%;    
+    margin-top: 0px;
+}
+
+@media (max-width: 900px) {
+    .dashboard-analytics-row {
+        grid-template-columns: 1fr;
+    }
+}

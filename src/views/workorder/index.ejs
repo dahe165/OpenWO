@@ -416,6 +416,30 @@
 
                                 </div>
 
+                                <% if (
+                                    stage === "Dikerjakan" &&
+                                    wo.status === "Waiting"
+                                ) { %>
+
+                                    <form
+                                        method="POST"
+                                        action="/workorder/<%= wo.id %>/resume-waiting"
+                                        class="timeline-waiting-form"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="timeline-waiting-button"
+                                            title="Lanjutkan Pekerjaan"
+                                            aria-label="Lanjutkan Pekerjaan"
+                                        >
+                                            ⏸
+                                        </button>
+
+                                    </form>
+
+                                <% } %>
+
                             <% }) %>
 
                         </div>
@@ -870,6 +894,53 @@
                         wo.status === "Diproses"
                     ) { %>
 
+                        <form
+                            method="POST"
+                            action="/workorder/<%= wo.id %>/waiting"
+                            class="waiting-form"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn-action btn-waiting"
+                            >
+                                ⏸ Waiting
+                            </button>
+
+                            <select
+                                name="reason"
+                                class="waiting-reason"
+                                required
+                            >
+
+                                <option value="">
+                                    ⏸ Pilih alasan menunggu...
+                                </option>
+
+                                <option value="Menunggu Barang">
+                                    📦 Menunggu Barang
+                                </option>
+
+                                <option value="Menunggu User">
+                                    👤 Menunggu User
+                                </option>
+
+                                <option value="Menunggu Vendor">
+                                    🏢 Menunggu Vendor
+                                </option>
+
+                                <option value="Menunggu Keputusan">
+                                    👔 Menunggu Keputusan
+                                </option>
+
+                                <option value="Lainnya">
+                                    📝 Lainnya
+                                </option>
+
+                            </select>                          
+
+                        </form>
+
                         <% if (
                             wo.id === activeId &&
                             completeMode
@@ -964,6 +1035,27 @@
                             </button>
 
                         <% } %>
+
+                    <% } %>
+
+                    <% if (
+                        role === "teknisi" &&
+                        wo.status === "Waiting"
+                    ) { %>
+
+                        <form
+                            method="POST"
+                            action="/workorder/<%= wo.id %>/resume-waiting"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn-action btn-start"
+                            >
+                                ▶ Lanjutkan Pekerjaan
+                            </button>
+
+                        </form>
 
                     <% } %>
 

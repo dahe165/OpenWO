@@ -1883,3 +1883,64 @@ body {
 .calendar-special {
     background: #fff9e6;
 }
+
+<!---priority--->
+
+
+.timeline-main {
+    position: relative;
+}
+
+.waiting-form {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.waiting-reason {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.btn-action .btn-waiting {
+    display: flex;
+    justify-content: flex-start;
+}
+
+
+.timeline-waiting-form {
+    position: absolute;
+    left: 80%;
+    top: 37px;
+    transform: translateX(-50%);
+    z-index: 5;
+    margin: 0;
+}
+
+.timeline-waiting-button {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid #fff;
+    border-radius: 50%;
+
+    background: #f1f5f9;
+    color: #191a17d7;
+
+    font-size: 11px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+}
+
+.timeline-waiting-button:hover {
+    transform: scale(1.08);
+}

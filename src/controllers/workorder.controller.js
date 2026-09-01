@@ -670,6 +670,142 @@ function start(req, res) {
     });
 }
 
+function startWaiting(req, res) {
+
+    const id =
+        Number(req.params.id);
+
+    const technicianId =
+        req.user?.id;
+
+    const reason =
+        (req.body?.reason || "")
+            .trim();
+
+    console.log(
+        "=== START WAITING ==="
+    );
+
+    console.log(
+        "WO ID:",
+        id
+    );
+
+    console.log(
+        "TECHNICIAN ID:",
+        technicianId
+    );
+
+    console.log(
+        "REASON:",
+        reason
+    );
+
+
+    if (!reason) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Alasan menunggu wajib diisi."
+
+        });
+
+    }
+
+
+    const workorder =
+        workorderModel.startWaiting(
+
+            id,
+
+            technicianId,
+
+            reason
+
+        );
+
+
+    if (!workorder) {
+
+        return res.status(404).json({
+
+            success: false,
+
+            message:
+                "Work Order tidak ditemukan, bukan tanggung jawab Anda, atau belum dalam status Diproses."
+
+        });
+
+    }
+
+
+    return res.json({
+
+        success: true,
+
+        workorder
+
+    });
+
+}
+
+function resumeWaiting(req, res) {
+
+    const id =
+        Number(req.params.id);
+
+    const technicianId =
+        req.user?.id;
+
+    console.log(
+        "=== RESUME WAITING ==="
+    );
+
+    console.log(
+        "WO ID:",
+        id
+    );
+
+    console.log(
+        "TECHNICIAN ID:",
+        technicianId
+    );
+
+
+    const workorder =
+        workorderModel.resumeWaiting(
+            id,
+            technicianId
+        );
+
+
+    if (!workorder) {
+
+        return res.status(404).json({
+
+            success: false,
+
+            message:
+                "Work Order tidak ditemukan, bukan tanggung jawab Anda, atau tidak sedang Waiting."
+
+        });
+
+    }
+
+
+    return res.json({
+
+        success: true,
+
+        workorder
+
+    });
+
+}
+
 function complete(req, res) {
 
     const id =
@@ -1037,6 +1173,8 @@ module.exports = {
     detail,
     accept,
     start,
+    startWaiting,
+    resumeWaiting,
     complete,
     verify,
     assign,

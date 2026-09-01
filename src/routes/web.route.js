@@ -436,9 +436,21 @@ router.post(
     workorderController.start
 );
 
+// waiting
+router.post(
+    "/workorder/:id/waiting",
+    requireRole("teknisi"),
+    workorderController.startWaiting
+);
+
+// resumeWaiting
+router.post(
+    "/workorder/:id/resume-waiting",
+    requireRole("teknisi"),
+    workorderController.resumeWaiting
+);
 
 // Complete
-
 router.post(
     "/workorder/:id/complete",
     requireLogin,
