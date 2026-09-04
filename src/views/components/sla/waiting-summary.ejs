@@ -1,0 +1,185 @@
+<%
+    const data = waiting || {};
+
+    const totalMinutes =
+        Number(data.totalMinutes) || 0;
+
+    const workOrders =
+        Number(data.workOrders) || 0;
+
+    const averageMinutes =
+        Number(data.averageMinutes) || 0;
+%>
+
+<div class="waiting-summary">
+
+    <div class="row g-3">
+
+        <!-- TOTAL WAITING -->
+        <div class="col-sm-6 col-lg-4">
+
+            <div class="waiting-metric">
+
+                <div class="waiting-icon">
+                    ⏸
+                </div>
+
+                <div class="waiting-content">
+
+                    <div class="waiting-label">
+                        Total Waktu Waiting
+                    </div>
+
+                    <div class="waiting-value">
+                        <%= totalMinutes.toFixed(1) %>
+                        <span>menit</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- WO WAITING -->
+        <div class="col-sm-6 col-lg-4">
+
+            <div class="waiting-metric">
+
+                <div class="waiting-icon">
+                    ◷
+                </div>
+
+                <div class="waiting-content">
+
+                    <div class="waiting-label">
+                        WO Pernah Waiting
+                    </div>
+
+                    <div class="waiting-value">
+                        <%= workOrders %>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- AVERAGE -->
+        <div class="col-sm-6 col-lg-4">
+
+            <div class="waiting-metric">
+
+                <div class="waiting-icon">
+                    ≈
+                </div>
+
+                <div class="waiting-content">
+
+                    <div class="waiting-label">
+                        Rata-rata Waiting
+                    </div>
+
+                    <div class="waiting-value">
+                        <%= averageMinutes.toFixed(1) %>
+                        <span>menit / WO</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.waiting-summary {
+    width: 100%;
+}
+
+.waiting-metric {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    min-height: 92px;
+
+    padding: 18px;
+
+    border: 1px solid #e9ecef;
+    border-radius: 14px;
+
+    background: #fff;
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.waiting-metric:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.waiting-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #f1f3f5;
+
+    font-size: 1.2rem;
+}
+
+.waiting-content {
+    min-width: 0;
+}
+
+.waiting-label {
+    color: #6c757d;
+    font-size: 0.82rem;
+    margin-bottom: 3px;
+}
+
+.waiting-value {
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.waiting-value span {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #6c757d;
+}
+
+
+@media (max-width: 576px) {
+
+    .waiting-metric {
+        min-height: 82px;
+        padding: 14px;
+    }
+
+    .waiting-value {
+        font-size: 1.25rem;
+    }
+
+}
+
+</style>

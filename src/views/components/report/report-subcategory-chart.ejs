@@ -1,0 +1,845 @@
+<%
+    /*
+     * ==========================================
+     * REPORT - SUBCATEGORY BAR CHART
+     * ==========================================
+     *
+     * Data berasal dari:
+     *
+     * report.subkategori
+     *
+     * Tidak ada master subkategori
+     * yang di-hardcode di component.
+     */
+
+    const items = Array.isArray(subkategori)
+        ? subkategori
+        : [];
+
+
+    /*
+     * ==========================================
+     * HITUNG NILAI MAKSIMUM
+     * ==========================================
+     */
+
+    let maxValue = 0;
+
+    items.forEach(function (item) {
+
+        const value =
+            Number(item.jumlah) || 0;
+
+        if (value > maxValue) {
+            maxValue = value;
+        }
+
+    });
+
+
+    /*
+     * ==========================================
+     * SKALA CHART
+     * ==========================================
+     *
+     * Minimal 5.
+     *
+     * Jika data lebih besar dari 5,
+     * skala akan mengikuti data.
+     */
+
+    const chartMax =
+        Math.max(
+            maxValue,
+            5
+        );
+
+
+    /*
+     * Jumlah garis utama.
+     */
+
+    const gridCount = 5;
+
+
+    /*
+     * Nilai setiap interval.
+     */
+
+    const gridStep =
+        chartMax / gridCount;
+
+%>
+
+
+<div class="report-subcategory-chart">
+
+    <% if (items.length === 0) { %>
+
+        <div class="report-chart-empty">
+
+            Belum ada data sub kategori
+            pada periode ini.
+
+        </div>
+
+    <% } else { %>
+
+
+        <!-- ======================================
+             CHART WRAPPER
+        ======================================= -->
+
+        <div class="report-chart-wrapper">
+
+
+            <!-- ==================================
+                 Y AXIS
+            =================================== -->
+
+            <div class="report-chart-y-axis">
+
+                <% for (
+                    let i = gridCount;
+                    i >= 0;
+                    i--
+                ) { %>
+
+                    <div class="report-y-label">
+
+                        <%= Math.round(
+                            gridStep * i
+                        ) %>
+
+                    </div>
+
+                <% } %>
+
+            </div>
+
+
+            <!-- ==================================
+                 MAIN CHART
+            =================================== -->
+
+            <div class="report-chart-main">
+
+
+                <!-- ==================================
+                     HORIZONTAL GRID
+                =================================== -->
+
+                <div class="report-chart-grid">
+
+                    <% for (
+                        let i = gridCount;
+                        i >= 0;
+                        i--
+                    ) { %>
+
+                        <div
+                            class="report-grid-line"
+                        ></div>
+
+                    <% } %>
+
+                </div>
+
+
+                <!-- ==================================
+                     BAR COLUMNS
+                =================================== -->
+
+                <div class="report-chart-columns">
+
+                    <% items.forEach(
+                        function (item, index) {
+
+                            const value =
+                                Number(
+                                    item.jumlah
+                                ) || 0;
+
+
+                            /*
+                             * Persentase tinggi batang
+                             */
+
+                            const percentage =
+                                chartMax > 0
+                                    ? (
+                                        value /
+                                        chartMax
+                                    ) * 100
+                                    : 0;
+
+                    %>
+
+
+                        <div
+                            class="report-chart-column"
+                        >
+
+
+                            <!-- ==========================
+                                 PLOT BAR
+                            =========================== -->
+
+                            <div
+                                class="report-chart-bar-area"
+                            >
+
+                                <% if (
+                                    value > 0
+                                ) { %>
+
+                                    <div
+                                        class="
+                                            report-chart-bar
+                                            report-chart-color-<%= index % 6 %>
+                                        "
+                                        style="
+                                            height:
+                                            <%= percentage %>%;
+                                        "
+                                    >
+
+                                    </div>
+
+                                <% } else { %>
+
+                                    <div
+                                        class="
+                                            report-chart-bar
+                                            report-chart-zero
+                                        "
+                                    ></div>
+
+                                <% } %>
+
+
+                                <!-- ======================
+                                     VALUE
+                                ======================= -->
+
+                                <div
+                                    class="report-chart-value"
+                                    style="
+                                        bottom:
+                                        calc(
+                                            <%= percentage %>%
+                                            + 8px
+                                        );
+                                    "
+                                >
+                                    <%= value %>
+                                </div>
+
+                            </div>
+
+
+                            <!-- ==========================
+                                 LABEL
+                            =========================== -->
+
+                            <div
+                                class="report-chart-label"
+                                title="<%= item.nama || '-' %>"
+                            >
+                                <%= item.nama || "-" %>
+                            </div>
+
+
+                        </div>
+
+
+                    <% }); %>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    <% } %>
+
+</div>
+
+
+<style>
+
+/* ==================================================
+   CHART CONTAINER
+================================================== */
+
+.report-subcategory-chart {
+
+    width: 100%;
+
+    margin-top: 1.5rem;
+
+}
+
+
+/* ==================================================
+   CHART WRAPPER
+================================================== */
+
+.report-chart-wrapper {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: flex-start;
+
+}
+
+
+/* ==================================================
+   Y AXIS
+================================================== */
+
+.report-chart-y-axis {
+
+    width: 42px;
+
+    flex-shrink: 0;
+
+    height: 300px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    padding: 0;
+
+    color: #64748b;
+
+    font-size: 0.75rem;
+
+    text-align: right;
+
+}
+
+
+/*
+ * Setiap angka memiliki tinggi
+ * yang sama dengan posisi grid.
+ */
+
+.report-y-label {
+
+    height: 1px;
+
+    line-height: 1px;
+
+    white-space: nowrap;
+
+}
+
+
+/* ==================================================
+   MAIN CHART
+================================================== */
+
+.report-chart-main {
+
+    position: relative;
+
+    flex: 1;
+
+    min-width: 0;
+
+    height: 300px;
+
+    margin-left: 12px;
+
+    border-left:
+        1px solid #dbe2ea;
+
+    border-bottom:
+        1px solid #dbe2ea;
+
+}
+
+
+/* ==================================================
+   GRID
+================================================== */
+
+.report-chart-grid {
+
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    pointer-events: none;
+
+}
+
+
+/*
+ * Garis horizontal
+ */
+
+.report-grid-line {
+
+    width: 100%;
+
+    height: 0;
+
+    border-top:
+        1px dashed #d8e0e9;
+
+}
+
+
+/* ==================================================
+   BAR COLUMNS
+================================================== */
+
+.report-chart-columns {
+
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: stretch;
+
+    justify-content: space-around;
+
+    gap: 1.5rem;
+
+    padding:
+        0
+        1rem;
+
+}
+
+
+/* ==================================================
+   INDIVIDUAL COLUMN
+================================================== */
+
+.report-chart-column {
+
+    position: relative;
+
+    flex: 1;
+
+    min-width: 60px;
+
+    max-width: 120px;
+
+    height: 100%;
+
+}
+
+
+/* ==================================================
+   BAR AREA
+================================================== */
+
+.report-chart-bar-area {
+
+    position: absolute;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+}
+
+
+/* ==================================================
+   BAR
+================================================== */
+
+.report-chart-bar {
+
+    position: absolute;
+
+    bottom: 0;
+
+    width: 52px;
+
+    min-height: 7px;
+
+    border-radius:
+        8px
+        8px
+        3px
+        3px;
+
+    box-shadow:
+        0
+        5px
+        14px
+        rgba(
+            15,
+            23,
+            42,
+            0.08
+        );
+
+    transition:
+        height
+        0.45s
+        ease,
+
+        transform
+        0.2s
+        ease,
+
+        box-shadow
+        0.2s
+        ease;
+
+}
+
+
+/* ==================================================
+   BAR COLORS
+================================================== */
+
+
+/*
+ * 01 - BLUE
+ */
+
+.report-chart-color-0 {
+
+    background:
+        linear-gradient(
+            180deg,
+            #8bc4f4 0%,
+            #4f91dc 100%
+        );
+
+}
+
+
+/*
+ * 02 - GREEN
+ */
+
+.report-chart-color-1 {
+
+    background:
+        linear-gradient(
+            180deg,
+            #9adfc6 0%,
+            #55b99a 100%
+        );
+
+}
+
+
+/*
+ * 03 - PURPLE
+ */
+
+.report-chart-color-2 {
+
+    background:
+        linear-gradient(
+            180deg,
+            #c0aff5 0%,
+            #8d75dc 100%
+        );
+
+}
+
+
+/*
+ * 04 - ORANGE
+ */
+
+.report-chart-color-3 {
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffd09f 0%,
+            #ee9659 100%
+        );
+
+}
+
+
+/*
+ * 05 - PINK
+ */
+
+.report-chart-color-4 {
+
+    background:
+        linear-gradient(
+            180deg,
+            #f3b6d2 0%,
+            #d979a8 100%
+        );
+
+}
+
+
+/*
+ * 06 - TEAL
+ */
+
+.report-chart-color-5 {
+
+    background:
+        linear-gradient(
+            180deg,
+            #94dfe4 0%,
+            #51afb8 100%
+        );
+
+}
+
+
+/* ==================================================
+   HOVER
+================================================== */
+
+.report-chart-bar:hover {
+
+    transform:
+        scaleX(1.06);
+
+    box-shadow:
+        0
+        8px
+        20px
+        rgba(
+            15,
+            23,
+            42,
+            0.15
+        );
+
+}
+
+
+/* ==================================================
+   ZERO VALUE
+================================================== */
+
+.report-chart-zero {
+
+    width: 52px;
+
+    height: 4px;
+
+    min-height: 4px;
+
+    border-radius: 999px;
+
+    background: #dce3eb;
+
+    box-shadow: none;
+
+}
+
+
+/* ==================================================
+   VALUE DI ATAS BAR
+================================================== */
+
+.report-chart-value {
+
+    position: absolute;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    height: 18px;
+
+    line-height: 18px;
+
+    font-size: 0.82rem;
+
+    font-weight: 700;
+
+    color: #1e293b;
+
+    white-space: nowrap;
+
+    pointer-events: none;
+
+}
+
+
+/* ==================================================
+   LABEL
+================================================== */
+
+.report-chart-label {
+
+    position: absolute;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: -38px;
+
+    height: 30px;
+
+    padding:
+        0
+        4px;
+
+    color: #475569;
+
+    font-size: 0.74rem;
+
+    line-height: 1.25;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* ==================================================
+   EMPTY STATE
+================================================== */
+
+.report-chart-empty {
+
+    padding:
+        3rem
+        1rem;
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 0.85rem;
+
+}
+
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media (
+    max-width: 575.98px
+) {
+
+    .report-chart-wrapper {
+
+        overflow-x: auto;
+
+        padding-bottom: 45px;
+
+    }
+
+
+    .report-chart-y-axis {
+
+        width: 32px;
+
+        height: 280px;
+
+        font-size: 0.68rem;
+
+    }
+
+
+    .report-chart-main {
+
+        flex:
+            0 0 650px;
+
+        height: 280px;
+
+        margin-left: 8px;
+
+    }
+
+
+    .report-chart-columns {
+
+        gap: 0.8rem;
+
+        padding:
+            0
+            0.5rem;
+
+    }
+
+
+    .report-chart-column {
+
+        flex:
+            0 0 65px;
+
+        min-width: 65px;
+
+    }
+
+
+    .report-chart-bar {
+
+        width: 38px;
+
+    }
+
+
+    .report-chart-zero {
+
+        width: 38px;
+
+    }
+
+
+    .report-chart-label {
+
+        font-size: 0.68rem;
+
+    }
+
+
+    .report-chart-value {
+
+        font-size: 0.76rem;
+
+    }
+
+}
+
+</style>

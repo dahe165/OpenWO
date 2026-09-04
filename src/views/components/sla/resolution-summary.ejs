@@ -1,0 +1,116 @@
+<%
+    const data = resolution || {};
+
+    const onTrack = Number(data.onTrack) || 0;
+    const warning = Number(data.warning) || 0;
+    const breach = Number(data.breach) || 0;
+
+    const total = onTrack + warning + breach;
+
+    const onTrackPct = total > 0 ? (onTrack / total) * 100 : 0;
+    const warningPct = total > 0 ? (warning / total) * 100 : 0;
+    const breachPct = total > 0 ? (breach / total) * 100 : 0;
+%>
+
+<div class="resolution-summary">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <div class="fw-semibold">Resolution SLA</div>
+            <div class="text-muted small">
+                Distribusi kesehatan Resolution SLA
+            </div>
+        </div>
+
+        <span class="badge bg-light text-dark">
+            <%= total %> WO
+        </span>
+    </div>
+
+    <!-- ON TRACK -->
+    <div class="sla-row mb-3">
+
+        <div class="d-flex justify-content-between small mb-1">
+            <span class="text-success fw-semibold">
+                🟢 On Track
+            </span>
+
+            <span>
+                <%= onTrack %> WO · <%= onTrackPct.toFixed(0) %>%
+            </span>
+        </div>
+
+        <div class="progress" style="height: 9px;">
+            <div
+                class="progress-bar bg-success"
+                style="width: <%= onTrackPct %>%;">
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- WARNING -->
+    <div class="sla-row mb-3">
+
+        <div class="d-flex justify-content-between small mb-1">
+            <span class="text-warning fw-semibold">
+                🟡 Warning
+            </span>
+
+            <span>
+                <%= warning %> WO · <%= warningPct.toFixed(0) %>%
+            </span>
+        </div>
+
+        <div class="progress" style="height: 9px;">
+            <div
+                class="progress-bar bg-warning"
+                style="width: <%= warningPct %>%;">
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- BREACH -->
+    <div class="sla-row">
+
+        <div class="d-flex justify-content-between small mb-1">
+            <span class="text-danger fw-semibold">
+                🔴 Breach
+            </span>
+
+            <span>
+                <%= breach %> WO · <%= breachPct.toFixed(0) %>%
+            </span>
+        </div>
+
+        <div class="progress" style="height: 9px;">
+            <div
+                class="progress-bar bg-danger"
+                style="width: <%= breachPct %>%;">
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+.resolution-summary {
+    width: 100%;
+}
+
+.resolution-summary .progress {
+    background: #eef1f4;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.resolution-summary .progress-bar {
+    border-radius: 10px;
+    transition: width 0.4s ease;
+}
+</style>

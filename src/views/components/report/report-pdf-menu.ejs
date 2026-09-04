@@ -1,0 +1,1112 @@
+<!-- =========================================================
+     REPORT PDF MENU
+     ========================================================= -->
+
+<div class="report-pdf-menu">
+
+    <!-- =====================================================
+         PDF CARD
+         ===================================================== -->
+
+    <button
+        type="button"
+        class="report-pdf-card"
+        onclick="openReportPdfMenu()"
+    >
+
+        <span class="report-pdf-card-icon">
+            📄
+        </span>
+
+        <span class="report-pdf-card-content">
+
+            <strong>
+                PDF
+            </strong>
+
+            <small>
+                Export laporan PDF
+            </small>
+
+        </span>
+
+        <span class="report-pdf-card-arrow">
+            →
+        </span>
+
+    </button>
+
+
+    <!-- =====================================================
+         MODAL
+         ===================================================== -->
+
+    <div
+        id="reportPdfModal"
+        class="report-pdf-modal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="report-pdf-backdrop"
+            onclick="closeReportPdfMenu()"
+        ></div>
+
+
+        <div
+            class="report-pdf-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reportPdfTitle"
+        >
+
+            <!-- HEADER -->
+
+            <div class="report-pdf-header">
+
+                <div class="report-pdf-header-left">
+
+                    <div class="report-pdf-icon">
+                        📄
+                    </div>
+
+                    <div>
+
+                        <h3 id="reportPdfTitle">
+                            Export PDF
+                        </h3>
+
+                        <p>
+                            Pilih model laporan yang ingin dicetak.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="report-pdf-close"
+                    onclick="closeReportPdfMenu()"
+                    aria-label="Tutup"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <!-- OPTIONS -->
+
+            <div class="report-pdf-options">
+
+                <!-- DETAIL -->
+
+                <label class="report-pdf-option">
+
+                    <input
+                        type="radio"
+                        name="reportPdfModel"
+                        value="detail"
+                        checked
+                    >
+
+                    <span class="report-pdf-option-icon">
+                        📋
+                    </span>
+
+                    <span class="report-pdf-option-content">
+
+                        <strong>
+                            Detail Work Order
+                        </strong>
+
+                        <small>
+                            No WO, tanggal, kategori,
+                            uraian, status, tindakan,
+                            pemohon dan petugas.
+                        </small>
+
+                    </span>
+
+                    <span class="report-pdf-radio">
+                        <span></span>
+                    </span>
+
+                </label>
+
+
+                <!-- SUMMARY -->
+
+                <label class="report-pdf-option">
+
+                    <input
+                        type="radio"
+                        name="reportPdfModel"
+                        value="summary"
+                    >
+
+                    <span class="report-pdf-option-icon">
+                        📊
+                    </span>
+
+                    <span class="report-pdf-option-content">
+
+                        <strong>
+                            Rekap Subkategori
+                        </strong>
+
+                        <small>
+                            Rekap jumlah Work Order
+                            berdasarkan subkategori.
+                        </small>
+
+                    </span>
+
+                    <span class="report-pdf-radio">
+                        <span></span>
+                    </span>
+
+                </label>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="report-pdf-footer">
+
+                <button
+                    type="button"
+                    class="report-pdf-cancel"
+                    onclick="closeReportPdfMenu()"
+                >
+                    Batal
+                </button>
+
+                <button
+                    type="button"
+                    class="report-pdf-print"
+                    onclick="openSelectedReportPdf()"
+                >
+                    📄 Buka PDF
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+/* =========================================================
+   PDF CARD
+   ========================================================= */
+
+.report-pdf-menu {
+    display: block;
+}
+
+
+.report-pdf-card {
+
+    width: 100%;
+    min-height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding:
+        10px
+        14px;
+
+    border:
+        1px solid #e1e8f0;
+
+    border-left:
+        3px solid #f65cc3;
+
+    border-radius: 11px;
+
+    background:
+        #ffffff;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    font-family: inherit;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
+}
+
+
+.report-pdf-card:hover {
+
+    transform:
+        translateY(-1px);
+
+    border-color:
+        #cfd8e3;
+
+    box-shadow:
+        0 5px 16px
+        rgba(30, 50, 80, 0.08);
+}
+
+
+/* ICON */
+
+.report-pdf-card-icon {
+
+    width: 38px;
+    height: 38px;
+
+    flex:
+        0 0 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background:
+        #f1efff;
+
+    font-size: 18px;
+}
+
+
+/* CONTENT */
+
+.report-pdf-card-content {
+
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.report-pdf-card-content strong {
+
+    color:
+        #172033;
+
+    font-size:
+        13px;
+
+    font-weight:
+        700;
+
+    line-height:
+        1.2;
+}
+
+
+.report-pdf-card-content small {
+
+    color:
+        #7b8494;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.3;
+
+    white-space:
+        nowrap;
+}
+
+
+/* ARROW */
+
+.report-pdf-card-arrow {
+
+    color:
+        #94a3b8;
+
+    font-size:
+        17px;
+
+    line-height:
+        1;
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.report-pdf-modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+}
+
+
+.report-pdf-modal.show {
+
+    display: flex;
+}
+
+
+.report-pdf-backdrop {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        rgba(15, 23, 42, 0.45);
+
+    backdrop-filter:
+        blur(4px);
+}
+
+
+/* =========================================================
+   DIALOG
+   ========================================================= */
+
+.report-pdf-dialog {
+
+    position: relative;
+
+    z-index: 1;
+
+    width:
+        min(520px, 100%);
+
+    background:
+        #ffffff;
+
+    border-radius:
+        18px;
+
+    box-shadow:
+        0 25px 70px
+        rgba(15, 23, 42, 0.25);
+
+    overflow:
+        hidden;
+
+    animation:
+        reportPdfModalIn
+        0.18s
+        ease-out;
+}
+
+
+@keyframes reportPdfModalIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(12px)
+            scale(0.98);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.report-pdf-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding:
+        22px;
+
+    border-bottom:
+        1px solid #edf0f4;
+}
+
+
+.report-pdf-header-left {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 13px;
+}
+
+
+.report-pdf-icon {
+
+    width: 44px;
+    height: 44px;
+
+    flex:
+        0 0 44px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius:
+        12px;
+
+    background:
+        #f1f5f9;
+
+    font-size:
+        21px;
+}
+
+
+.report-pdf-header h3 {
+
+    margin:
+        0;
+
+    font-size:
+        18px;
+
+    font-weight:
+        700;
+
+    color:
+        #172033;
+}
+
+
+.report-pdf-header p {
+
+    margin:
+        4px 0 0;
+
+    font-size:
+        13px;
+
+    line-height:
+        1.5;
+
+    color:
+        #7b8494;
+}
+
+
+.report-pdf-close {
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    border:
+        0;
+
+    background:
+        transparent;
+
+    border-radius:
+        9px;
+
+    color:
+        #7b8494;
+
+    font-size:
+        25px;
+
+    line-height:
+        1;
+
+    cursor:
+        pointer;
+}
+
+
+.report-pdf-close:hover {
+
+    background:
+        #f3f4f6;
+
+    color:
+        #172033;
+}
+
+
+/* =========================================================
+   OPTIONS
+   ========================================================= */
+
+.report-pdf-options {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        11px;
+
+    padding:
+        18px 22px;
+}
+
+
+.report-pdf-option {
+
+    position:
+        relative;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        44px
+        1fr
+        22px;
+
+    align-items:
+        center;
+
+    gap:
+        13px;
+
+    padding:
+        15px;
+
+    border:
+        1px solid #e5e9ef;
+
+    border-radius:
+        14px;
+
+    cursor:
+        pointer;
+
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+
+.report-pdf-option:hover {
+
+    background:
+        #fafbfc;
+
+    border-color:
+        #cbd5e1;
+}
+
+
+.report-pdf-option:has(
+    input:checked
+) {
+
+    background:
+        #f8fafc;
+
+    border-color:
+        #94a3b8;
+
+    box-shadow:
+        0 4px 15px
+        rgba(15, 23, 42, 0.05);
+}
+
+
+.report-pdf-option input {
+
+    position:
+        absolute;
+
+    opacity:
+        0;
+
+    pointer-events:
+        none;
+}
+
+
+.report-pdf-option-icon {
+
+    width:
+        44px;
+
+    height:
+        44px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        11px;
+
+    background:
+        #f1f5f9;
+
+    font-size:
+        20px;
+}
+
+
+.report-pdf-option-content {
+
+    min-width:
+        0;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+}
+
+
+.report-pdf-option-content strong {
+
+    font-size:
+        14px;
+
+    color:
+        #172033;
+}
+
+
+.report-pdf-option-content small {
+
+    font-size:
+        12px;
+
+    line-height:
+        1.5;
+
+    color:
+        #7b8494;
+}
+
+
+/* RADIO */
+
+.report-pdf-radio {
+
+    width:
+        20px;
+
+    height:
+        20px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border:
+        2px solid #cbd5e1;
+
+    border-radius:
+        50%;
+}
+
+
+.report-pdf-radio span {
+
+    width:
+        10px;
+
+    height:
+        10px;
+
+    border-radius:
+        50%;
+
+    background:
+        transparent;
+}
+
+
+.report-pdf-option:has(
+    input:checked
+) .report-pdf-radio {
+
+    border-color:
+        #334155;
+}
+
+
+.report-pdf-option:has(
+    input:checked
+) .report-pdf-radio span {
+
+    background:
+        #334155;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.report-pdf-footer {
+
+    display:
+        flex;
+
+    justify-content:
+        flex-end;
+
+    gap:
+        10px;
+
+    padding:
+        16px 22px 20px;
+
+    border-top:
+        1px solid #edf0f4;
+}
+
+
+.report-pdf-cancel,
+.report-pdf-print {
+
+    border:
+        0;
+
+    border-radius:
+        10px;
+
+    padding:
+        10px 16px;
+
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+
+    cursor:
+        pointer;
+}
+
+
+.report-pdf-cancel {
+
+    background:
+        #f1f5f9;
+
+    color:
+        #475569;
+}
+
+
+.report-pdf-cancel:hover {
+
+    background:
+        #e2e8f0;
+}
+
+
+.report-pdf-print {
+
+    background:
+        #172033;
+
+    color:
+        #ffffff;
+}
+
+
+.report-pdf-print:hover {
+
+    background:
+        #0f172a;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .report-pdf-card {
+
+        min-height:
+            68px;
+
+    }
+
+
+    .report-pdf-card-content small {
+
+        white-space:
+            normal;
+    }
+
+
+    .report-pdf-modal {
+
+        padding:
+            12px;
+    }
+
+
+    .report-pdf-dialog {
+
+        border-radius:
+            15px;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+(function () {
+
+    /*
+     * ==========================================
+     * OPEN MENU
+     * ==========================================
+     */
+
+    window.openReportPdfMenu =
+        function () {
+
+            const modal =
+                document.getElementById(
+                    "reportPdfModal"
+                );
+
+            if (!modal) {
+                return;
+            }
+
+            modal.classList.add(
+                "show"
+            );
+
+            modal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            document.body.style.overflow =
+                "hidden";
+        };
+
+
+    /*
+     * ==========================================
+     * CLOSE MENU
+     * ==========================================
+     */
+
+    window.closeReportPdfMenu =
+        function () {
+
+            const modal =
+                document.getElementById(
+                    "reportPdfModal"
+                );
+
+            if (!modal) {
+                return;
+            }
+
+            modal.classList.remove(
+                "show"
+            );
+
+            modal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            document.body.style.overflow =
+                "";
+        };
+
+
+    /*
+     * ==========================================
+     * OPEN PDF
+     * ==========================================
+     */
+
+    window.openSelectedReportPdf =
+        function () {
+
+            const selected =
+                document.querySelector(
+                    'input[name="reportPdfModel"]:checked'
+                );
+
+
+            const model =
+                selected
+                    ? selected.value
+                    : "detail";
+
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            let month =
+                params.get("month");
+
+
+            let year =
+                params.get("year");
+
+
+            if (!month) {
+
+                const now =
+                    new Date();
+
+                month =
+                    String(
+                        now.getMonth() + 1
+                    );
+            }
+
+
+            if (!year) {
+
+                const now =
+                    new Date();
+
+                year =
+                    String(
+                        now.getFullYear()
+                    );
+            }
+
+
+            const pdfUrl =
+                `/report/pdf?month=${encodeURIComponent(
+                    month
+                )}&year=${encodeURIComponent(
+                    year
+                )}&model=${encodeURIComponent(
+                    model
+                )}`;
+
+
+            window.open(
+                pdfUrl,
+                "_blank"
+            );
+
+
+            closeReportPdfMenu();
+        };
+
+
+    /*
+     * ==========================================
+     * ESCAPE
+     * ==========================================
+     */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                const modal =
+                    document.getElementById(
+                        "reportPdfModal"
+                    );
+
+
+                if (
+                    modal &&
+                    modal.classList.contains(
+                        "show"
+                    )
+                ) {
+
+                    closeReportPdfMenu();
+
+                }
+
+            }
+
+        }
+    );
+
+})();
+
+</script>

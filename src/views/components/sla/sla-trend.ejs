@@ -1,0 +1,712 @@
+<%
+    const trend = Array.isArray(slaTrend)
+        ? slaTrend
+        : [];
+
+    const maxTotal = Math.max(
+        ...trend.map(item => Number(item.total) || 0),
+        1
+    );
+%>
+
+
+<div class="sla-trend">
+
+    <% if (trend.length === 0) { %>
+
+        <div class="trend-empty">
+            <div class="empty-icon">◌</div>
+            <div class="empty-title">
+                Belum ada data SLA Trend
+            </div>
+            <div class="empty-text">
+                Data akan muncul setelah terdapat Work Order
+                yang selesai.
+            </div>
+        </div>
+
+    <% } else { %>
+
+        <!-- CHART -->
+        <div class="trend-chart">
+
+            <!-- GRID -->
+            <div class="trend-grid">
+
+                <span class="grid-line grid-100"></span>
+                <span class="grid-line grid-75"></span>
+                <span class="grid-line grid-50"></span>
+                <span class="grid-line grid-25"></span>
+
+            </div>
+
+
+            <!-- DAYS -->
+            <div class="trend-days">
+
+                <% trend.forEach((item) => {
+
+                    const onTrack =
+                        Number(item.onTrack) || 0;
+
+                    const warning =
+                        Number(item.warning) || 0;
+
+                    const breach =
+                        Number(item.breach) || 0;
+
+                    const total =
+                        Number(item.total) || 0;
+
+                    const totalHeight =
+                        total > 0
+                            ? (total / maxTotal) * 150
+                            : 0;
+
+                    const onTrackHeight =
+                        total > 0
+                            ? (onTrack / total) * totalHeight
+                            : 0;
+
+                    const warningHeight =
+                        total > 0
+                            ? (warning / total) * totalHeight
+                            : 0;
+
+                    const breachHeight =
+                        total > 0
+                            ? (breach / total) * totalHeight
+                            : 0;
+
+                %>
+
+                    <div class="trend-day">
+
+                        <!-- BAR AREA -->
+                        <div class="trend-bar-area">
+
+                            <% if (total > 0) { %>
+
+                                <div
+                                    class="trend-stack"
+                                    style="height: <%= totalHeight %>px;"
+                                >
+
+                                    <% if (breach > 0) { %>
+
+                                        <div
+                                            class="trend-segment breach"
+                                            style="height: <%= breachHeight %>px;"
+                                            data-tooltip="Breach · <%= breach %> WO"
+                                        ></div>
+
+                                    <% } %>
+
+
+                                    <% if (warning > 0) { %>
+
+                                        <div
+                                            class="trend-segment warning"
+                                            style="height: <%= warningHeight %>px;"
+                                            data-tooltip="Warning · <%= warning %> WO"
+                                        ></div>
+
+                                    <% } %>
+
+
+                                    <% if (onTrack > 0) { %>
+
+                                        <div
+                                            class="trend-segment on-track"
+                                            style="height: <%= onTrackHeight %>px;"
+                                            data-tooltip="On Track · <%= onTrack %> WO"
+                                        ></div>
+
+                                    <% } %>
+
+                                </div>
+
+                            <% } else { %>
+
+                                <div class="trend-zero"></div>
+
+                            <% } %>
+
+
+                            <!-- TOTAL -->
+                            <div class="trend-total">
+
+                                <%= total %>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DATE -->
+                        <div class="trend-label">
+
+                            <%= item.label %>
+
+                        </div>
+
+
+                        <!-- WEEKDAY -->
+                        <div class="trend-weekday">
+
+                            <%= item.weekday %>
+
+                        </div>
+
+                    </div>
+
+                <% }) %>
+
+            </div>
+
+        </div>
+
+
+        <!-- LEGEND -->
+        <div class="trend-legend">
+
+            <span>
+                <i class="legend-dot on-track"></i>
+                On Track
+            </span>
+
+            <span>
+                <i class="legend-dot warning"></i>
+                Warning
+            </span>
+
+            <span>
+                <i class="legend-dot breach"></i>
+                Breach
+            </span>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+        <div class="trend-summary">
+
+            <div class="summary-item">
+
+                <span class="summary-label">
+                    Periode
+                </span>
+
+                <strong>
+                    7 Hari
+                </strong>
+
+            </div>
+
+
+            <div class="summary-divider"></div>
+
+
+            <div class="summary-item">
+
+                <span class="summary-label">
+                    Total Selesai
+                </span>
+
+                <strong>
+                    <%= trend.reduce(
+                        (sum, item) =>
+                            sum + (Number(item.total) || 0),
+                        0
+                    ) %> WO
+                </strong>
+
+            </div>
+
+        </div>
+
+    <% } %>
+
+</div>
+
+
+<style>
+
+    .sla-trend {
+        width: 100%;
+    }
+
+
+    /*
+     * =====================================
+     * CHART
+     * =====================================
+     */
+
+    .trend-chart {
+        position: relative;
+        height: 205px;
+        padding: 10px 8px 0;
+    }
+
+
+    /*
+     * =====================================
+     * GRID
+     * =====================================
+     */
+
+    .trend-grid {
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        top: 10px;
+        height: 150px;
+        pointer-events: none;
+    }
+
+    .grid-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        border-top: 1px dashed #e9ecef;
+    }
+
+    .grid-100 {
+        top: 0;
+    }
+
+    .grid-75 {
+        top: 25%;
+    }
+
+    .grid-50 {
+        top: 50%;
+    }
+
+    .grid-25 {
+        top: 75%;
+    }
+
+
+    /*
+     * =====================================
+     * DAYS
+     * =====================================
+     */
+
+    .trend-days {
+        position: relative;
+        z-index: 2;
+
+        height: 195px;
+
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        gap: 10px;
+    }
+
+
+    .trend-day {
+        flex: 1;
+        min-width: 0;
+
+        height: 195px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+
+    /*
+     * =====================================
+     * BAR AREA
+     * =====================================
+     */
+
+    .trend-bar-area {
+        position: relative;
+
+        width: 100%;
+        height: 168px;
+
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+    }
+
+
+    .trend-stack {
+        position: relative;
+
+        width: 20px;
+
+        display: flex;
+        flex-direction: column;
+
+        overflow: visible;
+
+        border-radius: 5px 5px 3px 3px;
+
+        transition:
+            transform .2s ease,
+            filter .2s ease;
+    }
+
+
+    .trend-stack:hover {
+        transform: translateY(-3px);
+        filter: brightness(.96);
+    }
+
+
+    /*
+     * =====================================
+     * SEGMENTS
+     * =====================================
+     */
+
+    .trend-segment {
+        position: relative;
+
+        width: 100%;
+
+        min-height: 2px;
+
+        transition:
+            opacity .2s ease;
+    }
+
+
+    .trend-segment:first-child {
+        border-radius: 5px 5px 0 0;
+    }
+
+
+    .trend-segment:last-child {
+        border-radius: 0 0 3px 3px;
+    }
+
+
+    .trend-segment.on-track,
+    .legend-dot.on-track {
+        background: #198754;
+    }
+
+
+    .trend-segment.warning,
+    .legend-dot.warning {
+        background: #ffc107;
+    }
+
+
+    .trend-segment.breach,
+    .legend-dot.breach {
+        background: #dc3545;
+    }
+
+
+    /*
+     * =====================================
+     * TOOLTIP
+     * =====================================
+     */
+
+    .trend-segment::after {
+        content: attr(data-tooltip);
+
+        position: absolute;
+
+        left: 50%;
+        bottom: calc(100% + 8px);
+
+        transform:
+            translateX(-50%)
+            translateY(3px);
+
+        white-space: nowrap;
+
+        padding: 5px 8px;
+
+        background: #212529;
+        color: #fff;
+
+        font-size: .7rem;
+        font-weight: 500;
+
+        border-radius: 5px;
+
+        opacity: 0;
+        visibility: hidden;
+
+        pointer-events: none;
+
+        transition:
+            opacity .15s ease,
+            transform .15s ease;
+
+        z-index: 20;
+    }
+
+
+    .trend-segment:hover::after {
+        opacity: 1;
+        visibility: visible;
+
+        transform:
+            translateX(-50%)
+            translateY(0);
+    }
+
+
+    /*
+     * =====================================
+     * ZERO DATA
+     * =====================================
+     */
+
+    .trend-zero {
+        width: 5px;
+        height: 5px;
+
+        margin-bottom: 4px;
+
+        border-radius: 50%;
+
+        background: #ced4da;
+    }
+
+
+    /*
+     * =====================================
+     * TOTAL
+     * =====================================
+     */
+
+    .trend-total {
+        position: absolute;
+
+        bottom: 2px;
+
+        font-size: .72rem;
+        font-weight: 600;
+
+        color: #495057;
+
+        line-height: 1;
+    }
+
+
+    /*
+     * =====================================
+     * DATE
+     * =====================================
+     */
+
+    .trend-label {
+        margin-top: 3px;
+
+        font-size: .78rem;
+        font-weight: 600;
+
+        color: #343a40;
+    }
+
+
+    .trend-weekday {
+        margin-top: 1px;
+
+        font-size: .65rem;
+
+        color: #868e96;
+
+        text-transform: capitalize;
+    }
+
+
+    /*
+     * =====================================
+     * LEGEND
+     * =====================================
+     */
+
+    .trend-legend {
+        display: flex;
+
+        justify-content: center;
+
+        gap: 22px;
+
+        margin-top: 8px;
+
+        font-size: .75rem;
+
+        color: #6c757d;
+    }
+
+
+    .trend-legend span {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 6px;
+    }
+
+
+    .legend-dot {
+        width: 8px;
+        height: 8px;
+
+        border-radius: 50%;
+
+        display: inline-block;
+    }
+
+
+    /*
+     * =====================================
+     * SUMMARY
+     * =====================================
+     */
+
+    .trend-summary {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 22px;
+
+        margin-top: 16px;
+        padding-top: 14px;
+
+        border-top: 1px solid #f0f1f2;
+    }
+
+
+    .summary-item {
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+    }
+
+
+    .summary-label {
+        font-size: .72rem;
+
+        color: #868e96;
+    }
+
+
+    .summary-item strong {
+        font-size: .78rem;
+
+        color: #343a40;
+    }
+
+
+    .summary-divider {
+        width: 1px;
+        height: 18px;
+
+        background: #dee2e6;
+    }
+
+
+    /*
+     * =====================================
+     * EMPTY
+     * =====================================
+     */
+
+    .trend-empty {
+        padding: 45px 20px;
+
+        text-align: center;
+
+        border: 1px dashed #dee2e6;
+
+        border-radius: 10px;
+
+        background: #fafbfc;
+    }
+
+
+    .empty-icon {
+        font-size: 1.6rem;
+
+        color: #adb5bd;
+
+        margin-bottom: 6px;
+    }
+
+
+    .empty-title {
+        font-size: .85rem;
+
+        font-weight: 600;
+
+        color: #495057;
+    }
+
+
+    .empty-text {
+        margin-top: 3px;
+
+        font-size: .72rem;
+
+        color: #868e96;
+    }
+
+
+    /*
+     * =====================================
+     * MOBILE
+     * =====================================
+     */
+
+    @media (max-width: 576px) {
+
+        .trend-chart {
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+
+
+        .trend-days {
+            gap: 3px;
+        }
+
+
+        .trend-stack {
+            width: 15px;
+        }
+
+
+        .trend-legend {
+            gap: 12px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .trend-summary {
+            gap: 12px;
+        }
+
+
+        .summary-item {
+            flex-direction: column;
+
+            gap: 2px;
+        }
+
+    }
+
+</style>

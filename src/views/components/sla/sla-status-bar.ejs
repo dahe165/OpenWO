@@ -1,0 +1,203 @@
+<%
+    const data = sla || {};
+
+    const met = Number(data.met) || 0;
+    const running = Number(data.running) || 0;
+    const breach = Number(data.breach) || 0;
+    const notStarted = Number(data.notStarted) || 0;
+
+    const total =
+        met +
+        running +
+        breach +
+        notStarted;
+
+    const getPercent = (value) => {
+        if (!total) return 0;
+        return (value / total) * 100;
+    };
+%>
+
+<div class="sla-status-bar">
+
+    <!-- MET -->
+    <div class="sla-status-row">
+
+        <div class="sla-status-label">
+            <span>Met</span>
+            <strong><%= met %></strong>
+        </div>
+
+        <div class="sla-status-track">
+
+            <div
+                class="sla-status-fill sla-status-met"
+                style="width: <%= getPercent(met).toFixed(1) %>%"
+            ></div>
+
+        </div>
+
+        <div class="sla-status-percent">
+            <%= getPercent(met).toFixed(1) %>%
+        </div>
+
+    </div>
+
+
+    <!-- RUNNING -->
+    <div class="sla-status-row">
+
+        <div class="sla-status-label">
+            <span>Berjalan</span>
+            <strong><%= running %></strong>
+        </div>
+
+        <div class="sla-status-track">
+
+            <div
+                class="sla-status-fill sla-status-running"
+                style="width: <%= getPercent(running).toFixed(1) %>%"
+            ></div>
+
+        </div>
+
+        <div class="sla-status-percent">
+            <%= getPercent(running).toFixed(1) %>%
+        </div>
+
+    </div>
+
+
+    <!-- BREACH -->
+    <div class="sla-status-row">
+
+        <div class="sla-status-label">
+            <span>Breach</span>
+            <strong><%= breach %></strong>
+        </div>
+
+        <div class="sla-status-track">
+
+            <div
+                class="sla-status-fill sla-status-breach"
+                style="width: <%= getPercent(breach).toFixed(1) %>%"
+            ></div>
+
+        </div>
+
+        <div class="sla-status-percent">
+            <%= getPercent(breach).toFixed(1) %>%
+        </div>
+
+    </div>
+
+
+    <!-- NOT STARTED -->
+    <div class="sla-status-row">
+
+        <div class="sla-status-label">
+            <span>Belum Mulai</span>
+            <strong><%= notStarted %></strong>
+        </div>
+
+        <div class="sla-status-track">
+
+            <div
+                class="sla-status-fill sla-status-not-started"
+                style="width: <%= getPercent(notStarted).toFixed(1) %>%"
+            ></div>
+
+        </div>
+
+        <div class="sla-status-percent">
+            <%= getPercent(notStarted).toFixed(1) %>%
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.sla-status-bar {
+    width: 100%;
+}
+
+.sla-status-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 60px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.sla-status-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.sla-status-label span {
+    color: #6c757d;
+}
+
+.sla-status-label strong {
+    font-weight: 700;
+}
+
+.sla-status-track {
+    height: 10px;
+    background: #eef1f4;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.sla-status-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+.sla-status-met {
+    background: #198754;
+}
+
+.sla-status-running {
+    background: #0d6efd;
+}
+
+.sla-status-breach {
+    background: #dc3545;
+}
+
+.sla-status-not-started {
+    background: #adb5bd;
+}
+
+.sla-status-percent {
+    text-align: right;
+    font-size: 0.82rem;
+    color: #6c757d;
+}
+
+
+@media (max-width: 576px) {
+
+    .sla-status-row {
+        grid-template-columns: 90px 1fr 52px;
+        gap: 8px;
+    }
+
+    .sla-status-label {
+        font-size: 0.82rem;
+    }
+
+    .sla-status-percent {
+        font-size: 0.75rem;
+    }
+
+}
+
+</style>

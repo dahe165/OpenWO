@@ -1808,6 +1808,27 @@ body {
     margin: 0;
 }
 
+.exception-tambah {
+    display: flex;
+    margin: 0;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+}
+
+.exception-tambah-hari {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 9px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
 .form-row {
     display: grid;
 

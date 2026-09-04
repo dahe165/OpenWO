@@ -736,6 +736,58 @@
     color: #94a3b8;
 }
 
+.tech-kpi-progress {
+    position: relative;
+}
+
+.tech-kpi-waiting {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 3px 7px 3px 4px;
+
+    border-radius: 999px;
+
+    background: #fff7ed;
+    color: #9a3412;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+    transform .15s ease,
+    box-shadow .15s ease;
+}
+
+.tech-kpi-waiting:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(249, 115, 22, .15);
+}
+
+.tech-kpi-waiting-count {
+    width: 18px;
+    height: 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #f97316;
+    color: #ffffff;
+
+    font-size: 9px;
+    font-weight: 800;
+}
+
 .tech-summary {
     overflow: hidden;
     border: 1px solid #e6ebf2;
@@ -1094,7 +1146,8 @@
         </article>
 
 
-        <article class="tech-kpi">
+        <article class="tech-kpi tech-kpi-progress">
+
             <div class="tech-kpi-icon progress">⚙️</div>
 
             <div>
@@ -1108,6 +1161,23 @@
                     Sedang dikerjakan
                 </small>
             </div>
+
+            <% if (Number(technicianSummary.waiting || 0) > 0) { %>
+
+                <a
+                    href="/workorder?status=Waiting"
+                    class="tech-kpi-waiting"
+                    aria-label="Lihat <%= technicianSummary.waiting %> Work Order Waiting"
+                >
+                    <span class="tech-kpi-waiting-count">
+                        <%= technicianSummary.waiting %>
+                    </span>
+
+                    <span>Waiting</span>
+                </a>
+
+            <% } %>
+
         </article>
 
 

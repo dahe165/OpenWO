@@ -1,0 +1,2086 @@
+<%
+    /*
+     * ==========================================
+     * REPORT - DIAGRAM WORK ORDER
+     * ==========================================
+     */
+
+    const bulan =
+        Number(report?.periode?.bulan) || 1;
+
+    const tahun =
+        Number(report?.periode?.tahun) ||
+        new Date().getFullYear();
+
+
+    /*
+     * ==========================================
+     * NAMA BULAN
+     * ==========================================
+     */
+
+    const namaBulan = [
+        "",
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    ];
+
+
+    const periodeLabel =
+        `${namaBulan[bulan]} ${tahun}`;
+
+
+    /*
+     * ==========================================
+     * TOTAL WORK ORDER
+     * ==========================================
+     */
+
+    const totalWorkOrder =
+        Array.isArray(report?.data)
+            ? report.data.length
+            : 0;
+
+%>
+
+
+<div
+    class="report-chart-page"
+    id="reportChartPage"
+>
+
+
+    <!-- ==========================================
+         HEADER
+    =========================================== -->
+
+    <div class="report-chart-header">
+
+        <div class="report-chart-title">
+
+            <h1>
+                Diagram Work Order
+            </h1>
+
+            <p>
+                Sub kategori Work Order periode
+                <strong>
+                    <%= bulan %>/<%= tahun %>
+                </strong>
+            </p>
+
+        </div>
+
+
+        <!-- ======================================
+             PRINT BUTTON
+        ======================================= -->
+
+        <button
+            type="button"
+            class="report-print-button"
+            onclick="openPrintOptions()"
+        >
+
+            <span class="report-print-icon">
+                🖨️
+            </span>
+
+            <span>
+                Cetak Diagram
+            </span>
+
+        </button>
+
+    </div>
+
+
+
+    <!-- ==========================================
+         INFO BAR
+    =========================================== -->
+
+    <div class="report-chart-info">
+
+
+        <!-- KEMBALI -->
+
+        <div class="report-info-back">
+
+            <a
+                href="/report?month=<%= bulan %>&year=<%= tahun %>"
+                class="report-back-button"
+            >
+
+                <span>
+                    ←
+                </span>
+
+                Kembali ke Report
+
+            </a>
+
+        </div>
+
+
+
+        <!-- PERIODE -->
+
+        <div class="report-info-item">
+
+            <div class="report-info-icon">
+                📅
+            </div>
+
+            <div>
+
+                <span>
+                    Periode
+                </span>
+
+                <strong>
+                    <%= periodeLabel %>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TOTAL -->
+
+        <div class="report-info-item">
+
+            <div class="report-info-icon">
+                ☷
+            </div>
+
+            <div>
+
+                <span>
+                    Total Work Order
+                </span>
+
+                <strong>
+                    <%= totalWorkOrder %>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ==========================================
+         CHART CARD
+    =========================================== -->
+
+    <div class="report-chart-card">
+
+
+        <div class="report-chart-card-header">
+
+            <div>
+
+                <h2>
+                    Diagram Sub Kategori
+                </h2>
+
+                <p>
+                    Jumlah Work Order per Sub Kategori
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ======================================
+             REUSABLE CHART
+        ======================================= -->
+
+        <div class="report-chart-content">
+
+            <%- include(
+                "../components/report/report-subcategory-chart",
+                {
+                    subkategori:
+                        report.subkategori
+                }
+            ) %>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ==================================================
+     PRINT OPTIONS MODAL
+================================================== -->
+
+<div
+    class="print-options-overlay"
+    id="printOptionsOverlay"
+>
+
+
+    <div
+        class="print-options-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="printOptionsTitle"
+    >
+
+
+        <!-- ==========================================
+             MODAL HEADER
+        =========================================== -->
+
+        <div class="print-options-header">
+
+            <div>
+
+                <h2 id="printOptionsTitle">
+                    Pilih Model Cetak
+                </h2>
+
+                <p>
+                    Tentukan informasi yang ingin
+                    ditampilkan pada hasil cetak.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="print-options-close"
+                onclick="closePrintOptions()"
+                aria-label="Tutup"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             OPTIONS
+        =========================================== -->
+
+        <div class="print-options-list">
+
+
+            <!-- DIAGRAM SAJA -->
+
+            <label class="print-option">
+
+                <input
+                    type="radio"
+                    name="printMode"
+                    value="simple"
+                    checked
+                >
+
+                <span class="print-option-body">
+
+                    <strong>
+                        📊 Diagram Saja
+                    </strong>
+
+                    <small>
+                        Judul, periode, dan diagram.
+                    </small>
+
+                </span>
+
+            </label>
+
+
+
+            <!-- DIAGRAM + RINGKASAN -->
+
+            <label class="print-option">
+
+                <input
+                    type="radio"
+                    name="printMode"
+                    value="summary"
+                >
+
+                <span class="print-option-body">
+
+                    <strong>
+                        📄 Diagram + Ringkasan
+                    </strong>
+
+                    <small>
+                        Diagram ditambah informasi
+                        ringkas Work Order.
+                    </small>
+
+                </span>
+
+            </label>
+
+
+
+            <!-- DETAIL - BELUM AKTIF -->
+
+            <label
+                class="
+                    print-option
+                    print-option-disabled
+                "
+            >
+
+                <input
+                    type="radio"
+                    name="printMode"
+                    value="detail"
+                    disabled
+                >
+
+                <span class="print-option-body">
+
+                    <strong>
+                        📋 Diagram + Detail
+                    </strong>
+
+                    <small>
+                        Tersedia setelah Rekap WO
+                        detail selesai dibuat.
+                    </small>
+
+                </span>
+
+            </label>
+
+
+        </div>
+
+
+
+        <!-- ==========================================
+             ACTION
+        =========================================== -->
+
+        <div class="print-options-actions">
+
+            <button
+                type="button"
+                class="print-cancel-button"
+                onclick="closePrintOptions()"
+            >
+                Batal
+            </button>
+
+
+            <button
+                type="button"
+                class="print-confirm-button"
+                onclick="startPrint()"
+            >
+
+                🖨️ Cetak
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<style>
+
+/* ==================================================
+   PAGE
+================================================== */
+
+.report-chart-page {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding:
+        2rem
+        2.5rem
+        3rem;
+
+    color: #172033;
+
+}
+
+
+/* ==================================================
+   HEADER
+================================================== */
+
+.report-chart-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 2rem;
+
+    margin-bottom: 1.5rem;
+
+}
+
+
+.report-chart-title h1 {
+
+    margin: 0;
+
+    font-size: 1.65rem;
+
+    line-height: 1.2;
+
+    font-weight: 700;
+
+    color: #172033;
+
+}
+
+
+.report-chart-title p {
+
+    margin:
+        0.45rem
+        0
+        0;
+
+    color: #64748b;
+
+    font-size: 0.82rem;
+
+}
+
+
+.report-chart-title strong {
+
+    color: #334155;
+
+}
+
+
+/* ==================================================
+   PRINT BUTTON
+================================================== */
+
+.report-print-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 0.55rem;
+
+    min-height: 42px;
+
+    padding:
+        0.65rem
+        1rem;
+
+    border:
+        1px solid #2563eb;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #2563eb;
+
+    font-size: 0.82rem;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+.report-print-button:hover {
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    box-shadow:
+        0
+        6px
+        18px
+        rgba(
+            37,
+            99,
+            235,
+            0.18
+        );
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+.report-print-icon {
+
+    font-size: 1rem;
+
+}
+
+
+/* ==================================================
+   INFO BAR
+================================================== */
+
+.report-chart-info {
+
+    width: 100%;
+
+    min-height: 82px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0;
+
+    margin-bottom: 1.5rem;
+
+    padding:
+        1rem
+        1.25rem;
+
+    background: #ffffff;
+
+    border:
+        1px solid #e5eaf0;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0
+        5px
+        18px
+        rgba(
+            15,
+            23,
+            42,
+            0.05
+        );
+
+}
+
+
+.report-info-back {
+
+    min-width: 230px;
+
+    padding-right: 1.5rem;
+
+    margin-right: 1.5rem;
+
+    border-right:
+        1px solid #e5eaf0;
+
+}
+
+
+.report-back-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 0.45rem;
+
+    min-height: 40px;
+
+    padding:
+        0.55rem
+        0.85rem;
+
+    border:
+        1px solid #2563eb;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+    font-size: 0.8rem;
+
+    font-weight: 600;
+
+}
+
+
+.report-back-button:hover {
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+}
+
+
+.report-info-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.8rem;
+
+    min-width: 210px;
+
+    padding:
+        0
+        1.5rem;
+
+}
+
+
+.report-info-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        1px solid #e1e7ef;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    font-size: 1.1rem;
+
+}
+
+
+.report-info-item span {
+
+    display: block;
+
+    margin-bottom: 0.2rem;
+
+    color: #64748b;
+
+    font-size: 0.72rem;
+
+}
+
+
+.report-info-item strong {
+
+    display: block;
+
+    color: #172033;
+
+    font-size: 0.92rem;
+
+    font-weight: 700;
+
+}
+
+
+/* ==================================================
+   CHART CARD
+================================================== */
+
+.report-chart-card {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding:
+        1.5rem
+        1.5rem
+        2rem;
+
+    background: #ffffff;
+
+    border:
+        1px solid #e5eaf0;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0
+        7px
+        22px
+        rgba(
+            15,
+            23,
+            42,
+            0.05
+        );
+
+}
+
+
+.report-chart-card-header {
+
+    padding-bottom:
+        0.75rem;
+
+    border-bottom:
+        1px solid #edf1f5;
+
+}
+
+
+.report-chart-card-header h2 {
+
+    margin: 0;
+
+    font-size: 1rem;
+
+    font-weight: 700;
+
+    color: #172033;
+
+}
+
+
+.report-chart-card-header p {
+
+    margin:
+        0.3rem
+        0
+        0;
+
+    color: #64748b;
+
+    font-size: 0.76rem;
+
+}
+
+
+.report-chart-content {
+
+    width: 100%;
+
+    padding-top:
+        0.5rem;
+
+}
+
+
+/* ==================================================
+   PRINT OPTIONS OVERLAY
+================================================== */
+
+.print-options-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 1rem;
+
+    background:
+        rgba(
+            15,
+            23,
+            42,
+            0.45
+        );
+
+    backdrop-filter:
+        blur(3px);
+
+}
+
+
+.print-options-overlay.show {
+
+    display: flex;
+
+}
+
+
+/* ==================================================
+   MODAL
+================================================== */
+
+.print-options-modal {
+
+    width: 100%;
+
+    max-width: 480px;
+
+    background: #ffffff;
+
+    border:
+        1px solid #e3e8ef;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0
+        20px
+        50px
+        rgba(
+            15,
+            23,
+            42,
+            0.2
+        );
+
+    overflow: hidden;
+
+}
+
+
+/* ==================================================
+   MODAL HEADER
+================================================== */
+
+.print-options-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    padding:
+        1.25rem
+        1.35rem;
+
+    border-bottom:
+        1px solid #edf1f5;
+
+}
+
+
+.print-options-header h2 {
+
+    margin: 0;
+
+    font-size: 1rem;
+
+    font-weight: 700;
+
+    color: #172033;
+
+}
+
+
+.print-options-header p {
+
+    margin:
+        0.35rem
+        0
+        0;
+
+    color: #64748b;
+
+    font-size: 0.75rem;
+
+    line-height: 1.45;
+
+}
+
+
+.print-options-close {
+
+    width: 32px;
+
+    height: 32px;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 1.3rem;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+}
+
+
+.print-options-close:hover {
+
+    background: #e2e8f0;
+
+    color: #172033;
+
+}
+
+
+/* ==================================================
+   OPTIONS LIST
+================================================== */
+
+.print-options-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.7rem;
+
+    padding:
+        1.15rem
+        1.25rem;
+
+}
+
+
+/* ==================================================
+   OPTION
+================================================== */
+
+.print-option {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 0.8rem;
+
+    padding:
+        0.9rem;
+
+    border:
+        1px solid #e2e8f0;
+
+    border-radius: 11px;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.print-option:hover {
+
+    border-color:
+        #93c5fd;
+
+    background:
+        #f8fbff;
+
+}
+
+
+.print-option:has(
+    input:checked
+) {
+
+    border-color:
+        #60a5fa;
+
+    background:
+        #f8fbff;
+
+    box-shadow:
+        0
+        0
+        0
+        2px
+        rgba(
+            37,
+            99,
+            235,
+            0.08
+        );
+
+}
+
+
+.print-option input {
+
+    margin-top:
+        0.18rem;
+
+    accent-color:
+        #2563eb;
+
+}
+
+
+.print-option-body {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.2rem;
+
+}
+
+
+.print-option-body strong {
+
+    color: #172033;
+
+    font-size: 0.82rem;
+
+}
+
+
+.print-option-body small {
+
+    color: #64748b;
+
+    font-size: 0.72rem;
+
+    line-height: 1.4;
+
+}
+
+
+/* ==================================================
+   DISABLED OPTION
+================================================== */
+
+.print-option-disabled {
+
+    cursor: not-allowed;
+
+    opacity: 0.5;
+
+}
+
+
+.print-option-disabled:hover {
+
+    border-color:
+        #e2e8f0;
+
+    background:
+        #ffffff;
+
+}
+
+
+/* ==================================================
+   ACTION
+================================================== */
+
+.print-options-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 0.65rem;
+
+    padding:
+        1rem
+        1.25rem;
+
+    border-top:
+        1px solid #edf1f5;
+
+}
+
+
+.print-cancel-button,
+.print-confirm-button {
+
+    min-height: 38px;
+
+    padding:
+        0.55rem
+        0.9rem;
+
+    border-radius: 8px;
+
+    font-size: 0.78rem;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+.print-cancel-button {
+
+    border:
+        1px solid #dbe2ea;
+
+    background:
+        #ffffff;
+
+    color:
+        #475569;
+
+}
+
+
+.print-cancel-button:hover {
+
+    background:
+        #f8fafc;
+
+}
+
+
+.print-confirm-button {
+
+    border:
+        1px solid #2563eb;
+
+    background:
+        #2563eb;
+
+    color:
+        #ffffff;
+
+}
+
+
+.print-confirm-button:hover {
+
+    background:
+        #1d4ed8;
+
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (
+    max-width: 768px
+) {
+
+    .report-chart-page {
+
+        padding:
+            1.25rem
+            1rem
+            2rem;
+
+    }
+
+
+    .report-chart-header {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .report-print-button {
+
+        width: 100%;
+
+    }
+
+
+    .report-chart-info {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 1rem;
+
+    }
+
+
+    .report-info-back {
+
+        min-width: 0;
+
+        padding:
+            0
+            0
+            1rem;
+
+        margin:
+            0;
+
+        border-right:
+            none;
+
+        border-bottom:
+            1px solid #e5eaf0;
+
+    }
+
+
+    .report-info-item {
+
+        padding: 0;
+
+    }
+
+
+    .print-options-modal {
+
+        max-width:
+            none;
+
+    }
+
+}
+
+
+/* ==================================================
+   PRINT
+   A4 LANDSCAPE
+================================================== */
+
+@page {
+
+    size:
+        A4 landscape;
+
+    margin:
+        10mm;
+
+}
+
+
+@media print {
+
+
+    /* ==============================================
+       APP CHROME
+    ============================================== */
+
+    .app-sidebar,
+    .app-topbar,
+    .sidebar-overlay,
+    footer {
+
+        display: none !important;
+
+    }
+
+
+    /* ==============================================
+       RESET APP
+    ============================================== */
+
+    html,
+    body {
+
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        background:
+            #ffffff !important;
+
+    }
+
+
+    .app-shell,
+    .app-main,
+    .app-content {
+
+        display: block !important;
+
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+    }
+
+
+    /* ==============================================
+       PAGE
+    ============================================== */
+
+    .report-chart-page {
+
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        background:
+            #ffffff !important;
+
+    }
+
+
+    /* ==============================================
+       SCREEN-ONLY ELEMENT
+    ============================================== */
+
+    .report-print-button {
+
+        display: none !important;
+
+    }
+
+
+    /* ==============================================
+       HEADER
+    ============================================== */
+
+    .report-chart-header {
+
+        display: block !important;
+
+        margin:
+            0
+            0
+            5mm
+            0 !important;
+
+        padding:
+            0
+            0
+            3mm
+            0 !important;
+
+        border-bottom:
+            0.3mm
+            solid
+            #cfd7e3 !important;
+
+    }
+
+
+    .report-chart-title h1 {
+
+        margin: 0 !important;
+
+        font-size:
+            17pt !important;
+
+        line-height:
+            1.2 !important;
+
+        color:
+            #172033 !important;
+
+    }
+
+
+    .report-chart-title p {
+
+        margin:
+            1.5mm
+            0
+            0 !important;
+
+        font-size:
+            8.5pt !important;
+
+        color:
+            #64748b !important;
+
+    }
+
+
+    /* ==============================================
+       DEFAULT: INFO BAR HIDDEN
+       Simple mode
+    ============================================== */
+
+    .report-chart-info {
+
+        display: none !important;
+
+    }
+
+
+    /* ==============================================
+       DEFAULT: CARD HEADER HIDDEN
+       Prevent double title
+    ============================================== */
+
+    .report-chart-card-header {
+
+        display: none !important;
+
+    }
+
+
+    /* ==============================================
+       CHART CARD
+    ============================================== */
+
+    .report-chart-card {
+
+        width: 100% !important;
+
+        margin: 0 !important;
+
+        padding:
+            0
+            4mm
+            5mm !important;
+
+        border:
+            0.25mm
+            solid
+            #dce3eb !important;
+
+        border-radius:
+            2.5mm !important;
+
+        box-shadow:
+            none !important;
+
+        break-inside:
+            avoid !important;
+
+        page-break-inside:
+            avoid !important;
+
+    }
+
+
+    .report-chart-content {
+
+        width: 100% !important;
+
+        padding-top:
+            4mm !important;
+
+    }
+
+
+    /* ==============================================
+       SUMMARY MODE
+    ============================================== */
+
+    body.print-mode-summary
+    .report-chart-info {
+
+        display: flex !important;
+
+        min-height:
+            auto !important;
+
+        margin:
+            0
+            0
+            5mm
+            0 !important;
+
+        padding:
+            3mm
+            4mm !important;
+
+        border:
+            0.25mm
+            solid
+            #dce3eb !important;
+
+        border-radius:
+            2.5mm !important;
+
+        box-shadow:
+            none !important;
+
+    }
+
+
+    body.print-mode-summary
+    .report-info-back {
+
+        display: none !important;
+
+    }
+
+
+    body.print-mode-summary
+    .report-info-item {
+
+        min-width:
+            0 !important;
+
+        padding:
+            0
+            8mm !important;
+
+    }
+
+
+    body.print-mode-summary
+    .report-info-icon {
+
+        width:
+            8mm !important;
+
+        height:
+            8mm !important;
+
+        font-size:
+            9pt !important;
+
+    }
+
+
+    body.print-mode-summary
+    .report-info-item span {
+
+        font-size:
+            7pt !important;
+
+    }
+
+
+    body.print-mode-summary
+    .report-info-item strong {
+
+        font-size:
+            8.5pt !important;
+
+    }
+
+
+    /* ==============================================
+       CHART GEOMETRY
+    ============================================== */
+
+    .report-chart-wrapper {
+
+        width: 100% !important;
+
+        height: 255px !important;
+
+        display: flex !important;
+
+        align-items: stretch !important;
+
+        overflow: visible !important;
+
+    }
+
+
+    .report-chart-y-axis {
+
+        height: 255px !important;
+
+        flex:
+            0 0 35px !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        justify-content:
+            space-between !important;
+
+    }
+
+
+    .report-y-label {
+
+        height: 0 !important;
+
+        line-height: 0 !important;
+
+    }
+
+
+    .report-chart-main {
+
+        height: 255px !important;
+
+        flex:
+            1 1 auto !important;
+
+        min-width: 0 !important;
+
+        margin-left:
+            8px !important;
+
+        position: relative !important;
+
+        overflow: visible !important;
+
+    }
+
+
+    /* ==============================================
+       GRID
+    ============================================== */
+
+    .report-chart-grid {
+
+        position: absolute !important;
+
+        inset: 0 !important;
+
+        width: 100% !important;
+
+        height: 255px !important;
+
+        display: flex !important;
+
+        flex-direction: column !important;
+
+        justify-content:
+            space-between !important;
+
+    }
+
+
+    .report-grid-line {
+
+        width: 100% !important;
+
+        height: 0 !important;
+
+        flex:
+            0 0 0 !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        border-top:
+            0.25mm
+            dashed
+            #d5dde7 !important;
+
+    }
+
+
+    /* ==============================================
+       BARS
+    ============================================== */
+
+    .report-chart-columns {
+
+        position: absolute !important;
+
+        inset: 0 !important;
+
+        width: 100% !important;
+
+        height: 255px !important;
+
+        display: flex !important;
+
+        align-items: stretch !important;
+
+        justify-content:
+            space-around !important;
+
+        padding:
+            0
+            8mm !important;
+
+        gap:
+            4mm !important;
+
+    }
+
+
+    .report-chart-column {
+
+        position: relative !important;
+
+        height: 255px !important;
+
+        flex:
+            1 1 0 !important;
+
+        min-width:
+            40px !important;
+
+        max-width:
+            100px !important;
+
+    }
+
+
+    .report-chart-bar-area {
+
+        position: absolute !important;
+
+        left: 0 !important;
+
+        right: 0 !important;
+
+        bottom: 0 !important;
+
+        width: 100% !important;
+
+        height: 255px !important;
+
+        display: flex !important;
+
+        align-items: flex-end !important;
+
+        justify-content: center !important;
+
+    }
+
+
+    .report-chart-value {
+
+        font-size:
+            8pt !important;
+
+        height:
+            15px !important;
+
+        line-height:
+            15px !important;
+
+        z-index:
+            5 !important;
+
+    }
+
+
+    .report-chart-bar {
+
+        width:
+            34px !important;
+
+        min-height:
+            5px !important;
+
+        border-radius:
+            5px
+            5px
+            2px
+            2px !important;
+
+        -webkit-print-color-adjust:
+            exact !important;
+
+        print-color-adjust:
+            exact !important;
+
+    }
+
+
+    .report-chart-zero {
+
+        width:
+            34px !important;
+
+        height:
+            3px !important;
+
+        min-height:
+            3px !important;
+
+    }
+
+
+    .report-chart-label {
+
+        bottom:
+            -25px !important;
+
+        height:
+            20px !important;
+
+        font-size:
+            6.5pt !important;
+
+        line-height:
+            1.2 !important;
+
+    }
+
+
+    /* ==============================================
+       PRINT COLORS
+    ============================================== */
+
+    .report-chart-bar,
+    .report-chart-grid,
+    .report-grid-line {
+
+        -webkit-print-color-adjust:
+            exact !important;
+
+        print-color-adjust:
+            exact !important;
+
+    }
+
+
+    /* ==============================================
+       HIDE MODAL
+    ============================================== */
+
+    .print-options-overlay {
+
+        display: none !important;
+
+    }
+
+}
+
+</style>
+
+
+
+<script>
+
+/*
+ * ==========================================
+ * OPEN PRINT OPTIONS
+ * ==========================================
+ */
+
+function openPrintOptions() {
+
+    const overlay =
+        document.getElementById(
+            "printOptionsOverlay"
+        );
+
+    if (!overlay) {
+        return;
+    }
+
+    overlay.classList.add("show");
+
+}
+
+
+/*
+ * ==========================================
+ * CLOSE PRINT OPTIONS
+ * ==========================================
+ */
+
+function closePrintOptions() {
+
+    const overlay =
+        document.getElementById(
+            "printOptionsOverlay"
+        );
+
+    if (!overlay) {
+        return;
+    }
+
+    overlay.classList.remove("show");
+
+}
+
+
+/*
+ * ==========================================
+ * START PRINT
+ * ==========================================
+ */
+
+function startPrint() {
+
+    const selected =
+        document.querySelector(
+            'input[name="printMode"]:checked'
+        );
+
+
+    const mode =
+        selected
+            ? selected.value
+            : "simple";
+
+
+    /*
+     * Bersihkan mode sebelumnya.
+     */
+
+    document.body.classList.remove(
+        "print-mode-simple",
+        "print-mode-summary",
+        "print-mode-detail"
+    );
+
+
+    /*
+     * Pasang mode yang dipilih.
+     */
+
+    document.body.classList.add(
+        `print-mode-${mode}`
+    );
+
+
+    /*
+     * Tutup modal.
+     */
+
+    closePrintOptions();
+
+
+    /*
+     * Beri waktu browser menerapkan
+     * class sebelum membuka print.
+     */
+
+    setTimeout(
+        function () {
+
+            window.print();
+
+        },
+        100
+    );
+
+}
+
+
+/*
+ * ==========================================
+ * AFTER PRINT
+ * ==========================================
+ */
+
+window.addEventListener(
+    "afterprint",
+    function () {
+
+        document.body.classList.remove(
+            "print-mode-simple",
+            "print-mode-summary",
+            "print-mode-detail"
+        );
+
+    }
+);
+
+
+/*
+ * ==========================================
+ * ESC CLOSE MODAL
+ * ==========================================
+ */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closePrintOptions();
+
+        }
+
+    }
+);
+
+
+/*
+ * ==========================================
+ * CLICK OUTSIDE MODAL
+ * ==========================================
+ */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const overlay =
+            document.getElementById(
+                "printOptionsOverlay"
+            );
+
+
+        if (
+            overlay &&
+            event.target === overlay
+        ) {
+
+            closePrintOptions();
+
+        }
+
+    }
+);
+
+</script>

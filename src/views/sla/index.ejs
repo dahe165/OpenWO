@@ -1,0 +1,177 @@
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                SLA Monitoring
+            </h2>
+
+            <p class="text-muted mb-0">
+                Monitoring kesehatan SLA Work Order
+            </p>
+        </div>
+
+        <a
+            href="/dashboard"
+            class="btn btn-outline-secondary"
+        >
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- SLA HEALTH -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="row align-items-center">
+
+                <!-- GAUGE -->
+                <div class="col-lg-5 mb-4 mb-lg-0 text-center">
+
+                    <h5 class="fw-semibold mb-3">
+                        SLA Health
+                    </h5>
+
+                    <%- include("../components/sla/sla-health", {
+                        sla: slaHealth,
+                        variant: "full"
+                    }) %>
+
+                </div>
+
+
+                <!-- SUMMARY -->
+                <div class="col-lg-7">
+
+                    <h5 class="fw-semibold mb-3">
+                        Resolution SLA
+                    </h5>
+
+                    <%- include("../components/sla/resolution-summary", {
+                        resolution: slaOverview.resolution
+                    }) %>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SLA TREND -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+
+            <h5 class="fw-semibold mb-1">
+                SLA Trend
+            </h5>
+
+            <p class="text-muted small mb-4">
+                Performa Resolution SLA Work Order yang selesai
+                dalam 7 hari terakhir
+            </p>
+
+            <%- include("../components/sla/sla-trend", {
+                slaTrend: slaTrend
+            }) %>
+
+        </div>
+    </div>
+
+    <!-- TOTAL -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                    <div class="text-muted small">
+                        Work Order dalam monitoring SLA
+                    </div>
+
+                    <div class="fs-3 fw-bold">
+                        <%= slaHealth.total %>
+                    </div>
+                </div>
+
+                <div class="text-muted">
+                    Resolution SLA
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RESPONSE SLA -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-semibold mb-1">
+                Response SLA
+            </h5>
+
+            <p class="text-muted small mb-4">
+                Status response terhadap target SLA
+            </p>
+
+            <%- include("../components/sla/sla-status-bar", {
+                sla: slaOverview.response
+            }) %>
+
+        </div>
+
+    </div>
+
+    <!-- WAITING ANALYSIS -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-semibold mb-1">
+                Waiting Analysis
+            </h5>
+
+            <p class="text-muted small mb-4">
+                Dampak waktu waiting terhadap Resolution SLA
+            </p>
+
+            <%- include("../components/sla/waiting-summary", {
+                waiting: slaOverview.waiting
+            }) %>
+
+        </div>
+
+    </div>
+
+    <!-- TECHNICIAN PERFORMANCE -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-semibold mb-1">
+                Technician Performance
+            </h5>
+
+            <p class="text-muted small mb-4">
+                Performa teknisi berdasarkan kepatuhan Resolution SLA
+            </p>
+
+            <%- include("../components/sla/technician-performance", {
+                technicianPerformance: technicianPerformance
+            }) %>
+
+        </div>
+
+    </div>
+
+</div>

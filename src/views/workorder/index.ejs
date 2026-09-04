@@ -66,12 +66,54 @@
 
         <div class="filter-group">
 
-        <button class="filter-btn active" data-filter="Semua">Semua</button>
-        <button class="filter-btn" data-filter="Menunggu">Menunggu</button>
-        <button class="filter-btn" data-filter="Diterima">Diterima</button>
-        <button class="filter-btn" data-filter="Ditugaskan">Ditugaskan</button>
-        <button class="filter-btn" data-filter="Diproses">Diproses</button>
-        <button class="filter-btn" data-filter="Selesai">Selesai</button>
+            <button
+                class="filter-btn <%= status === 'Semua' ? 'active' : '' %>"
+                data-filter="Semua"
+            >
+                Semua
+            </button>
+
+            <button
+                class="filter-btn <%= status === 'Menunggu' ? 'active' : '' %>"
+                data-filter="Menunggu"
+            >
+                Menunggu
+            </button>
+
+            <button
+                class="filter-btn <%= status === 'Diterima' ? 'active' : '' %>"
+                data-filter="Diterima"
+            >
+                Diterima
+            </button>
+
+            <button
+                class="filter-btn <%= status === 'Ditugaskan' ? 'active' : '' %>"
+                data-filter="Ditugaskan"
+            >
+                Ditugaskan
+            </button>
+
+            <button
+                class="filter-btn <%= status === 'Diproses' ? 'active' : '' %>"
+                data-filter="Diproses"
+            >
+                Diproses
+            </button>
+
+            <button
+                class="filter-btn <%= status === 'Waiting' ? 'active' : '' %>"
+                data-filter="Waiting"
+            >
+                Waiting
+            </button>
+
+            <button
+                class="filter-btn <%= status === 'Selesai' ? 'active' : '' %>"
+                data-filter="Selesai"
+            >
+                Selesai
+            </button>
 
         </div>
 

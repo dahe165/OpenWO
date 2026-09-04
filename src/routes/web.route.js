@@ -14,6 +14,15 @@ const homeController =
 const dashboardController =
     require("../controllers/dashboard.controller");
 
+const reportController =
+    require("../controllers/report.controller");
+
+const reportChartController =
+    require("../controllers/report/chart.controller");
+
+const reportPdfController =
+    require("../controllers/report/pdf.controller");
+
 const workorderController =
     require("../controllers/workorder.controller");
 
@@ -40,6 +49,9 @@ const priorityController =
 
 const businessCalendarController =
     require("../controllers/business-calendar.controller");
+
+const slaController =
+    require("../controllers/sla.controller");
 
 
 // =====================================================
@@ -70,6 +82,15 @@ router.get(
     dashboardController.index
 );
 
+// =====================================================
+// SLA MONITORING
+// =====================================================
+
+router.get(
+    "/sla",
+    requireLogin,
+    slaController.index
+);
 
 // =====================================================
 // PROFILE
@@ -393,15 +414,26 @@ router.post(
 router.get(
     "/report",
     requireLogin,
-    (req, res) => {
-
-        res.send(
-            "Halaman Laporan"
-        );
-
-    }
+    reportController.index
 );
 
+router.get(
+    "/report/chart",
+    requireLogin,
+    reportChartController.index
+);
+
+router.get(
+    "/report/pdf",
+    requireLogin,
+    reportPdfController.index
+);
+
+router.get(
+    "/report/workorders",
+    requireLogin,
+    reportController.workorders
+);
 
 // =====================================================
 // WORK ORDER ACTIONS

@@ -1,0 +1,411 @@
+<div class="report-page">
+
+    <!-- HEADER -->
+    <div class="report-header">
+        <div>
+            <h1>Rekap Bulanan Work Order</h1>
+
+            <p>
+                Rekapitulasi Work Order berdasarkan periode
+            </p>
+        </div>
+    </div>
+
+
+    <!-- FILTER -->
+    <div class="report-card report-filter">
+
+        <form
+            method="GET"
+            action="/report"
+        >
+
+            <div class="report-filter-grid">
+
+                <div class="report-field">
+
+                    <label for="month">
+                        Bulan
+                    </label>
+
+                    <select
+                        id="month"
+                        name="month"
+                        class="form-select"
+                    >
+
+                        <option
+                            value="1"
+                            <%= report.periode.bulan === 1 ? "selected" : "" %>
+                        >
+                            Januari
+                        </option>
+
+                        <option
+                            value="2"
+                            <%= report.periode.bulan === 2 ? "selected" : "" %>
+                        >
+                            Februari
+                        </option>
+
+                        <option
+                            value="3"
+                            <%= report.periode.bulan === 3 ? "selected" : "" %>
+                        >
+                            Maret
+                        </option>
+
+                        <option
+                            value="4"
+                            <%= report.periode.bulan === 4 ? "selected" : "" %>
+                        >
+                            April
+                        </option>
+
+                        <option
+                            value="5"
+                            <%= report.periode.bulan === 5 ? "selected" : "" %>
+                        >
+                            Mei
+                        </option>
+
+                        <option
+                            value="6"
+                            <%= report.periode.bulan === 6 ? "selected" : "" %>
+                        >
+                            Juni
+                        </option>
+
+                        <option
+                            value="7"
+                            <%= report.periode.bulan === 7 ? "selected" : "" %>
+                        >
+                            Juli
+                        </option>
+
+                        <option
+                            value="8"
+                            <%= report.periode.bulan === 8 ? "selected" : "" %>
+                        >
+                            Agustus
+                        </option>
+
+                        <option
+                            value="9"
+                            <%= report.periode.bulan === 9 ? "selected" : "" %>
+                        >
+                            September
+                        </option>
+
+                        <option
+                            value="10"
+                            <%= report.periode.bulan === 10 ? "selected" : "" %>
+                        >
+                            Oktober
+                        </option>
+
+                        <option
+                            value="11"
+                            <%= report.periode.bulan === 11 ? "selected" : "" %>
+                        >
+                            November
+                        </option>
+
+                        <option
+                            value="12"
+                            <%= report.periode.bulan === 12 ? "selected" : "" %>
+                        >
+                            Desember
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="report-field">
+
+                    <label for="year">
+                        Tahun
+                    </label>
+
+                    <select
+                        id="year"
+                        name="year"
+                        class="form-select"
+                    >
+
+                        <%
+                            const currentYear =
+                                new Date().getFullYear();
+
+                            const startYear =
+                                Math.min(
+                                    currentYear - 2,
+                                    report.periode.tahun - 2
+                                );
+
+                            const endYear =
+                                Math.max(
+                                    currentYear + 2,
+                                    report.periode.tahun + 2
+                                );
+                        %>
+
+                        <% for (
+                            let year = startYear;
+                            year <= endYear;
+                            year++
+                        ) { %>
+
+                            <option
+                                value="<%= year %>"
+                                <%= report.periode.tahun === year ? "selected" : "" %>
+                            >
+                                <%= year %>
+                            </option>
+
+                        <% } %>
+
+                    </select>
+
+                </div>
+
+
+                <div class="report-filter-action">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Tampilkan
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- KPI -->
+    <div class="report-kpi-grid">
+
+        <div class="report-kpi-card">
+
+            <span class="report-kpi-label">
+                TOTAL
+            </span>
+
+            <strong>
+                <%= report.summary.total %>
+            </strong>
+
+            <small>
+                Work Order
+            </small>
+
+        </div>
+
+
+        <div class="report-kpi-card">
+
+            <span class="report-kpi-label">
+                DIBUAT
+            </span>
+
+            <strong>
+                <%= report.summary.total %>
+            </strong>
+
+            <small>
+                Pada periode ini
+            </small>
+
+        </div>
+
+
+        <div class="report-kpi-card">
+
+            <span class="report-kpi-label">
+                DIPROSES
+            </span>
+
+            <strong>
+                <%= report.summary.diproses %>
+            </strong>
+
+            <small>
+                Work Order
+            </small>
+
+        </div>
+
+
+        <div class="report-kpi-card">
+
+            <span class="report-kpi-label">
+                SELESAI
+            </span>
+
+            <strong>
+                <%= report.summary.selesai %>
+            </strong>
+
+            <small>
+                Work Order
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- REPORT ACTIONS -->
+    <div class="report-card report-actions-card">
+
+        <div class="report-section-header">
+
+            <div>
+                <h2>
+                    Laporan
+                </h2>
+
+                <p>
+                    Pilih bentuk laporan yang ingin ditampilkan.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="report-actions-grid">
+
+            <!-- EXCEL -->
+            <a
+                href="#"
+                class="report-action report-action-excel"
+            >
+
+                <span class="report-action-icon">
+                    📊
+                </span>
+
+                <span class="report-action-content">
+
+                    <strong>
+                        Excel
+                    </strong>
+
+                    <small>
+                        Export data Work Order
+                    </small>
+
+                </span>
+
+                <span class="report-action-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <!-- REKAP WO -->
+            <a
+                href="/report/workorders?month=<%= report.periode.bulan %>&year=<%= report.periode.tahun %>"
+                class="report-action report-action-rekap"
+            >
+
+                <span class="report-action-icon">
+                    📋
+                </span>
+
+                <span class="report-action-content">
+
+                    <strong>
+                        Rekap WO
+                    </strong>
+
+                    <small>
+                        Lihat daftar Work Order
+                    </small>
+
+                </span>
+
+                <span class="report-action-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <!-- DIAGRAM -->
+            <a
+                href="/report/chart"
+                class="report-action report-action-chart"
+            >
+
+                <span class="report-action-icon">
+                    📈
+                </span>
+
+                <span class="report-action-content">
+
+                    <strong>
+                        Diagram
+                    </strong>
+
+                    <small>
+                        Lihat diagram Work Order
+                    </small>
+
+                </span>
+
+                <span class="report-action-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <!-- PDF -->
+             
+            <%- include("../components/report/report-pdf-menu") %>
+
+        </div>
+
+    </div>
+
+
+    <!-- PERIOD INFO -->
+    <div class="report-period-info">
+
+        Periode
+        <strong>
+            <%
+                const monthNames = [
+                    "",
+                    "Januari",
+                    "Februari",
+                    "Maret",
+                    "April",
+                    "Mei",
+                    "Juni",
+                    "Juli",
+                    "Agustus",
+                    "September",
+                    "Oktober",
+                    "November",
+                    "Desember"
+                ];
+            %>
+
+            <%= monthNames[report.periode.bulan] %>
+            <%= report.periode.tahun %>
+        </strong>
+
+    </div>
+
+</div>

@@ -85,6 +85,11 @@ function index(req, res) {
                 wo => wo.status === "Diproses"
             ).length,
 
+        waiting:
+            technicianWorkorders.filter(
+                wo => wo.status === "Waiting"
+            ).length,
+
         selesai:
             technicianWorkorders.filter(
                 wo => wo.status === "Selesai"
