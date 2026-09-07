@@ -1,0 +1,217 @@
+<style>
+    .section-form-page{max-width:1180px;margin:0 auto}
+    .section-back{display:inline-flex;align-items:center;gap:7px;margin-bottom:12px;color:#2563eb;text-decoration:none;font-size:12px;font-weight:600}
+    .section-back:hover{text-decoration:underline}
+    .section-form-head{margin-bottom:20px}
+    .section-form-head h1{margin:0;color:#172554;font-size:28px;line-height:1.2}
+    .section-form-head p{margin:7px 0 0;color:#64748b;font-size:13px}
+
+    .section-form-layout{display:grid;grid-template-columns:390px minmax(0,1fr);gap:20px;align-items:stretch}
+    .section-info,.section-data{border:1px solid #dfe7f1;border-radius:14px;background:#fff;box-shadow:0 3px 14px rgba(15,23,42,.045)}
+    .section-info{padding:24px}
+    .section-info-title{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+    .section-info-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#dbeafe;color:#2563eb;font-size:22px}
+    .section-info-title h2{margin:0;color:#172554;font-size:20px}
+    .section-info-title p{margin:3px 0 0;color:#64748b;font-size:12px}
+
+    .info-item{display:grid;grid-template-columns:48px 1fr;gap:12px;margin-bottom:20px}
+    .info-item:last-of-type{margin-bottom:24px}
+    .info-number{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#eff6ff;color:#2563eb;font-size:14px;font-weight:800}
+    .info-item h3{margin:0 0 4px;color:#172554;font-size:13px}
+    .info-item p{margin:0;color:#64748b;font-size:12px;line-height:1.55}
+    .info-tip{padding:14px 15px;border-radius:12px;background:#eff6ff;color:#475569;font-size:11px;line-height:1.55}
+    .info-tip strong{display:block;margin-bottom:3px;color:#2563eb;font-size:12px}
+
+    .section-data{padding:26px}
+    .data-head{margin-bottom:22px}
+    .data-head h2{margin:0;color:#172554;font-size:21px}
+    .data-head p{margin:5px 0 0;color:#64748b;font-size:12px}
+
+    .section-form-group{margin-bottom:18px}
+    .section-form-group label{display:block;margin-bottom:7px;color:#172554;font-size:12px;font-weight:700}
+    .required{color:#dc2626}
+    .section-input,.section-select{width:100%;min-height:44px;box-sizing:border-box;padding:0 12px;border:1px solid #d5dfeb;border-radius:10px;background:#fff;color:#1e293b;font:inherit;font-size:13px;outline:none}
+    .section-input:focus,.section-select:focus{border-color:#93c5fd;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+    .section-form-help{display:block;margin-top:6px;color:#64748b;font-size:11px;line-height:1.4}
+    .section-input::placeholder{color:#94a3b8}
+
+    .section-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:20px;margin-top:22px;border-top:1px solid #e8eef5}
+    .section-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:0 16px;border-radius:9px;text-decoration:none;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+    .section-btn-cancel{border:1px solid #dbe3ef;background:#fff;color:#475569}
+    .section-btn-cancel:hover{background:#f8fafc}
+    .section-btn-primary{border:1px solid #2563eb;background:#2563eb;color:#fff;box-shadow:0 4px 12px rgba(37,99,235,.16)}
+    .section-btn-primary:hover{background:#1d4ed8}
+
+    @media(max-width:900px){
+        .section-form-layout{grid-template-columns:1fr}
+    }
+    @media(max-width:600px){
+        .section-form-page{max-width:none}
+        .section-info,.section-data{padding:18px}
+        .section-form-head h1{font-size:24px}
+        .section-actions{flex-direction:column-reverse}
+        .section-btn{width:100%}
+    }
+</style>
+
+<div class="section-form-page">
+
+    <a href="/admin/sections" class="section-back">
+        ← Kembali ke Master Seksi
+    </a>
+
+    <div class="section-form-head">
+        <h1>Tambah Seksi</h1>
+        <p>Tambahkan Seksi baru ke dalam Bagian organisasi.</p>
+    </div>
+
+    <div class="section-form-layout">
+
+        <aside class="section-info">
+            <div class="section-info-title">
+                <div class="section-info-icon">⌘</div>
+                <div>
+                    <h2>Informasi</h2>
+                    <p>Beberapa hal yang perlu diperhatikan.</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-number">1</div>
+                <div>
+                    <h3>Pilih Bagian</h3>
+                    <p>Seksi akan ditempatkan dalam Bagian organisasi yang dipilih.</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-number">2</div>
+                <div>
+                    <h3>Kode Seksi</h3>
+                    <p>Gunakan kode singkat yang unik untuk mempermudah identifikasi. Contoh: INF, NET, SPT.</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-number">3</div>
+                <div>
+                    <h3>Nama Seksi</h3>
+                    <p>Gunakan nama yang jelas dan mudah dipahami. Contoh: Infrastruktur, Network Support, Helpdesk.</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-number">4</div>
+                <div>
+                    <h3>Urutan</h3>
+                    <p>Menentukan urutan tampilan Seksi dalam daftar. Angka lebih kecil akan ditampilkan lebih atas.</p>
+                </div>
+            </div>
+
+            <div class="info-tip">
+                <strong>💡 Tips</strong>
+                Pastikan kode dan nama Seksi sesuai dengan struktur organisasi yang berlaku di perusahaan.
+            </div>
+        </aside>
+
+        <section class="section-data">
+            <div class="data-head">
+                <h2>Data Seksi</h2>
+                <p>Lengkapi informasi Seksi berikut.</p>
+            </div>
+
+            <form action="/admin/sections" method="POST">
+
+                <div class="section-form-group">
+                    <label for="department_id">
+                        Bagian <span class="required">*</span>
+                    </label>
+
+                    <select id="department_id" name="department_id" class="section-select" required>
+                        <option value="">-- Pilih Bagian --</option>
+
+                        <% departments.forEach(department => { %>
+                            <option value="<%= department.id %>">
+                                <%= department.kode %> — <%= department.nama %>
+                            </option>
+                        <% }) %>
+                    </select>
+
+                    <small class="section-form-help">
+                        Pilih Bagian tempat Seksi ini berada.
+                    </small>
+                </div>
+
+                <div class="section-form-group">
+                    <label for="kode">
+                        Kode Seksi <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="kode"
+                        name="kode"
+                        class="section-input"
+                        placeholder="Contoh: INF"
+                        maxlength="50"
+                        required
+                    >
+
+                    <small class="section-form-help">
+                        Kode singkat untuk identitas Seksi.
+                    </small>
+                </div>
+
+                <div class="section-form-group">
+                    <label for="nama">
+                        Nama Seksi <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nama"
+                        name="nama"
+                        class="section-input"
+                        placeholder="Contoh: Infrastruktur"
+                        maxlength="100"
+                        required
+                    >
+
+                    <small class="section-form-help">
+                        Nama resmi Seksi.
+                    </small>
+                </div>
+
+                <div class="section-form-group">
+                    <label for="urutan">Urutan</label>
+
+                    <input
+                        type="number"
+                        id="urutan"
+                        name="urutan"
+                        class="section-input"
+                        value="0"
+                        min="0"
+                        step="1"
+                    >
+
+                    <small class="section-form-help">
+                        Menentukan urutan tampilan Seksi.
+                    </small>
+                </div>
+
+                <div class="section-actions">
+                    <a href="/admin/sections" class="section-btn section-btn-cancel">
+                        Batal
+                    </a>
+
+                    <button type="submit" class="section-btn section-btn-primary">
+                        ✓ Simpan Seksi
+                    </button>
+                </div>
+
+            </form>
+        </section>
+
+    </div>
+</div>

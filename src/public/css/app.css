@@ -1921,12 +1921,18 @@ body {
 .waiting-reason {
     display: flex;
     gap: 10px;
-    align-items: flex-end;
-}
-
-.btn-action .btn-waiting {
-    display: flex;
-    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    padding: 0 38px 0 13px;
+    border: 1px solid #dbe2ea;
+    border-radius: 9px;
+    background-color: #fff;
+    color: #334155;
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color .2s ease, box-shadow .2s ease;
 }
 
 
@@ -1951,8 +1957,8 @@ body {
     border: 2px solid #fff;
     border-radius: 50%;
 
-    background: #f1f5f9;
-    color: #191a17d7;
+    background: #fff7ed;
+    color: #9a3412;
 
     font-size: 11px;
     line-height: 1;

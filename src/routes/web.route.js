@@ -53,6 +53,15 @@ const businessCalendarController =
 const slaController =
     require("../controllers/sla.controller");
 
+const departmentController =
+    require("../controllers/admin.department.controller");
+
+const sectionController =
+    require("../controllers/admin.section.controller");
+
+const sectionManagementController =
+    require("../controllers/admin.section-management.controller");
+
 
 // =====================================================
 // MIDDLEWARE
@@ -868,6 +877,17 @@ router.get(
 );
 
 
+router.get(
+    "/setting/system",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    settingsController.system
+);
+
+
 router.post(
     "/setting",
     requireLogin,
@@ -936,6 +956,168 @@ router.get(
         "superuser"
     ),
     adminMasterDataController.index
+);
+
+// =====================================================
+// ADMIN - MASTER BAGIAN
+// =====================================================
+
+router.get(
+    "/admin/departments",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    departmentController.index
+);
+
+
+router.get(
+    "/admin/departments/create",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    departmentController.create
+);
+
+
+router.post(
+    "/admin/departments",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    departmentController.store
+);
+
+
+router.get(
+    "/admin/departments/:id/edit",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    departmentController.edit
+);
+
+
+router.post(
+    "/admin/departments/:id",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    departmentController.update
+);
+
+
+router.post(
+    "/admin/departments/:id/toggle",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    departmentController.toggle
+);
+
+// =====================================================
+// ADMIN - MASTER SEKSI
+// =====================================================
+
+router.get(
+    "/admin/sections",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    sectionController.index
+);
+
+
+router.get(
+    "/admin/sections/create",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    sectionController.create
+);
+
+
+router.post(
+    "/admin/sections",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    sectionController.store
+);
+
+
+router.get(
+    "/admin/sections/:id/edit",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    sectionController.edit
+);
+
+
+router.post(
+    "/admin/sections/:id",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    sectionController.update
+);
+
+
+router.post(
+    "/admin/sections/:id/toggle",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    sectionController.toggle
+);
+
+// =====================================================
+// ADMIN - KELOLA SEKSI
+// =====================================================
+
+router.get(
+    "/admin/sections/:id/manage",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    sectionManagementController.manage
+);
+
+router.post(
+    "/admin/sections/:id/manage",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    sectionManagementController.update
 );
 
 // =====================================================

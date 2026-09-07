@@ -8,6 +8,9 @@ const priorityModel = require("../models/priority.model");
 
 const userModel = require("../models/user.model");
 
+const sectionManagementModel =
+    require("../models/section-management.model");
+
 const { formatRelativeTime } = require("../utils/time.util");
 
 function create(req, res) {
@@ -587,8 +590,30 @@ function index(req, res) {
     // TEKNISI
     // ==========================================
 
-    const technicians =
-        userModel.getTechnicians();
+    let technicians;
+
+    if (req.user?.role === "asman") {
+
+        // Ambil Seksi Asman langsung dari database.
+        // Jangan bergantung pada data Seksi di session.
+        const asman =
+            userModel.findById(
+                Number(req.user.id)
+            );
+
+        technicians =
+            asman?.section_id
+                ? sectionManagementModel.getTechniciansBySection(
+                    asman.section_id
+                )
+                : [];
+
+    } else {
+
+        technicians =
+            userModel.getTechnicians();
+
+    }
 
 
     // ==========================================

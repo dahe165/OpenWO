@@ -98,7 +98,8 @@
 
         <a
             href="/setting"
-            class="<%= title === 'Pengaturan' ? 'active' : '' %>"
+            class="<%= title === 'Pengaturan' || title === 'Pengaturan Sistem' || title === 'Pengaturan Work Order' || title === 'Keamanan' ? 'active' : '' %>"
+            aria-label="Pengaturan OpenWO"
         >
 
             <span class="nav-icon">

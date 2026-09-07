@@ -1992,11 +1992,10 @@ font-size:14px;
 
 .wo-actions {
     display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
     gap: 20px;
     width: 100%;
     margin-top: 0px;
+    justify-content: space-between;
 }
 
 .wo-actions form {
@@ -2027,6 +2026,14 @@ font-size:14px;
 .btn-complete {
     background: #16a34a;
     color: white;
+}
+
+.btn-waiting {
+    width: 80%;
+    display: flex;
+    justify-content: flex-start;
+    background: #fffcd0;
+    color: #7e7500;
 }
 
 .btn-action:hover {
@@ -3624,9 +3631,7 @@ font-size:14px;
 .completion-actions {
 
     display: flex;
-
-    justify-content: flex-start;
-
+    justify-content: flex-end;
     margin-top: 18px;
 
 }
@@ -3833,8 +3838,8 @@ font-size:14px;
 
 
 .completion-photo-thumb {
-    width: 90px;
-    height: 90px;
+    width: 60px;
+    height: 60px;
 
     display: block;
 
@@ -5821,3 +5826,4 @@ font-size:14px;
         grid-template-columns: 1fr;
     }
 }
+

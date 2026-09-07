@@ -1,0 +1,283 @@
+<div class="settings-page">
+
+    <div class="settings-header">
+        <a href="/dashboard" class="settings-back">
+            ← Kembali ke Dashboard
+        </a>
+
+        <div class="settings-title">
+            <div class="settings-title-icon">⚙️</div>
+
+            <div>
+                <h1>Pengaturan</h1>
+                <p>Kelola cara OpenWO bekerja dan konfigurasi sistem.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="settings-grid">
+
+        <a href="/setting/system" class="settings-card">
+            <div class="settings-card-icon">⚙️</div>
+
+            <div class="settings-card-content">
+                <h2>Pengaturan Sistem</h2>
+                <p>
+                    Kelola identitas OpenWO seperti nama aplikasi,
+                    deskripsi, dan logo.
+                </p>
+            </div>
+
+            <span class="settings-card-arrow">→</span>
+        </a>
+
+
+        <div class="settings-card settings-card-disabled">
+            <div class="settings-card-icon">📋</div>
+
+            <div class="settings-card-content">
+                <h2>Pengaturan Work Order</h2>
+                <p>
+                    Atur perilaku, workflow, eskalasi, dan aturan
+                    Work Order OpenWO.
+                </p>
+
+                <span class="settings-coming-soon">
+                    Segera hadir
+                </span>
+            </div>
+
+            <span class="settings-card-arrow">→</span>
+        </div>
+
+
+        <div class="settings-card settings-card-disabled">
+            <div class="settings-card-icon">🔐</div>
+
+            <div class="settings-card-content">
+                <h2>Keamanan</h2>
+                <p>
+                    Kelola pengaturan yang berkaitan dengan keamanan
+                    dan akses sistem.
+                </p>
+
+                <span class="settings-coming-soon">
+                    Segera hadir
+                </span>
+            </div>
+
+            <span class="settings-card-arrow">→</span>
+        </div>
+
+    </div>
+
+
+    <div class="settings-info">
+        <div class="settings-info-icon">💡</div>
+
+        <div>
+            <strong>Tips</strong>
+            <p>
+                Pengaturan sistem memengaruhi tampilan dan identitas
+                OpenWO. Pengaturan Work Order dan Keamanan akan
+                ditambahkan bertahap tanpa mengganggu fungsi yang
+                sudah berjalan.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+
+<style>
+.settings-page {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.settings-header {
+    margin-bottom: 24px;
+}
+
+.settings-back {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.15s ease;
+}
+
+.settings-back:hover {
+    color: #2563eb;
+}
+
+.settings-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.settings-title-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    background: #eff6ff;
+    font-size: 22px;
+}
+
+.settings-title h1 {
+    margin: 0;
+    font-size: 23px;
+    color: #111827;
+}
+
+.settings-title p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.settings-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    min-height: 142px;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    color: inherit;
+    text-decoration: none;
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+a.settings-card:hover {
+    transform: translateY(-2px);
+    border-color: #bfdbfe;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+}
+
+.settings-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #f8fafc;
+    font-size: 19px;
+}
+
+.settings-card-content {
+    padding-right: 20px;
+}
+
+.settings-card h2 {
+    margin: 1px 0 7px;
+    color: #1f2937;
+    font-size: 15px;
+}
+
+.settings-card p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.settings-card-arrow {
+    position: absolute;
+    right: 18px;
+    top: 20px;
+    color: #94a3b8;
+    font-size: 18px;
+}
+
+.settings-card-disabled {
+    cursor: default;
+    background: #fafafa;
+}
+
+.settings-card-disabled .settings-card-icon {
+    opacity: 0.75;
+}
+
+.settings-card-disabled h2 {
+    color: #475569;
+}
+
+.settings-coming-soon {
+    display: inline-flex;
+    margin-top: 12px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.settings-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin-top: 16px;
+    padding: 15px 17px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 13px;
+}
+
+.settings-info-icon {
+    flex-shrink: 0;
+    font-size: 17px;
+}
+
+.settings-info strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #334155;
+    font-size: 12px;
+}
+
+.settings-info p {
+    margin: 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+@media (max-width: 650px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-title h1 {
+        font-size: 20px;
+    }
+
+    .settings-card {
+        min-height: 126px;
+        padding: 17px;
+    }
+}
+</style>

@@ -1,0 +1,722 @@
+<div class="settings-page">
+
+    <% if (saved) { %>
+
+        <div
+            id="settingsSuccess"
+            class="settings-success"
+        >
+
+            <div class="settings-success-icon">
+                ✓
+            </div>
+
+            <div>
+
+                <strong>
+                    Perubahan berhasil
+                </strong>
+
+                <span>
+                    Pengaturan sistem telah disimpan.
+                </span>
+
+            </div>
+
+        </div>
+
+    <% } %>
+
+    <div class="settings-header">
+
+        <a
+            href="/dashboard"
+            class="settings-back"
+        >
+            ← Kembali ke Dashboard
+        </a>
+
+        <div class="settings-title">
+
+            <div class="settings-title-icon">
+                ⚙️
+            </div>
+
+            <div>
+
+                <h1>
+                    Pengaturan Sistem
+                </h1>
+
+                <p>
+                    Kelola konfigurasi dasar OpenWO.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="settings-card">
+
+        <div class="settings-card-header">
+
+            <div>
+
+                <h2>
+                    🏢 Identitas Sistem
+                </h2>
+
+                <p>
+                    Informasi dasar yang digunakan
+                    oleh aplikasi OpenWO.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            action="/setting"
+            method="POST"
+            enctype="multipart/form-data"
+            class="settings-form"
+        >
+
+            <div class="settings-field">
+
+                <label for="appName">
+                    Nama Aplikasi
+                </label>
+
+                <input
+                    type="text"
+                    id="appName"
+                    name="appName"
+                    value="<%= appName %>"
+                    required
+                >
+
+                <small>
+                    Nama aplikasi yang digunakan
+                    oleh sistem.
+                </small>
+
+            </div>
+
+
+            <div class="settings-field">
+
+                <label for="appDescription">
+                    Deskripsi Aplikasi
+                </label>
+
+                <input
+                    type="text"
+                    id="appDescription"
+                    name="appDescription"
+                    value="<%= appDescription %>"
+                >
+
+                <small>
+                    Deskripsi singkat mengenai aplikasi.
+                </small>
+
+            </div>
+
+            <div class="settings-section-divider"></div>
+
+            <div class="settings-field">
+
+                <label for="appLogo">
+                    Logo Aplikasi
+                </label>
+
+                <div class="logo-upload">
+
+                    <div class="logo-preview">
+
+                        <% if (appLogo) { %>
+
+                            <img
+                                src="<%= appLogo %>"
+                                alt="Logo Aplikasi"
+                            >
+
+                        <% } else { %>
+
+                            <span>🚀</span>
+
+                        <% } %>
+
+                    </div>
+
+                    <div class="logo-upload-info">
+
+                        <input
+                            type="file"
+                            id="appLogo"
+                            name="appLogo"
+                            accept="image/png,image/jpeg,image/webp"
+                        >
+
+                        <small>
+                            PNG, JPG, atau WEBP.
+                            Maksimal 2 MB.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="settings-actions">
+
+                <a
+                    href="/dashboard"
+                    class="settings-btn settings-btn-cancel"
+                >
+                    Batal
+                </a>
+
+                <button
+                    type="submit"
+                    class="settings-btn settings-btn-save"
+                >
+                    ✓ Simpan Pengaturan
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.settings-page {
+
+    width: 100%;
+
+    max-width: 850px;
+
+    margin: 0 auto;
+
+}
+
+
+.settings-header {
+
+    margin-bottom: 22px;
+
+}
+
+
+.settings-back {
+
+    display: inline-block;
+
+    margin-bottom: 18px;
+
+    color: #64748b;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    transition:
+        color 0.15s ease;
+
+}
+
+
+.settings-back:hover {
+
+    color: #2563eb;
+
+}
+
+
+.settings-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+}
+
+
+.settings-title-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 13px;
+
+    background: #eff6ff;
+
+    font-size: 22px;
+
+}
+
+
+.settings-title h1 {
+
+    margin: 0;
+
+    font-size: 23px;
+
+    color: #111827;
+
+}
+
+
+.settings-title p {
+
+    margin: 5px 0 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+}
+
+
+.settings-card {
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+}
+
+
+.settings-card-header {
+
+    padding: 20px 22px;
+
+    border-bottom: 1px solid #eef2f7;
+
+}
+
+
+.settings-card-header h2 {
+
+    margin: 0;
+
+    font-size: 16px;
+
+    color: #1f2937;
+
+}
+
+
+.settings-card-header p {
+
+    margin: 6px 0 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+}
+
+
+.settings-form {
+
+    padding: 22px;
+
+}
+
+
+.settings-field {
+
+    margin-bottom: 20px;
+
+}
+
+
+.settings-field label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #1f2937;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.settings-field input {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 11px 13px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #111827;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+
+}
+
+
+.settings-field input:focus {
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.10);
+
+}
+
+
+.settings-field small {
+
+    display: block;
+
+    margin-top: 6px;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+}
+
+
+.settings-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    padding-top: 8px;
+
+}
+
+
+.settings-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 40px;
+
+    padding: 0 15px;
+
+    border-radius: 9px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+}
+
+
+.settings-btn-cancel {
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+}
+
+
+.settings-btn-save {
+
+    border: 0;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+}
+
+
+.settings-btn-save:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+@media (max-width: 600px) {
+
+    .settings-page {
+
+        width: 100%;
+
+    }
+
+
+    .settings-title h1 {
+
+        font-size: 20px;
+
+    }
+
+
+    .settings-card-header,
+    .settings-form {
+
+        padding: 17px;
+
+    }
+
+
+    .settings-actions {
+
+        flex-direction: column-reverse;
+
+    }
+
+
+    .settings-btn {
+
+        width: 100%;
+
+    }
+
+}
+
+.settings-success {
+
+    position: fixed;
+
+    top: 22px;
+
+    right: 22px;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    min-width: 270px;
+
+    padding: 13px 16px;
+
+    background: #ffffff;
+
+    border: 1px solid #d1fae5;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(15, 23, 42, 0.12);
+
+    animation:
+        settingsSuccessIn
+        0.25s ease;
+}
+
+
+.settings-success-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 32px;
+
+    height: 32px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #10b981;
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+}
+
+
+.settings-success strong {
+
+    display: block;
+
+    color: #111827;
+
+    font-size: 13px;
+
+}
+
+
+.settings-success span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+}
+
+
+@keyframes settingsSuccessIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(-8px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .settings-success {
+
+        left: 15px;
+
+        right: 15px;
+
+        top: 15px;
+
+        min-width: 0;
+
+    }
+
+}
+
+</style>
+
+<script>
+
+    const settingsSuccess =
+        document.getElementById(
+            "settingsSuccess"
+        );
+
+
+    if (settingsSuccess) {
+
+        /*
+         * Hapus ?saved=1 dari URL
+         * tanpa reload halaman.
+         *
+         * Modal tetap tampil,
+         * tetapi jika halaman di-refresh,
+         * modal tidak muncul lagi.
+         */
+
+        const cleanUrl =
+            window.location.pathname;
+
+
+        window.history.replaceState(
+            {},
+            document.title,
+            cleanUrl
+        );
+
+
+        /*
+         * Hilangkan modal setelah 2,5 detik.
+         */
+
+        setTimeout(
+            () => {
+
+                settingsSuccess.style.transition =
+                    "opacity 0.25s ease, transform 0.25s ease";
+
+                settingsSuccess.style.opacity =
+                    "0";
+
+                settingsSuccess.style.transform =
+                    "translateY(-8px)";
+
+
+                setTimeout(
+                    () => {
+
+                        settingsSuccess.remove();
+
+                    },
+                    300
+                );
+
+            },
+            2500
+        );
+
+    }
+
+</script>

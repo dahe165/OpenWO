@@ -113,50 +113,82 @@
 
         </div>
 
+        <!-- MASTER BAGIAN -->
 
-        <!-- DIVISI -->
+
+        <!-- MASTER BAGIAN -->
 
         <div class="form-group">
 
-            <label for="seksi">
-                Seksi
+            <label for="department_id">
+                Master Bagian
             </label>
 
-            <input
-                type="text"
-                id="seksi"
-                name="seksi"
-                placeholder="Contoh: Jaringan & Infrastruktur"
+            <select
+                id="department_id"
+                name="department_id"
                 required
-                autocomplete="organization"
             >
 
+                <option value="">
+                    -- Pilih Bagian --
+                </option>
+
+                <% departments.forEach(department => { %>
+
+                    <option
+                        value="<%= department.id %>"
+                    >
+                        <%= department.kode %>
+                        -
+                        <%= department.nama %>
+                    </option>
+
+                <% }) %>
+
+            </select>
+
             <small>
-                Seksi tempat pengguna berada.
+                Bagian organisasi utama pengguna.
             </small>
 
         </div>
 
 
-        <!-- ORGANISASI -->
+        <!-- MASTER SEKSI -->
 
         <div class="form-group">
 
-            <label for="bagian">
-                Bagian
+            <label for="section_id">
+                Master Seksi
             </label>
 
-            <input
-                type="text"
-                id="bagian"
-                name="bagian"
-                placeholder="Contoh: STI"
-                required
-                autocomplete="organization"
+            <select
+                id="section_id"
+                name="section_id"
             >
 
+                <option value="">
+                    -- Pilih Seksi --
+                </option>
+
+                <% sections.forEach(section => { %>
+
+                    <option
+                        value="<%= section.id %>"
+                        data-department-id="<%= section.department_id %>"
+                    >
+                        <%= section.kode %>
+                        -
+                        <%= section.nama %>
+                    </option>
+
+                <% }) %>
+
+            </select>
+
             <small>
-                Departemen atau bagian pengguna.
+                Seksi berdasarkan Bagian yang dipilih.
             </small>
 
         </div>
@@ -416,3 +448,126 @@
 }
 
 </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const roleSelect =
+        document.getElementById("role");
+
+    const departmentSelect =
+        document.getElementById("department_id");
+
+    const sectionSelect =
+        document.getElementById("section_id");
+
+
+    /*
+     * =====================================
+     * SEKSI WAJIB UNTUK ASMAN
+     * =====================================
+     */
+
+    function updateSectionRequirement() {
+
+        const requiresSection =
+            roleSelect.value === "asman" ||
+            roleSelect.value === "teknisi";
+
+        sectionSelect.required =
+            requiresSection;
+    }
+
+
+    /*
+     * =====================================
+     * FILTER SEKSI BERDASARKAN BAGIAN
+     * =====================================
+     */
+
+    const sectionOptions =
+        Array.from(sectionSelect.options);
+
+
+    function filterSections() {
+
+        const departmentId =
+            departmentSelect.value;
+
+
+        sectionOptions.forEach(option => {
+
+            // Option kosong selalu ditampilkan
+            if (!option.value) {
+
+                option.hidden = false;
+
+                return;
+            }
+
+
+            // Tampilkan hanya Seksi
+            // milik Bagian yang dipilih
+            option.hidden =
+                option.dataset.departmentId !==
+                departmentId;
+
+        });
+
+
+        /*
+         * Jika Seksi yang sedang dipilih
+         * bukan milik Bagian baru,
+         * kosongkan pilihan.
+         */
+
+        const selectedOption =
+            sectionSelect.options[
+                sectionSelect.selectedIndex
+            ];
+
+
+        if (
+            selectedOption &&
+            selectedOption.value &&
+            selectedOption.dataset.departmentId !==
+                departmentId
+        ) {
+
+            sectionSelect.value = "";
+
+        }
+
+    }
+
+
+    /*
+     * =====================================
+     * EVENT
+     * =====================================
+     */
+
+    roleSelect.addEventListener(
+        "change",
+        updateSectionRequirement
+    );
+
+
+    departmentSelect.addEventListener(
+        "change",
+        filterSections
+    );
+
+
+    /*
+     * =====================================
+     * INITIAL STATE
+     * =====================================
+     */
+
+    updateSectionRequirement();
+
+    filterSections();
+
+});
+</script>

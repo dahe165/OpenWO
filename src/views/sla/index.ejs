@@ -1,177 +1,320 @@
-<div class="container-fluid py-4">
+<style>
+    /* =========================================================
+       SLA MONITORING — MINIMAL MODERN VIEW
+       Komponen SLA tetap digunakan apa adanya.
+       Styling di sini hanya menyatukan tampilan halaman.
+       ========================================================= */
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    .sla-page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 28px 24px 40px;
+    }
 
+    .sla-page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .sla-page-title {
+        margin: 0;
+        font-size: 1.55rem;
+        font-weight: 750;
+        letter-spacing: -.025em;
+        color: #111827;
+    }
+
+    .sla-page-subtitle {
+        margin: 5px 0 0;
+        color: #6b7280;
+        font-size: .88rem;
+    }
+
+    .sla-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        background: #fff;
+        color: #4b5563;
+        text-decoration: none;
+        font-size: .82rem;
+        font-weight: 600;
+        transition: .18s ease;
+        white-space: nowrap;
+    }
+
+    .sla-back-link:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+        color: #111827;
+    }
+
+    .sla-section {
+        margin-bottom: 18px;
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, .035);
+    }
+
+    .sla-section-header {
+        margin-bottom: 16px;
+    }
+
+    .sla-section-title {
+        margin: 0;
+        font-size: .98rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .sla-section-description {
+        margin: 4px 0 0;
+        color: #9ca3af;
+        font-size: .78rem;
+    }
+
+    .sla-primary-grid {
+        display: grid;
+        grid-template-columns: minmax(300px, .9fr) minmax(0, 1.1fr);
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .sla-primary-grid .sla-section {
+        margin-bottom: 0;
+    }
+
+    .sla-total {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 16px 18px;
+        margin-top: 4px;
+        border-top: 1px solid #f0f2f5;
+    }
+
+    .sla-total-label {
+        color: #6b7280;
+        font-size: .78rem;
+    }
+
+    .sla-total-value {
+        margin-top: 2px;
+        font-size: 1.35rem;
+        line-height: 1.1;
+        font-weight: 750;
+        color: #111827;
+    }
+
+    .sla-total-context {
+        color: #9ca3af;
+        font-size: .75rem;
+    }
+
+    /* Component harmonization */
+    .sla-section .sla-health-gauge {
+        border: 0;
+        padding: 4px 4px 0;
+        border-radius: 0;
+    }
+
+    .sla-section .resolution-summary {
+        padding: 2px 0 0;
+    }
+
+    .sla-section .waiting-metric {
+        box-shadow: none;
+    }
+
+    .sla-section .waiting-metric:hover {
+        transform: none;
+        box-shadow: none;
+        border-color: #e9ecef;
+    }
+
+    .sla-section .technician-performance table {
+        font-size: .84rem;
+    }
+
+    @media (max-width: 900px) {
+        .sla-primary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .sla-primary-grid .sla-section {
+            margin-bottom: 18px;
+        }
+
+        .sla-primary-grid .sla-section:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .sla-page {
+            padding: 20px 14px 30px;
+        }
+
+        .sla-page-header {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .sla-page-title {
+            font-size: 1.3rem;
+        }
+
+        .sla-back-link {
+            align-self: flex-start;
+        }
+
+        .sla-section {
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .sla-primary-grid {
+            gap: 14px;
+        }
+
+        .sla-total {
+            padding: 14px 4px;
+        }
+    }
+</style>
+
+<div class="sla-page">
+
+    <header class="sla-page-header">
         <div>
-            <h2 class="fw-bold mb-1">
-                SLA Monitoring
-            </h2>
-
-            <p class="text-muted mb-0">
-                Monitoring kesehatan SLA Work Order
-            </p>
+            <h1 class="sla-page-title">SLA Monitoring</h1>
+            <p class="sla-page-subtitle">Monitoring kesehatan SLA Work Order</p>
         </div>
 
-        <a
-            href="/dashboard"
-            class="btn btn-outline-secondary"
-        >
-            ← Dashboard
-        </a>
-
-    </div>
+        <a href="/dashboard" class="sla-back-link">← Dashboard</a>
+    </header>
 
 
-    <!-- SLA HEALTH -->
-    <div class="card shadow-sm border-0 mb-4">
+    <!-- GRID 1: RESOLUTION + WAITING -->
+    <div class="sla-primary-grid">
 
-        <div class="card-body">
-
-            <div class="row align-items-center">
-
-                <!-- GAUGE -->
-                <div class="col-lg-5 mb-4 mb-lg-0 text-center">
-
-                    <h5 class="fw-semibold mb-3">
-                        SLA Health
-                    </h5>
-
-                    <%- include("../components/sla/sla-health", {
-                        sla: slaHealth,
-                        variant: "full"
-                    }) %>
-
-                </div>
-
-
-                <!-- SUMMARY -->
-                <div class="col-lg-7">
-
-                    <h5 class="fw-semibold mb-3">
-                        Resolution SLA
-                    </h5>
-
-                    <%- include("../components/sla/resolution-summary", {
-                        resolution: slaOverview.resolution
-                    }) %>
-
-                </div>
-
+        <section class="sla-section">
+            <div class="sla-section-header">
+                <h2 class="sla-section-title">Resolution SLA</h2>
+                <p class="sla-section-description">
+                    Distribusi status SLA Work Order
+                </p>
             </div>
 
-        </div>
-
-    </div>
-
-    <!-- SLA TREND -->
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body">
-
-            <h5 class="fw-semibold mb-1">
-                SLA Trend
-            </h5>
-
-            <p class="text-muted small mb-4">
-                Performa Resolution SLA Work Order yang selesai
-                dalam 7 hari terakhir
-            </p>
-
-            <%- include("../components/sla/sla-trend", {
-                slaTrend: slaTrend
+            <%- include("../components/sla/resolution-summary", {
+                resolution: slaOverview.resolution
             }) %>
+        </section>
 
-        </div>
-    </div>
 
-    <!-- TOTAL -->
-    <div class="card shadow-sm border-0">
-
-        <div class="card-body">
-
-            <div class="d-flex justify-content-between align-items-center">
-
-                <div>
-                    <div class="text-muted small">
-                        Work Order dalam monitoring SLA
-                    </div>
-
-                    <div class="fs-3 fw-bold">
-                        <%= slaHealth.total %>
-                    </div>
-                </div>
-
-                <div class="text-muted">
-                    Resolution SLA
-                </div>
-
+        <section class="sla-section">
+            <div class="sla-section-header">
+                <h2 class="sla-section-title">Waiting Analysis</h2>
+                <p class="sla-section-description">
+                    Dampak waktu waiting terhadap Resolution SLA
+                </p>
             </div>
-
-        </div>
-
-    </div>
-
-    <!-- RESPONSE SLA -->
-    <div class="card shadow-sm border-0 mb-4">
-
-        <div class="card-body">
-
-            <h5 class="fw-semibold mb-1">
-                Response SLA
-            </h5>
-
-            <p class="text-muted small mb-4">
-                Status response terhadap target SLA
-            </p>
-
-            <%- include("../components/sla/sla-status-bar", {
-                sla: slaOverview.response
-            }) %>
-
-        </div>
-
-    </div>
-
-    <!-- WAITING ANALYSIS -->
-    <div class="card shadow-sm border-0 mb-4">
-
-        <div class="card-body">
-
-            <h5 class="fw-semibold mb-1">
-                Waiting Analysis
-            </h5>
-
-            <p class="text-muted small mb-4">
-                Dampak waktu waiting terhadap Resolution SLA
-            </p>
 
             <%- include("../components/sla/waiting-summary", {
                 waiting: slaOverview.waiting
             }) %>
-
-        </div>
+        </section>
 
     </div>
 
-    <!-- TECHNICIAN PERFORMANCE -->
-    <div class="card shadow-sm border-0 mb-4">
 
-        <div class="card-body">
+    <!-- GRID 2: HEALTH + TREND -->
+    <div class="sla-primary-grid">
 
-            <h5 class="fw-semibold mb-1">
-                Technician Performance
-            </h5>
+            <%- include("../components/sla/sla-health", {
+                sla: slaHealth,
+                variant: "full"
+            }) %>
 
-            <p class="text-muted small mb-4">
-                Performa teknisi berdasarkan kepatuhan Resolution SLA
-            </p>
+
+        <section class="sla-section">
+            <div class="sla-section-header">
+                <h2 class="sla-section-title">SLA Trend</h2>
+                <p class="sla-section-description">
+                    Performa Resolution SLA Work Order yang selesai
+                    dalam 7 hari terakhir
+                </p>
+            </div>
+
+            <%- include("../components/sla/sla-trend", {
+                slaTrend: slaTrend
+            }) %>
+        </section>
+
+    </div>
+
+
+    <!-- GRID 3: RESPONSE + TECHNICIAN -->
+    <div class="sla-primary-grid">
+
+        <section class="sla-section">
+            <div class="sla-section-header">
+                <h2 class="sla-section-title">Response SLA</h2>
+                <p class="sla-section-description">
+                    Status response terhadap target SLA
+                </p>
+            </div>
+
+            <%- include("../components/sla/sla-status-bar", {
+                sla: slaOverview.response
+            }) %>
+        </section>
+
+
+        <section class="sla-section">
+            <div class="sla-section-header">
+                <h2 class="sla-section-title">Technician Performance</h2>
+                <p class="sla-section-description">
+                    Performa teknisi berdasarkan kepatuhan Resolution SLA
+                </p>
+            </div>
 
             <%- include("../components/sla/technician-performance", {
                 technicianPerformance: technicianPerformance
             }) %>
-
-        </div>
+        </section>
 
     </div>
+
+
+    <!-- TOTAL -->
+    <section class="sla-section">
+        <div class="sla-total">
+            <div>
+                <div class="sla-total-label">
+                    Work Order dalam monitoring SLA
+                </div>
+
+                <div class="sla-total-value">
+                    <%= slaHealth.total %>
+                </div>
+            </div>
+
+            <div class="sla-total-context">
+                Resolution SLA
+            </div>
+        </div>
+    </section>
 
 </div>

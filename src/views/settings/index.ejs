@@ -1,722 +1,365 @@
-<div class="settings-page">
+<div class="wo-settings-page">
 
-    <% if (saved) { %>
-
-        <div
-            id="settingsSuccess"
-            class="settings-success"
-        >
-
-            <div class="settings-success-icon">
-                ✓
-            </div>
-
-            <div>
-
-                <strong>
-                    Perubahan berhasil
-                </strong>
-
-                <span>
-                    Pengaturan sistem telah disimpan.
-                </span>
-
-            </div>
-
-        </div>
-
-    <% } %>
-
-    <div class="settings-header">
-
-        <a
-            href="/dashboard"
-            class="settings-back"
-        >
-            ← Kembali ke Dashboard
+    <div class="wo-settings-header">
+        <a href="/setting" class="wo-settings-back">
+            ← Kembali ke Pengaturan
         </a>
 
-        <div class="settings-title">
-
-            <div class="settings-title-icon">
-                ⚙️
-            </div>
-
+        <div class="wo-settings-title">
+            <div class="wo-settings-icon">📋</div>
             <div>
-
-                <h1>
-                    Pengaturan Sistem
-                </h1>
-
-                <p>
-                    Kelola konfigurasi dasar OpenWO.
-                </p>
-
+                <h1>Pengaturan Work Order</h1>
+                <p>Atur perilaku dan aturan proses Work Order OpenWO.</p>
             </div>
-
         </div>
-
     </div>
 
 
-    <div class="settings-card">
+    <div class="wo-settings-note">
+        <span>ℹ️</span>
+        <div>
+            <strong>Konfigurasi bertahap</strong>
+            <p>
+                Halaman ini menjadi pusat pengaturan Work Order.
+                Nilai yang tampil mengikuti workflow OpenWO saat ini;
+                perubahan perilaku akan diaktifkan bertahap agar workflow
+                yang sudah berjalan tetap aman.
+            </p>
+        </div>
+    </div>
 
-        <div class="settings-card-header">
 
+    <div class="wo-settings-section">
+        <div class="wo-section-heading">
             <div>
+                <h2>Perilaku WO</h2>
+                <p>Aturan dasar ketika Work Order dibuat dan dikerjakan.</p>
+            </div>
+        </div>
 
-                <h2>
-                    🏢 Identitas Sistem
-                </h2>
+        <div class="wo-settings-list">
 
-                <p>
-                    Informasi dasar yang digunakan
-                    oleh aplikasi OpenWO.
-                </p>
+            <div class="wo-setting-row">
+                <div>
+                    <h3>Status awal Work Order</h3>
+                    <p>Work Order baru masuk ke antrean sebelum diproses.</p>
+                </div>
+                <span class="wo-value">Menunggu</span>
+            </div>
 
+            <div class="wo-setting-row">
+                <div>
+                    <h3>Dokumentasi penyelesaian</h3>
+                    <p>Teknisi wajib mengisi deskripsi penyelesaian.</p>
+                </div>
+                <span class="wo-value wo-value-on">Wajib</span>
             </div>
 
         </div>
+    </div>
 
 
-        <form
-            action="/setting"
-            method="POST"
-            enctype="multipart/form-data"
-            class="settings-form"
-        >
-
-            <div class="settings-field">
-
-                <label for="appName">
-                    Nama Aplikasi
-                </label>
-
-                <input
-                    type="text"
-                    id="appName"
-                    name="appName"
-                    value="<%= appName %>"
-                    required
-                >
-
-                <small>
-                    Nama aplikasi yang digunakan
-                    oleh sistem.
-                </small>
-
+    <div class="wo-settings-section">
+        <div class="wo-section-heading">
+            <div>
+                <h2>Workflow</h2>
+                <p>Tahapan verifikasi yang menjaga kualitas penyelesaian WO.</p>
             </div>
+        </div>
 
+        <div class="wo-settings-list">
 
-            <div class="settings-field">
-
-                <label for="appDescription">
-                    Deskripsi Aplikasi
-                </label>
-
-                <input
-                    type="text"
-                    id="appDescription"
-                    name="appDescription"
-                    value="<%= appDescription %>"
-                >
-
-                <small>
-                    Deskripsi singkat mengenai aplikasi.
-                </small>
-
-            </div>
-
-            <div class="settings-section-divider"></div>
-
-            <div class="settings-field">
-
-                <label for="appLogo">
-                    Logo Aplikasi
-                </label>
-
-                <div class="logo-upload">
-
-                    <div class="logo-preview">
-
-                        <% if (appLogo) { %>
-
-                            <img
-                                src="<%= appLogo %>"
-                                alt="Logo Aplikasi"
-                            >
-
-                        <% } else { %>
-
-                            <span>🚀</span>
-
-                        <% } %>
-
-                    </div>
-
-                    <div class="logo-upload-info">
-
-                        <input
-                            type="file"
-                            id="appLogo"
-                            name="appLogo"
-                            accept="image/png,image/jpeg,image/webp"
-                        >
-
-                        <small>
-                            PNG, JPG, atau WEBP.
-                            Maksimal 2 MB.
-                        </small>
-
-                    </div>
-
+            <div class="wo-setting-row">
+                <div>
+                    <h3>Verifikasi Asman</h3>
+                    <p>
+                        WO yang selesai dikerjakan diverifikasi oleh Asman
+                        sebelum ditutup atau diteruskan.
+                    </p>
                 </div>
-
+                <span class="wo-value wo-value-on">Aktif</span>
             </div>
 
-
-            <div class="settings-actions">
-
-                <a
-                    href="/dashboard"
-                    class="settings-btn settings-btn-cancel"
-                >
-                    Batal
-                </a>
-
-                <button
-                    type="submit"
-                    class="settings-btn settings-btn-save"
-                >
-                    ✓ Simpan Pengaturan
-                </button>
-
+            <div class="wo-setting-row">
+                <div>
+                    <h3>Verifikasi Manager</h3>
+                    <p>
+                        Berlaku untuk WO yang telah diputuskan Asman
+                        untuk dieskalasi ke Manager.
+                    </p>
+                </div>
+                <span class="wo-value wo-value-on">Aktif</span>
             </div>
 
-        </form>
+        </div>
+    </div>
 
+
+    <div class="wo-settings-section">
+        <div class="wo-section-heading">
+            <div>
+                <h2>Eskalasi</h2>
+                <p>Penanganan WO yang membutuhkan keputusan lebih lanjut.</p>
+            </div>
+        </div>
+
+        <div class="wo-settings-list">
+
+            <div class="wo-setting-row">
+                <div>
+                    <h3>Eskalasi oleh Asman</h3>
+                    <p>
+                        Asman menentukan apakah WO perlu diteruskan
+                        ke Manager setelah memeriksa hasil pekerjaan.
+                    </p>
+                </div>
+                <span class="wo-value wo-value-on">Aktif</span>
+            </div>
+
+            <div class="wo-setting-row">
+                <div>
+                    <h3>Alasan eskalasi</h3>
+                    <p>
+                        Alasan wajib dicatat agar keputusan eskalasi
+                        memiliki konteks dan jejak pada timeline.
+                    </p>
+                </div>
+                <span class="wo-value wo-value-on">Wajib</span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="wo-settings-section">
+        <div class="wo-section-heading">
+            <div>
+                <h2>SLA</h2>
+                <p>Aturan waktu layanan yang berkaitan dengan Work Order.</p>
+            </div>
+        </div>
+
+        <div class="wo-settings-list">
+
+            <div class="wo-setting-row">
+                <div>
+                    <h3>Perhitungan SLA</h3>
+                    <p>
+                        Monitoring SLA menggunakan data event Work Order
+                        dan Business Calendar yang sudah tersedia.
+                    </p>
+                </div>
+                <span class="wo-value wo-value-on">Aktif</span>
+            </div>
+
+            <div class="wo-setting-row">
+                <div>
+                    <h3>Waiting</h3>
+                    <p>
+                        Waktu Waiting dicatat sebagai event tersendiri
+                        sehingga dampaknya dapat dianalisis dalam SLA.
+                    </p>
+                </div>
+                <span class="wo-value wo-value-on">Aktif</span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="wo-settings-tip">
+        <span>💡</span>
+        <div>
+            <strong>Catatan desain</strong>
+            <p>
+                Pengaturan ini sengaja belum diberi tombol simpan.
+                Kita tidak akan membuat opsi konfigurasi yang belum
+                benar-benar dibaca oleh workflow. Setelah struktur
+                pengaturan disepakati, setiap opsi akan dihubungkan
+                ke konfigurasi sistem satu per satu.
+            </p>
+        </div>
     </div>
 
 </div>
 
 
 <style>
-
-.settings-page {
-
+.wo-settings-page {
     width: 100%;
-
-    max-width: 850px;
-
+    max-width: 900px;
     margin: 0 auto;
-
 }
 
-
-.settings-header {
-
-    margin-bottom: 22px;
-
-}
-
-
-.settings-back {
-
-    display: inline-block;
-
+.wo-settings-header {
     margin-bottom: 18px;
-
-    color: #64748b;
-
-    text-decoration: none;
-
-    font-size: 13px;
-
-    transition:
-        color 0.15s ease;
-
 }
 
+.wo-settings-back {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 13px;
+}
 
-.settings-back:hover {
-
+.wo-settings-back:hover {
     color: #2563eb;
-
 }
 
-
-.settings-title {
-
+.wo-settings-title {
     display: flex;
-
     align-items: center;
-
     gap: 14px;
-
 }
 
-
-.settings-title-icon {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
+.wo-settings-icon {
     width: 48px;
-
     height: 48px;
-
-    border-radius: 13px;
-
-    background: #eff6ff;
-
-    font-size: 22px;
-
-}
-
-
-.settings-title h1 {
-
-    margin: 0;
-
-    font-size: 23px;
-
-    color: #111827;
-
-}
-
-
-.settings-title p {
-
-    margin: 5px 0 0;
-
-    color: #64748b;
-
-    font-size: 13px;
-
-}
-
-
-.settings-card {
-
-    background: #ffffff;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 16px;
-
-    overflow: hidden;
-
-}
-
-
-.settings-card-header {
-
-    padding: 20px 22px;
-
-    border-bottom: 1px solid #eef2f7;
-
-}
-
-
-.settings-card-header h2 {
-
-    margin: 0;
-
-    font-size: 16px;
-
-    color: #1f2937;
-
-}
-
-
-.settings-card-header p {
-
-    margin: 6px 0 0;
-
-    color: #64748b;
-
-    font-size: 12px;
-
-}
-
-
-.settings-form {
-
-    padding: 22px;
-
-}
-
-
-.settings-field {
-
-    margin-bottom: 20px;
-
-}
-
-
-.settings-field label {
-
-    display: block;
-
-    margin-bottom: 7px;
-
-    color: #1f2937;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-}
-
-
-.settings-field input {
-
-    width: 100%;
-
-    box-sizing: border-box;
-
-    padding: 11px 13px;
-
-    border: 1px solid #d1d5db;
-
-    border-radius: 9px;
-
-    background: #ffffff;
-
-    color: #111827;
-
-    font-size: 14px;
-
-    outline: none;
-
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
-
-}
-
-
-.settings-field input:focus {
-
-    border-color: #2563eb;
-
-    box-shadow:
-        0 0 0 3px
-        rgba(37, 99, 235, 0.10);
-
-}
-
-
-.settings-field small {
-
-    display: block;
-
-    margin-top: 6px;
-
-    color: #94a3b8;
-
-    font-size: 11px;
-
-}
-
-
-.settings-actions {
-
     display: flex;
-
-    justify-content: flex-end;
-
-    gap: 8px;
-
-    padding-top: 8px;
-
-}
-
-
-.settings-btn {
-
-    display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
-
-    min-height: 40px;
-
-    padding: 0 15px;
-
-    border-radius: 9px;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    text-decoration: none;
-
-    cursor: pointer;
-
-    box-sizing: border-box;
-
-}
-
-
-.settings-btn-cancel {
-
-    background: #f3f4f6;
-
-    color: #374151;
-
-}
-
-
-.settings-btn-save {
-
-    border: 0;
-
-    background: #2563eb;
-
-    color: #ffffff;
-
-}
-
-
-.settings-btn-save:hover {
-
-    background: #1d4ed8;
-
-}
-
-
-@media (max-width: 600px) {
-
-    .settings-page {
-
-        width: 100%;
-
-    }
-
-
-    .settings-title h1 {
-
-        font-size: 20px;
-
-    }
-
-
-    .settings-card-header,
-    .settings-form {
-
-        padding: 17px;
-
-    }
-
-
-    .settings-actions {
-
-        flex-direction: column-reverse;
-
-    }
-
-
-    .settings-btn {
-
-        width: 100%;
-
-    }
-
-}
-
-.settings-success {
-
-    position: fixed;
-
-    top: 22px;
-
-    right: 22px;
-
-    z-index: 9999;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 11px;
-
-    min-width: 270px;
-
-    padding: 13px 16px;
-
-    background: #ffffff;
-
-    border: 1px solid #d1fae5;
-
-    border-radius: 12px;
-
-    box-shadow:
-        0 10px 30px
-        rgba(15, 23, 42, 0.12);
-
-    animation:
-        settingsSuccessIn
-        0.25s ease;
-}
-
-
-.settings-success-icon {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 32px;
-
-    height: 32px;
-
     flex-shrink: 0;
-
-    border-radius: 50%;
-
-    background: #10b981;
-
-    color: #ffffff;
-
-    font-size: 17px;
-
-    font-weight: 700;
-
+    border-radius: 13px;
+    background: #eff6ff;
+    font-size: 22px;
 }
 
-
-.settings-success strong {
-
-    display: block;
-
+.wo-settings-title h1 {
+    margin: 0;
     color: #111827;
-
-    font-size: 13px;
-
+    font-size: 23px;
 }
 
-
-.settings-success span {
-
-    display: block;
-
-    margin-top: 3px;
-
+.wo-settings-title p {
+    margin: 5px 0 0;
     color: #64748b;
+    font-size: 13px;
+}
 
+.wo-settings-note,
+.wo-settings-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 13px;
+    background: #f8fafc;
+}
+
+.wo-settings-note > span,
+.wo-settings-tip > span {
+    flex-shrink: 0;
+    font-size: 17px;
+}
+
+.wo-settings-note strong,
+.wo-settings-tip strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #334155;
+    font-size: 12px;
+}
+
+.wo-settings-note p,
+.wo-settings-tip p {
+    margin: 0;
+    color: #64748b;
     font-size: 11px;
-
+    line-height: 1.6;
 }
 
-
-@keyframes settingsSuccessIn {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            translateY(-8px);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform:
-            translateY(0);
-
-    }
-
+.wo-settings-section {
+    margin-bottom: 16px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    background: #ffffff;
 }
 
+.wo-section-heading {
+    padding: 17px 19px;
+    border-bottom: 1px solid #eef2f7;
+}
 
-@media (max-width: 600px) {
+.wo-section-heading h2 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 15px;
+}
 
-    .settings-success {
+.wo-section-heading p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 11px;
+}
 
-        left: 15px;
+.wo-setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 17px 19px;
+    border-bottom: 1px solid #f1f5f9;
+}
 
-        right: 15px;
+.wo-setting-row:last-child {
+    border-bottom: 0;
+}
 
-        top: 15px;
+.wo-setting-row h3 {
+    margin: 0 0 5px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
 
+.wo-setting-row p {
+    max-width: 650px;
+    margin: 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.wo-value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 76px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.wo-value-on {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.wo-settings-tip {
+    margin-bottom: 0;
+}
+
+@media (max-width: 650px) {
+    .wo-settings-title h1 {
+        font-size: 20px;
+    }
+
+    .wo-setting-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .wo-value {
         min-width: 0;
-
     }
-
 }
-
 </style>
-
-<script>
-
-    const settingsSuccess =
-        document.getElementById(
-            "settingsSuccess"
-        );
-
-
-    if (settingsSuccess) {
-
-        /*
-         * Hapus ?saved=1 dari URL
-         * tanpa reload halaman.
-         *
-         * Modal tetap tampil,
-         * tetapi jika halaman di-refresh,
-         * modal tidak muncul lagi.
-         */
-
-        const cleanUrl =
-            window.location.pathname;
-
-
-        window.history.replaceState(
-            {},
-            document.title,
-            cleanUrl
-        );
-
-
-        /*
-         * Hilangkan modal setelah 2,5 detik.
-         */
-
-        setTimeout(
-            () => {
-
-                settingsSuccess.style.transition =
-                    "opacity 0.25s ease, transform 0.25s ease";
-
-                settingsSuccess.style.opacity =
-                    "0";
-
-                settingsSuccess.style.transform =
-                    "translateY(-8px)";
-
-
-                setTimeout(
-                    () => {
-
-                        settingsSuccess.remove();
-
-                    },
-                    300
-                );
-
-            },
-            2500
-        );
-
-    }
-
-</script>

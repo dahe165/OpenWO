@@ -33,16 +33,21 @@ function getAllCategories() {
 
     return db.prepare(`
         SELECT
-            id,
-            nama,
-            aktif,
-            urutan,
-            created_at,
-            updated_at
+            categories.id,
+            categories.nama,
+            categories.aktif,
+            categories.urutan,
+            categories.department_id,
+            departments.kode AS department_kode,
+            departments.nama AS department_nama,
+            categories.created_at,
+            categories.updated_at
         FROM categories
+        LEFT JOIN departments
+            ON departments.id = categories.department_id
         ORDER BY
-            urutan ASC,
-            id ASC
+            categories.urutan ASC,
+            categories.id ASC
     `).all();
 
 }
@@ -66,7 +71,8 @@ function getActiveCategories() {
             id,
             nama,
             aktif,
-            urutan
+            urutan,
+            department_id
         FROM categories
         WHERE aktif = 1
         ORDER BY
@@ -87,14 +93,19 @@ function getCategoryById(id) {
 
     return db.prepare(`
         SELECT
-            id,
-            nama,
-            aktif,
-            urutan,
-            created_at,
-            updated_at
+            categories.id,
+            categories.nama,
+            categories.aktif,
+            categories.urutan,
+            categories.department_id,
+            departments.kode AS department_kode,
+            departments.nama AS department_nama,
+            categories.created_at,
+            categories.updated_at
         FROM categories
-        WHERE id = ?
+        LEFT JOIN departments
+            ON departments.id = categories.department_id
+        WHERE categories.id = ?
     `).get(id);
 
 }
@@ -110,14 +121,19 @@ function getCategoryByName(nama) {
 
     return db.prepare(`
         SELECT
-            id,
-            nama,
-            aktif,
-            urutan,
-            created_at,
-            updated_at
+            categories.id,
+            categories.nama,
+            categories.aktif,
+            categories.urutan,
+            categories.department_id,
+            departments.kode AS department_kode,
+            departments.nama AS department_nama,
+            categories.created_at,
+            categories.updated_at
         FROM categories
-        WHERE nama = ?
+        LEFT JOIN departments
+            ON departments.id = categories.department_id
+        WHERE categories.nama = ?
     `).get(nama);
 
 }
@@ -131,7 +147,8 @@ function getCategoryByName(nama) {
 
 function createCategory(
     nama,
-    urutan = 0
+    urutan = 0,
+    departmentId
 ) {
 
     const result =
@@ -139,12 +156,14 @@ function createCategory(
             INSERT INTO categories (
                 nama,
                 aktif,
-                urutan
+                urutan,
+                department_id
             )
-            VALUES (?, 1, ?)
+            VALUES (?, 1, ?, ?)
         `).run(
             nama.trim(),
-            Number(urutan) || 0
+            Number(urutan) || 0,
+            Number(departmentId)
         );
 
 
@@ -164,7 +183,8 @@ function createCategory(
 function updateCategory(
     id,
     nama,
-    urutan
+    urutan,
+    departmentId
 ) {
 
     db.prepare(`
@@ -173,12 +193,14 @@ function updateCategory(
         SET
             nama = ?,
             urutan = ?,
+            department_id = ?,
             updated_at = CURRENT_TIMESTAMP
 
         WHERE id = ?
     `).run(
         nama.trim(),
         Number(urutan) || 0,
+        Number(departmentId),
         id
     );
 
@@ -416,6 +438,22 @@ function setSubcategoryStatus(
 
 /*
  * =====================================
+ * GET ACTIVE DEPARTMENTS
+ * =====================================
+ */
+
+function getActiveDepartments() {
+    return db.prepare(`
+        SELECT id, kode, nama, aktif
+        FROM departments
+        WHERE aktif = 1
+        ORDER BY nama ASC, id ASC
+    `).all();
+}
+
+
+/*
+ * =====================================
  * EXPORT
  * =====================================
  */
@@ -435,6 +473,8 @@ module.exports = {
     updateCategory,
 
     setCategoryStatus,
+
+    getActiveDepartments,
 
     getSubcategories,
 

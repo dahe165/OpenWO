@@ -4,6 +4,132 @@ const db =
 
 /*
  * =====================================
+ * Tabel Departments / Bagian
+ * =====================================
+ */
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS departments (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        kode TEXT NOT NULL UNIQUE,
+
+        nama TEXT NOT NULL UNIQUE,
+
+        aktif INTEGER NOT NULL DEFAULT 1,
+
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+    );
+`);
+
+console.log(
+    "✅ Tabel departments / Bagian siap."
+);
+
+/*
+ * =====================================
+ * MASTER SEKSI
+ * =====================================
+ */
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS sections (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        department_id INTEGER NOT NULL,
+
+        kode TEXT NOT NULL,
+        nama TEXT NOT NULL,
+
+        aktif INTEGER NOT NULL DEFAULT 1,
+
+        urutan INTEGER NOT NULL DEFAULT 0,
+
+        created_at TEXT NOT NULL
+            DEFAULT CURRENT_TIMESTAMP,
+
+        updated_at TEXT NOT NULL
+            DEFAULT CURRENT_TIMESTAMP,
+
+        FOREIGN KEY (department_id)
+            REFERENCES departments(id)
+            ON DELETE RESTRICT,
+
+        UNIQUE (
+            department_id,
+            kode
+        ),
+
+        UNIQUE (
+            department_id,
+            nama
+        )
+    );
+`);
+
+console.log(
+    "✅ Tabel sections siap."
+);
+
+/*
+ * =====================================
+ * RELASI SEKSI ↔ KATEGORI
+ * =====================================
+ *
+ * Master Kategori tetap berdiri sendiri.
+ * Relasi Seksi → Kategori disimpan di tabel
+ * section_categories.
+ *
+ * Satu kategori dapat digunakan oleh
+ * beberapa Seksi.
+ *
+ */
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS section_categories (
+        section_id INTEGER NOT NULL,
+        category_id INTEGER NOT NULL,
+
+        created_at TEXT NOT NULL
+            DEFAULT CURRENT_TIMESTAMP,
+
+        PRIMARY KEY (
+            section_id,
+            category_id
+        ),
+
+        FOREIGN KEY (section_id)
+            REFERENCES sections(id)
+            ON DELETE RESTRICT,
+
+        FOREIGN KEY (category_id)
+            REFERENCES categories(id)
+            ON DELETE RESTRICT
+    );
+`);
+
+console.log(
+    "✅ Tabel section_categories siap."
+);
+
+/*
+ * -------------------------------------
+ * Index Relasi Kategori
+ * -------------------------------------
+ */
+
+db.exec(`
+    CREATE INDEX IF NOT EXISTS
+    idx_section_categories_category_id
+    ON section_categories(category_id);
+`);
+
+/*
+ * =====================================
  * Tabel Users
  * =====================================
  */
@@ -139,6 +265,105 @@ if (!hasPasswordHash) {
     );
 
 }
+
+/*
+ * -------------------------------------
+ * department_id
+ * -------------------------------------
+ *
+ * Relasi User → Bagian
+ *
+ * Nullable untuk menjaga kompatibilitas
+ * dengan data user lama.
+ *
+ * Tidak menghapus:
+ * - users.bagian
+ * - users.seksi
+ *
+ */
+
+const hasDepartmentId =
+    userColumns.some(
+        column =>
+            column.name === "department_id"
+    );
+
+
+if (!hasDepartmentId) {
+
+    db.exec(`
+        ALTER TABLE users
+        ADD COLUMN department_id INTEGER
+        REFERENCES departments(id);
+    `);
+
+    console.log(
+        "DATABASE MIGRATION: kolom department_id berhasil ditambahkan."
+    );
+
+}
+
+/*
+ * -------------------------------------
+ * section_id
+ * -------------------------------------
+ *
+ * Relasi User → Seksi
+ *
+ * Nullable untuk menjaga kompatibilitas
+ * dengan data user lama.
+ *
+ * Tidak menghapus:
+ * - users.seksi
+ * - users.bagian
+ *
+ */
+
+const hasSectionId =
+    userColumns.some(
+        column =>
+            column.name === "section_id"
+    );
+
+
+if (!hasSectionId) {
+
+    db.exec(`
+        ALTER TABLE users
+        ADD COLUMN section_id INTEGER
+        REFERENCES sections(id);
+    `);
+
+    console.log(
+        "DATABASE MIGRATION: kolom section_id berhasil ditambahkan."
+    );
+
+}
+
+
+/*
+ * -------------------------------------
+ * Index section_id
+ * -------------------------------------
+ */
+
+db.exec(`
+    CREATE INDEX IF NOT EXISTS
+    idx_users_section_id
+    ON users(section_id);
+`);
+
+/*
+ * -------------------------------------
+ * Index department_id
+ * -------------------------------------
+ */
+
+db.exec(`
+    CREATE INDEX IF NOT EXISTS
+    idx_users_department_id
+    ON users(department_id);
+`);
 
 /*
  * -------------------------------------

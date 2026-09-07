@@ -1,6 +1,9 @@
 const categoryModel =
     require("../models/category.model");
 
+const departmentModel =
+    require("../models/department.model");
+
 
 /*
  * =====================================
@@ -101,11 +104,16 @@ function index(req, res) {
 
 function createCategory(req, res) {
 
+    const departments =
+        departmentModel.getActive();
+
     res.render(
         "admin/categories/create",
         {
             title:
-                "Tambah Kategori"
+                "Tambah Kategori",
+
+            departments
         }
     );
 
@@ -132,6 +140,10 @@ function storeCategory(req, res) {
             Number(req.body.urutan) || 0;
 
 
+        const departmentId =
+            Number(req.body.department_id);
+
+
         /*
          * Validasi nama
          */
@@ -140,6 +152,24 @@ function storeCategory(req, res) {
 
             return res.status(400).send(
                 "Nama kategori wajib diisi."
+            );
+
+        }
+
+
+        if (!Number.isInteger(departmentId) || departmentId <= 0) {
+
+            return res.status(400).send(
+                "Bagian kategori wajib dipilih."
+            );
+
+        }
+
+
+        if (!departmentModel.getById(departmentId)?.aktif) {
+
+            return res.status(400).send(
+                "Bagian yang dipilih tidak aktif atau tidak ditemukan."
             );
 
         }
@@ -167,7 +197,8 @@ function storeCategory(req, res) {
 
         categoryModel.createCategory(
             nama,
-            urutan
+            urutan,
+            departmentId
         );
 
 
@@ -231,13 +262,17 @@ function editCategory(req, res) {
         }
 
 
+        const departments =
+            departmentModel.getActive();
+
         res.render(
             "admin/categories/edit",
             {
                 title:
                     "Edit Kategori",
 
-                category
+                category,
+                departments
             }
         );
 
@@ -283,10 +318,32 @@ function updateCategory(req, res) {
             Number(req.body.urutan) || 0;
 
 
+        const departmentId =
+            Number(req.body.department_id);
+
+
         if (!nama) {
 
             return res.status(400).send(
                 "Nama kategori wajib diisi."
+            );
+
+        }
+
+
+        if (!Number.isInteger(departmentId) || departmentId <= 0) {
+
+            return res.status(400).send(
+                "Bagian kategori wajib dipilih."
+            );
+
+        }
+
+
+        if (!departmentModel.getById(departmentId)?.aktif) {
+
+            return res.status(400).send(
+                "Bagian yang dipilih tidak aktif atau tidak ditemukan."
             );
 
         }
@@ -339,7 +396,8 @@ function updateCategory(req, res) {
         categoryModel.updateCategory(
             id,
             nama,
-            urutan
+            urutan,
+            departmentId
         );
 
 

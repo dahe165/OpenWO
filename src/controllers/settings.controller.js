@@ -4,6 +4,20 @@ const settingsModel =
 
 function index(req, res) {
 
+    res.render(
+        "settings/index",
+        {
+            title: "Pengaturan",
+
+            layout: "layouts/app"
+        }
+    );
+
+}
+
+
+function system(req, res) {
+
     const appName =
         settingsModel.get("app_name");
 
@@ -11,11 +25,11 @@ function index(req, res) {
         settingsModel.get("app_description");
 
     const appLogo =
-    settingsModel.get("app_logo");
+        settingsModel.get("app_logo");
 
 
     res.render(
-        "settings/index",
+        "settings/system",
         {
             title: "Pengaturan Sistem",
 
@@ -114,6 +128,8 @@ console.log(
 module.exports = {
 
     index,
+
+    system,
 
     update
 

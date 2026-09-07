@@ -80,6 +80,72 @@ db.exec(`
     ON subcategories(category_id);
 `);
 
+/*
+ * =====================================
+ * Tabel Section Categories
+ * =====================================
+ *
+ * Relasi:
+ *
+ * Seksi ↔ Kategori
+ *
+ * Satu Seksi dapat memiliki banyak kategori.
+ * Satu Kategori dapat digunakan oleh
+ * beberapa Seksi.
+ *
+ * Master Kategori tetap berdiri sendiri.
+ *
+ */
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS section_categories (
+
+        section_id INTEGER NOT NULL,
+
+        category_id INTEGER NOT NULL,
+
+        created_at TEXT
+            DEFAULT CURRENT_TIMESTAMP,
+
+        PRIMARY KEY (
+            section_id,
+            category_id
+        ),
+
+        FOREIGN KEY (
+            section_id
+        )
+        REFERENCES sections(id)
+        ON DELETE RESTRICT,
+
+        FOREIGN KEY (
+            category_id
+        )
+        REFERENCES categories(id)
+        ON DELETE RESTRICT
+
+    );
+`);
+
+
+/*
+ * =====================================
+ * Index Section Categories
+ * =====================================
+ */
+
+db.exec(`
+    CREATE INDEX IF NOT EXISTS
+    idx_section_categories_category_id
+
+    ON section_categories(category_id);
+`);
+
+
+console.log(
+    "✅ Tabel section_categories siap."
+);
+
 
 /*
  * =====================================

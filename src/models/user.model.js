@@ -91,7 +91,9 @@ function getAll() {
                 username,
                 role,
                 seksi,
-                bagian
+                bagian,
+                department_id,
+                section_id
             FROM users
             ORDER BY id
         `)
@@ -181,7 +183,9 @@ function getPaginated({
                     username,
                     role,
                     seksi,
-                    bagian
+                    bagian,
+                    department_id,
+                    section_id
                 FROM users
 
                 ${where}
@@ -238,7 +242,9 @@ function findByUsername(
                 password_hash,
                 role,
                 seksi,
-                bagian
+                bagian,
+                department_id,
+                section_id
             FROM users
             WHERE username = ?
         `)
@@ -261,7 +267,9 @@ function findById(
                 username,
                 role,
                 seksi,
-                bagian
+                bagian,
+                department_id,
+                section_id
             FROM users
             WHERE id = ?
         `)
@@ -328,7 +336,9 @@ function getTechnicians() {
                 username,
                 role,
                 seksi,
-                bagian
+                bagian,
+                department_id,
+                section_id
             FROM users
             WHERE role = 'teknisi'
             ORDER BY nama
@@ -350,9 +360,13 @@ function create(
                     username,
                     role,
                     seksi,
-                    bagian
+                    bagian,
+                    department_id,
+                    section_id
                 )
                 VALUES (
+                    ?,
+                    ?,
                     ?,
                     ?,
                     ?,
@@ -365,7 +379,9 @@ function create(
                 data.username,
                 data.role,
                 data.seksi || null,
-                data.bagian || null
+                data.bagian || null,
+                data.department_id || null,
+                data.section_id || null
             );
 
 
@@ -390,16 +406,16 @@ function update(
             SET
                 nama = ?,
                 role = ?,
-                seksi = ?,
-                bagian = ?
+                department_id = ?,
+                section_id = ?
 
             WHERE id = ?
         `)
         .run(
             data.nama,
             data.role,
-            data.seksi || null,
-            data.bagian || null,
+            data.department_id || null,
+            data.section_id || null,
             id
         );
 

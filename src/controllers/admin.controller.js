@@ -1,6 +1,12 @@
 const userModel =
     require("../models/user.model");
 
+const departmentModel =
+    require("../models/department.model");
+
+const sectionModel =
+    require("../models/section.model");
+
 
 function index(req, res) {
 
@@ -100,16 +106,23 @@ function create(
     res
 ) {
 
+    const departments =
+        departmentModel.getActive();
+
+    const sections =
+        sectionModel.getActive();
+
     res.render(
         "admin/users/create",
         {
-
             title:
                 "Tambah Pengguna",
 
             layout:
-                "layouts/app"
+                "layouts/app",
 
+            departments,
+            sections
         }
     );
 
@@ -129,13 +142,40 @@ function store(
 
         role,
 
-        seksi,
+        department_id,
 
-        bagian,
+        section_id,
 
         password
 
     } = req.body;
+
+    if (
+        !validateSectionBelongsToDepartment(
+            department_id,
+            section_id
+        )
+    ) {
+        return res
+            .status(400)
+            .send(
+                "Seksi yang dipilih tidak sesuai dengan Bagian."
+            );
+    }
+
+    if (
+        !validateRolePlacement(
+            role,
+            department_id,
+            section_id
+        )
+    ) {
+        return res
+            .status(400)
+            .send(
+                "Asman dan Teknisi wajib memiliki Bagian dan Seksi."
+            );
+    }
 
 
     if (
@@ -163,9 +203,9 @@ function store(
 
             role,
 
-            seksi,
+            department_id,
 
-            bagian
+            section_id
 
         });
 
@@ -208,6 +248,12 @@ function edit(
     const user =
         userModel.findById(id);
 
+    const departments =
+        departmentModel.getActive();
+
+    const sections =
+        sectionModel.getActive();
+
 
     if (!user) {
 
@@ -219,18 +265,20 @@ function edit(
 
     }
 
-
     res.render(
         "admin/users/edit",
         {
-
             title:
                 "Edit Pengguna",
 
             layout:
                 "layouts/app",
 
-            user
+            user,
+
+            departments,
+
+            sections
 
         }
     );
@@ -255,15 +303,14 @@ function update(
 
         role,
 
-        seksi,
+        department_id,
 
-        bagian,
+        section_id,
 
         password
 
     } = req.body;
-
-
+    
     if (
         !nama ||
         !role
@@ -275,6 +322,33 @@ function update(
                 "Nama dan role wajib diisi."
             );
 
+    }
+
+    if (
+        !validateSectionBelongsToDepartment(
+            department_id,
+            section_id
+        )
+    ) {
+        return res
+            .status(400)
+            .send(
+                "Seksi yang dipilih tidak sesuai dengan Bagian."
+            );
+    }
+
+    if (
+        !validateRolePlacement(
+            role,
+            department_id,
+            section_id
+        )
+    ) {
+        return res
+            .status(400)
+            .send(
+                "Asman dan Teknisi wajib memiliki Bagian dan Seksi."
+            );
     }
 
 
@@ -290,9 +364,9 @@ function update(
 
                 role,
 
-                seksi,
+                department_id,
 
-                bagian
+                section_id
 
             }
 
@@ -459,6 +533,64 @@ function remove(
 
 }
 
+
+function validateSectionBelongsToDepartment(
+    departmentId,
+    sectionId
+) {
+    // Seksi boleh kosong sementara
+    // untuk menjaga kompatibilitas user lama.
+    if (!sectionId) {
+        return true;
+    }
+
+    if (!departmentId) {
+        return false;
+    }
+
+    const section =
+        sectionModel.getById(
+            Number(sectionId)
+        );
+
+    if (!section) {
+        return false;
+    }
+
+    return (
+        Number(section.department_id) ===
+        Number(departmentId)
+    );
+}
+
+function validateRolePlacement(
+    role,
+    departmentId,
+    sectionId
+) {
+    /*
+     * =====================================
+     * ASMAN + TEKNISI
+     * WAJIB MEMILIKI BAGIAN + SEKSI
+     * =====================================
+     */
+
+    if (
+        role === "asman" ||
+        role === "teknisi"
+    ) {
+
+        if (!departmentId) {
+            return false;
+        }
+
+        if (!sectionId) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 module.exports = {
 
