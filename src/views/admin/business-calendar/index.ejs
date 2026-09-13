@@ -12,6 +12,10 @@
 
     </div>
 
+    <% if (typeof querySaved !== "undefined" && querySaved === "hours") { %>
+        <div class="calendar-saved">✓ Jam kerja regular berhasil diperbarui.</div>
+    <% } %>
+
 
     <!-- ========================================= -->
     <!-- INFO KALENDER -->
@@ -322,6 +326,13 @@
 
         <div class="calendar-card-header">
 
+            <a
+                href="/admin/business-calendar/hours/edit"
+                class="calendar-edit-hours"
+            >
+                ✎ Atur Jam Kerja
+            </a>
+
             <div>
 
                 <h2>Jam Kerja</h2>
@@ -490,3 +501,54 @@
     </div>
 
 </div>
+
+<style>
+.calendar-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    gap: 16px;
+}
+
+.calendar-edit-hours {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid #dbe3ee;
+    border-radius: 9px;
+    background: #f8fafc;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.calendar-edit-hours:hover {
+    background: #eff6ff;
+}
+
+.calendar-saved {
+    margin-bottom: 16px;
+    padding: 11px 14px;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    background: #f0fdf4;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .calendar-card-header {
+        flex-direction: column;
+    }
+
+    .calendar-edit-hours {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>

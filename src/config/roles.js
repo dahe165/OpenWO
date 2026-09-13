@@ -14,6 +14,7 @@ const roles = {
         name: "Teknisi",
 
         permissions: [
+            "workorder.create",
             "workorder.view_assigned",
             "workorder.process",
             "workorder.update_status"
@@ -25,6 +26,7 @@ const roles = {
         name: "Asman",
 
         permissions: [
+            "workorder.create",
             "workorder.view_all",
             "workorder.assign",
             "workorder.monitor",
@@ -37,6 +39,7 @@ const roles = {
         name: "Manager",
 
         permissions: [
+            "workorder.create",
             "workorder.view_all",
             "workorder.monitor",
             "report.operational",

@@ -70,6 +70,58 @@ function getBusinessHours(
 }
 
 
+
+/*
+ * =====================================
+ * UPDATE BUSINESS HOURS
+ * =====================================
+ *
+ * Mengganti seluruh jam kerja regular
+ * pada kalender aktif dalam satu transaksi.
+ * Hari tanpa interval disimpan sebagai libur.
+ *
+ */
+
+function updateBusinessHours(
+    calendarId,
+    hours
+) {
+
+    const transaction = db.transaction((items) => {
+
+        db.prepare(`
+            DELETE FROM business_hours
+            WHERE calendar_id = ?
+        `).run(calendarId);
+
+        const insert = db.prepare(`
+            INSERT INTO business_hours (
+                calendar_id,
+                hari,
+                jam_mulai,
+                jam_selesai,
+                aktif
+            )
+            VALUES (?, ?, ?, ?, 1)
+        `);
+
+        for (const item of items) {
+            insert.run(
+                calendarId,
+                item.hari,
+                item.jamMulai,
+                item.jamSelesai
+            );
+        }
+
+    });
+
+    transaction(hours);
+
+    return getBusinessHours(calendarId);
+
+}
+
 /*
  * =====================================
  * Get Calendar Exceptions
@@ -239,6 +291,8 @@ module.exports = {
     getActiveCalendar,
 
     getBusinessHours,
+
+    updateBusinessHours,
 
     getCalendarExceptions,
 

@@ -1,0 +1,280 @@
+<style>
+.business-hours-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.business-hours-header {
+    margin-bottom: 20px;
+}
+
+.business-hours-header h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 24px;
+}
+
+.business-hours-header p {
+    margin: 6px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.business-hours-note {
+    margin-bottom: 16px;
+    padding: 13px 15px;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #475569;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.business-hours-card {
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, .04);
+}
+
+.business-hours-row {
+    display: grid;
+    grid-template-columns: 145px 1fr;
+    gap: 20px;
+    padding: 18px 20px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.business-hours-row:last-child {
+    border-bottom: 0;
+}
+
+.business-day-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.business-day-label strong {
+    color: #111827;
+    font-size: 14px;
+}
+
+.day-toggle {
+    margin-top: 2px;
+}
+
+.interval-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.interval-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.interval-row input[type="time"] {
+    min-width: 125px;
+    padding: 9px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    background: #fff;
+    color: #0f172a;
+    font-size: 13px;
+}
+
+.interval-row input[type="time"]:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.10);
+}
+
+.interval-separator {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.add-interval {
+    align-self: flex-start;
+    padding: 6px 9px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.remove-interval {
+    padding: 6px 8px;
+    border: 0;
+    border-radius: 7px;
+    background: #fef2f2;
+    color: #b91c1c;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.hours-off {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.hours-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.hours-actions a,
+.hours-actions button {
+    min-height: 40px;
+}
+
+@media (max-width: 700px) {
+    .business-hours-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .interval-row {
+        flex-wrap: wrap;
+    }
+
+    .interval-row input[type="time"] {
+        flex: 1 1 110px;
+        min-width: 0;
+    }
+
+    .hours-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+}
+</style>
+
+<div class="business-hours-page">
+
+    <div class="business-hours-header">
+        <a href="/admin/business-calendar" style="display:inline-block;margin-bottom:14px;color:#64748b;text-decoration:none;font-size:13px;">← Kembali ke Kalender Layanan</a>
+        <h1>Atur Jam Kerja Regular</h1>
+        <p><%= calendar.nama %> · <%= calendar.timezone %></p>
+    </div>
+
+    <div class="business-hours-note">
+        <strong>Jam kerja ini digunakan untuk perhitungan SLA.</strong><br>
+        Aktifkan hari kerja lalu atur satu atau beberapa interval. Hari yang dimatikan akan dianggap libur regular.
+    </div>
+
+    <form method="POST" action="/admin/business-calendar/hours">
+        <div class="business-hours-card">
+            <%
+                const namaHari = ["", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+            %>
+
+            <% for (let hari = 1; hari <= 7; hari++) { %>
+                <%
+                    const hours = calendar.businessHours
+                        .filter(item => item.hari === hari)
+                        .sort((a,b) => a.jam_mulai.localeCompare(b.jam_mulai));
+                    const aktif = hours.length > 0;
+                %>
+
+                <div class="business-hours-row" data-day="<%= hari %>">
+                    <div class="business-day-label">
+                        <input
+                            class="day-toggle"
+                            type="checkbox"
+                            name="hari_<%= hari %>_aktif"
+                            <%= aktif ? "checked" : "" %>
+                            onchange="toggleDay(<%= hari %>, this.checked)"
+                        >
+                        <strong><%= namaHari[hari] %></strong>
+                    </div>
+
+                    <div>
+                        <div class="interval-list" id="intervals-<%= hari %>">
+                            <% if (aktif) { %>
+                                <% hours.forEach(hour => { %>
+                                    <div class="interval-row">
+                                        <input type="time" name="jam_mulai_<%= hari %>" value="<%= hour.jam_mulai %>">
+                                        <span class="interval-separator">sampai</span>
+                                        <input type="time" name="jam_selesai_<%= hari %>" value="<%= hour.jam_selesai %>">
+                                        <button type="button" class="remove-interval" onclick="removeInterval(this)">×</button>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <div class="hours-off">Libur regular</div>
+                            <% } %>
+                        </div>
+
+                        <button type="button" class="add-interval" onclick="addInterval(<%= hari %>)" <%= aktif ? "" : "disabled" %>>+ Tambah interval</button>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <div class="hours-actions">
+            <a href="/admin/business-calendar" class="btn btn-outline-secondary">Batal</a>
+            <button type="submit" class="btn btn-primary">Simpan Jam Kerja</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleDay(day, active) {
+    const list = document.getElementById("intervals-" + day);
+    const addButton = list.parentElement.querySelector(".add-interval");
+
+    if (active) {
+        if (!list.querySelector(".interval-row")) {
+            list.innerHTML = createIntervalHTML(day);
+        }
+        addButton.disabled = false;
+    } else {
+        list.innerHTML = '<div class="hours-off">Libur regular</div>';
+        addButton.disabled = true;
+    }
+}
+
+function createIntervalHTML(day) {
+    return `
+        <div class="interval-row">
+            <input type="time" name="jam_mulai_${day}" value="08:00">
+            <span class="interval-separator">sampai</span>
+            <input type="time" name="jam_selesai_${day}" value="12:00">
+            <button type="button" class="remove-interval" onclick="removeInterval(this)">×</button>
+        </div>
+    `;
+}
+
+function addInterval(day) {
+    const list = document.getElementById("intervals-" + day);
+    if (!list.querySelector(".interval-row")) {
+        list.innerHTML = createIntervalHTML(day);
+        return;
+    }
+
+    const row = document.createElement("div");
+    row.innerHTML = createIntervalHTML(day);
+    list.appendChild(row.firstElementChild);
+}
+
+function removeInterval(button) {
+    const list = button.closest(".interval-list");
+    const rows = list.querySelectorAll(".interval-row");
+    if (rows.length === 1) {
+        list.innerHTML = '<div class="hours-off">Belum ada interval</div>';
+        return;
+    }
+    button.closest(".interval-row").remove();
+}
+</script>

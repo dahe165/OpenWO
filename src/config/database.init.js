@@ -495,6 +495,88 @@ db.exec(`
 
 /*
  * =====================================
+ * MASTER ASSET
+ * =====================================
+ *
+ * Asset Management v0.0
+ *
+ * Asset berdiri sendiri terlebih dahulu.
+ * Relasi ke Work Order belum dibuat.
+ *
+ */
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS assets (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        kode TEXT NOT NULL UNIQUE,
+
+        nama TEXT NOT NULL,
+
+        jenis TEXT,
+
+        merk TEXT,
+
+        model TEXT,
+
+        serial_number TEXT,
+
+        lokasi TEXT,
+
+        department_id INTEGER NOT NULL,
+
+        section_id INTEGER NOT NULL,
+
+        status TEXT NOT NULL DEFAULT 'Aktif',
+
+        keterangan TEXT,
+
+        created_at TEXT NOT NULL
+            DEFAULT CURRENT_TIMESTAMP,
+
+        updated_at TEXT NOT NULL
+            DEFAULT CURRENT_TIMESTAMP,
+
+        FOREIGN KEY (department_id)
+            REFERENCES departments(id)
+            ON DELETE RESTRICT,
+
+        FOREIGN KEY (section_id)
+            REFERENCES sections(id)
+            ON DELETE RESTRICT
+
+    );
+`);
+
+
+db.exec(`
+    CREATE INDEX IF NOT EXISTS
+    idx_assets_department_id
+    ON assets(department_id);
+`);
+
+
+db.exec(`
+    CREATE INDEX IF NOT EXISTS
+    idx_assets_section_id
+    ON assets(section_id);
+`);
+
+
+db.exec(`
+    CREATE INDEX IF NOT EXISTS
+    idx_assets_status
+    ON assets(status);
+`);
+
+console.log(
+    "✅ Tabel assets / Master Asset siap."
+);
+
+
+/*
+ * =====================================
  * Tabel SLA Event
  * =====================================
  */
@@ -564,6 +646,32 @@ insertSetting.run(
     "app_logo",
     ""
 );
+
+insertSetting.run(
+    "workflow_closing",
+    "on"
+);
+
+insertSetting.run(
+    "workflow_verification",
+    "on"
+);
+
+insertSetting.run(
+    "workflow_escalation",
+    "on"
+);
+
+insertSetting.run(
+    "timeline_display_mode",
+    "detail"
+);
+
+insertSetting.run("timeline_color_dibuat", "#0ea5e9");
+insertSetting.run("timeline_color_diterima", "#8b5cf6");
+insertSetting.run("timeline_color_ditugaskan", "#f59e0b");
+insertSetting.run("timeline_color_dikerjakan", "#2563eb");
+insertSetting.run("timeline_color_selesai", "#16a34a");
 
 
 console.log(

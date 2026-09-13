@@ -3,6 +3,7 @@
     <!-- BRAND -->
 
     <div class="sidebar-brand">
+        <a href="/" class="d-flex align-items-center text-decoration-none text-dark w-100">
 
         <div class="brand-logo">
             <% if (appLogo) { %>
@@ -18,6 +19,8 @@
 
             <% } %>
         </div>
+        
+        </a>
 
         <div>
 
@@ -30,7 +33,7 @@
             </small>
 
         </div>
-
+        
     </div>
 
 
@@ -73,6 +76,26 @@
             </span>
 
         </a>
+
+
+        <% if (user && (user.role === "admin" || user.role === "superuser")) { %>
+
+            <a
+                href="/admin/assets"
+                class="<%= title === 'Asset Management' ? 'active' : '' %>"
+            >
+
+                <span class="nav-icon">
+                    🖥️
+                </span>
+
+                <span>
+                    Asset Management
+                </span>
+
+            </a>
+
+        <% } %>
 
 
         <a

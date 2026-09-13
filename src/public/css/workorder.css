@@ -71,7 +71,7 @@ body{
 
     border-radius:20px;
 
-    padding:25px 25px 0;
+    padding:25px 25px 20px;
 
     box-shadow:0 12px 35px rgba(0,0,0,.06);
 
@@ -248,7 +248,7 @@ display:flex;
 
 justify-content:space-between;
 
-margin-top:16px;
+margin-top:5px;
 
 color:#6b7280;
 
@@ -265,11 +265,8 @@ font-size:14px;
 }
 
 .wo-summary .wo-title{
-
     font-size:18px;
-
     margin-bottom:6px;
-
 }
 
 .wo-summary:hover{
@@ -1992,9 +1989,10 @@ font-size:14px;
 
 .wo-actions {
     display: flex;
-    gap: 20px;
+    gap: 10px;
     width: 100%;
     margin-top: 0px;
+    flex-wrap: wrap;
     justify-content: space-between;
 }
 
@@ -2033,7 +2031,9 @@ font-size:14px;
     display: flex;
     justify-content: flex-start;
     background: #fffcd0;
-    color: #7e7500;
+    color: var(--warning);
+    background: color-mix(in srgb, var(--warning) 10%, white);
+    border: 1px solid color-mix(in srgb, var(--warning) 28%, white);
 }
 
 .btn-action:hover {
@@ -2321,7 +2321,7 @@ font-size:14px;
    ========================================= */
 
 .wo-timeline-section {
-    margin-top: 30px;
+    margin-top: 25px;
 }
 
 
@@ -2893,12 +2893,12 @@ font-size:14px;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-
     width: 100%;
-
     gap: 20px;
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5eaf1;
 
-    margin-bottom: 16px;
 }
 
 .wo-title-area {
@@ -2924,7 +2924,7 @@ font-size:14px;
 }
 
 .wo-category {
-    color: #64748b;
+    color: #293091;
     font-weight: 600;
 }
 
@@ -3153,7 +3153,7 @@ font-size:14px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 40px;
+    gap: 10px;
     margin-bottom: 12px;
 }
 
@@ -3178,6 +3178,8 @@ font-size:14px;
     display: block;
 
     margin-top: 3px;
+
+    margin-left: 5px;
 
     font-size: 11px;
 
@@ -5827,3 +5829,560 @@ font-size:14px;
     }
 }
 
+
+/* =====================================
+   AKSI TEKNISI — WAITING + SELESAIKAN
+   ===================================== */
+
+.technician-action-bar {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+.waiting-form {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.waiting-form .btn-waiting {
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.waiting-reason {
+    min-width: 0;
+    max-width: 240px;
+    flex: 1 1 auto;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    background: #fff;
+    color: #334155;
+    font: inherit;
+    font-size: 12px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.waiting-reason:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.technician-complete-action {
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+/* Tombol submit completion sengaja berada di luar form,
+   tetapi tetap terhubung melalui atribut form="...". */
+.completion-form .completion-actions {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .technician-action-bar {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+
+    .waiting-form {
+        gap: 6px;
+    }
+
+    .waiting-form .btn-waiting,
+    .technician-complete-action {
+        padding: 9px 10px;
+        font-size: 12px;
+    }
+
+    .waiting-reason {
+        font-size: 11px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+}
+
+@media (max-width: 380px) {
+    .technician-action-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .technician-complete-action {
+        width: 100%;
+    }
+}
+
+/* =========================================
+   HASIL PENYELESAIAN — COMPACT BAR
+   ========================================= */
+
+.completion-result {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 14px auto;
+    padding: 10px 12px;
+    background: #f5f8fc;
+    border: 1px solid #e7edf5;
+    border-radius: 10px;
+}
+
+.completion-result-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.completion-result-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 28px;
+    border-radius: 8px;
+    background: #ffffff;
+    font-size: 16px;
+}
+
+.completion-result-content {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.completion-result-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    margin: 0 0 5px;
+}
+
+.completion-result-header strong {
+    display: block;
+    font-size: 13px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.completion-result-header small {
+    display: block;
+    font-size: 10px;
+    line-height: 1.2;
+    color: #94a3b8;
+}
+
+.completion-result-description {
+    margin-left: 0;
+    min-width: 0;
+    color: #475569;
+    font-size: 11px;
+    line-height: 1.45;
+    word-break: break-word;
+}
+
+.completion-result-description span {
+    display: block;
+}
+
+.completion-result-description .result-empty {
+    color: #94a3b8;
+}
+
+.completion-result-photo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.completion-result-photo-wrap .completion-photo-thumb {
+    width: 62px;
+    height: 62px;
+    display: block;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #dbe3ed;
+}
+
+@media (max-width: 600px) {
+    .completion-result {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        padding: 9px 10px;
+    }
+
+    .completion-result-main {
+        gap: 8px;
+    }
+
+    .completion-result-description {
+        margin-left: 0;
+    }
+
+    .completion-result-photo-wrap .completion-photo-thumb {
+        width: 54px;
+        height: 54px;
+    }
+}
+
+/* =========================================
+   TIMELINE DISPLAY SETTING
+   Global modes: detail / compact
+   ========================================= */
+
+.timeline-context {
+    margin: -8px 20px 22px;
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.timeline-context-label {
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.timeline-context strong {
+    color: #334155;
+    font-size: 11px;
+}
+
+.timeline-context-separator {
+    color: #94a3b8;
+    padding: 0 2px;
+}
+
+.timeline-info .timeline-date,
+.timeline-info .timeline-time {
+    display: block;
+}
+
+.timeline-info .timeline-date {
+    margin-top: 2px;
+    color: #64748b;
+}
+
+.timeline-info .timeline-time {
+    color: #475569;
+    font-weight: 600;
+}
+
+.verification-content .verification-date,
+.verification-content .verification-time {
+    display: block;
+}
+
+.verification-content .verification-date {
+    margin-top: 3px;
+}
+
+.verification-content .verification-time {
+    color: #475569;
+    font-weight: 600;
+}
+
+.timeline-meta .timeline-meta-date,
+.timeline-meta .timeline-meta-time {
+    display: block;
+}
+
+.timeline-meta .timeline-meta-time {
+    font-weight: 600;
+    color: #475569;
+}
+
+@media (max-width: 760px) {
+    .timeline-context {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}
+
+/* =========================================
+   TIMELINE v0.8 — CONTEXT ONCE
+   Ringkas: konteks dipisahkan dari progress.
+========================================= */
+
+.wo-detail .wo-header {
+    padding-bottom: 13px;
+    margin-bottom: 0;
+    border-bottom: 1px solid #e5eaf1;
+}
+
+.timeline-context-group {
+    margin: -4px 20px 30px;
+}
+
+.timeline-context {
+    display: flex;
+    align-items: baseline;
+    flex-direction: column;
+    flex-wrap: wrap;
+    column-gap: 7px;
+    row-gap: 2px;
+    margin: 0;
+    padding: 10px;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.timeline-context + .timeline-context {
+    margin-top: 7px;
+}
+
+.timeline-context-label {
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: .01em;
+}
+
+.timeline-context strong {
+    color: #334155;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.timeline-context-org {
+    color: #64748b;
+    font-size: 11px;
+}
+
+.timeline-context-separator {
+    color: #cbd5e1;
+    margin: 0 2px;
+}
+
+.timeline-main.timeline-main-compact::before {
+    top: 15px;
+}
+
+/* Ringkas: indikator berada di atas, lalu status, tanggal, jam, pelaku. */
+.timeline-main-step.timeline-mode-compact {
+    justify-content: flex-start;
+}
+
+.timeline-main-step.timeline-mode-compact .timeline-dot {
+    order: 1;
+    margin-top: 0;
+    margin-bottom: 11px;
+}
+
+.timeline-main-step.timeline-mode-compact .timeline-step-label {
+    order: 2;
+    min-height: auto;
+    padding: 0;
+    margin-bottom: 11px;
+    line-height: 1.25;
+}
+
+.timeline-main-step.timeline-mode-compact .timeline-info {
+    order: 3;
+    gap: 2px;
+}
+
+.timeline-main-step.timeline-mode-compact .timeline-date {
+    order: 1;
+    margin-top: 0;
+    font-size: 12px;
+    line-height: 1.25;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.timeline-main-step.timeline-mode-compact .timeline-time {
+    order: 2;
+    font-size: 12px;
+    line-height: 1.25;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.timeline-person-block {
+    order: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-top: 10px;
+    padding: 9px 12px;
+    min-width: 88px;
+    max-width: 145px;
+    border-radius: 9px;
+    background: #eefaf4;
+    box-shadow: none;
+}
+
+.timeline-person-block strong {
+    color: #237a4b;
+    font-size: 12px;
+    line-height: 1.25;
+}
+
+.timeline-person-block small {
+    color: #475569;
+    font-size: 11px;
+    line-height: 1.25;
+}
+
+@media (max-width: 900px) {
+    .timeline-context-group {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .timeline-main.timeline-main-compact::before {
+        top: 8px;
+    }
+
+    .timeline-main-step.timeline-mode-compact .timeline-date,
+    .timeline-main-step.timeline-mode-compact .timeline-time {
+        font-size: 9px;
+    }
+
+    .timeline-person-block {
+        min-width: 0;
+        max-width: 100px;
+        padding: 7px 8px;
+        margin-top: 7px;
+    }
+
+    .timeline-person-block strong {
+        font-size: 9px;
+    }
+
+    .timeline-person-block small {
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 600px) {
+    .wo-detail .wo-header {
+        padding-bottom: 13px;
+    }
+
+    .timeline-context-group {
+        margin-bottom: 24px;
+    }
+}
+
+/* =========================================
+   TIMELINE v0.8.2 — DETAIL MODE RESTORE
+   Mode Detail mempertahankan susunan bawaan:
+   label/status di atas indikator, lalu informasi event.
+========================================= */
+
+.timeline-main.timeline-main-detail::before {
+    top: 49px;
+}
+
+.timeline-main-step.timeline-mode-detail .timeline-step-label {
+    order: 1;
+}
+
+.timeline-main-step.timeline-mode-detail .timeline-dot {
+    order: 2;
+}
+
+.timeline-main-step.timeline-mode-detail .timeline-info {
+    order: 3;
+}
+
+@media (max-width: 900px) {
+    .timeline-main.timeline-main-detail::before {
+        top: 39px;
+    }
+
+    .timeline-main-step.timeline-mode-detail .timeline-dot {
+        margin-top: 0;
+        margin-bottom: 6px;
+    }
+}
+
+
+/* =========================================
+   TIMELINE v0.9 — GLOBAL STAGE COLORS
+   Warna aksi dikendalikan oleh Admin melalui
+   system_settings. Pending tetap netral.
+========================================= */
+
+.timeline-main-step {
+    --timeline-stage-color: #64748b;
+}
+
+.timeline-main-step.done .timeline-step-label {
+    color: var(--timeline-stage-color);
+}
+
+.timeline-main-step.done .timeline-dot {
+    background: var(--timeline-stage-color);
+    box-shadow:
+        0 0 0 2px color-mix(in srgb, var(--timeline-stage-color) 25%, white);
+}
+
+.timeline-main-step.active .timeline-step-label {
+    color: var(--timeline-stage-color);
+}
+
+.timeline-main-step.active .timeline-dot {
+    background: var(--timeline-stage-color);
+    box-shadow:
+        0 0 0 3px color-mix(in srgb, var(--timeline-stage-color) 18%, white);
+    animation: timelineStagePulse 1.5s infinite;
+}
+
+.timeline-main-step.timeline-mode-compact .timeline-person-block {
+    background: color-mix(in srgb, var(--timeline-stage-color) 10%, white);
+}
+
+.timeline-main-step.timeline-mode-compact .timeline-person-block strong {
+    color: var(--timeline-stage-color);
+}
+
+@keyframes timelineStagePulse {
+    0% {
+        box-shadow:
+            0 0 0 3px color-mix(in srgb, var(--timeline-stage-color) 18%, white);
+    }
+    50% {
+        transform: scale(1.12);
+        box-shadow:
+            0 0 0 7px color-mix(in srgb, var(--timeline-stage-color) 14%, transparent);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow:
+            0 0 0 3px color-mix(in srgb, var(--timeline-stage-color) 18%, white);
+    }
+}

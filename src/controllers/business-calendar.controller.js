@@ -68,7 +68,8 @@ function index(req, res) {
                 calendar,
                 calendarYear: year,
                 calendarMonth: month,
-                currentDate
+                currentDate,
+                querySaved: req.query.saved || ""
             }
         );
 
@@ -86,6 +87,157 @@ function index(req, res) {
             .send(
                 "Terjadi kesalahan saat mengambil kalender layanan."
             );
+
+    }
+
+}
+
+
+/*
+ * =====================================
+ * EDIT BUSINESS HOURS FORM
+ * =====================================
+ */
+
+function editBusinessHours(req, res) {
+
+    try {
+
+        const calendar =
+            businessCalendarModel.getCalendar();
+
+        if (!calendar) {
+            return res.status(404).send(
+                "Kalender layanan tidak ditemukan."
+            );
+        }
+
+        res.render(
+            "admin/business-calendar/business-hours-form",
+            {
+                title: "Atur Jam Kerja",
+                layout: "layouts/app",
+                calendar
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "BUSINESS HOURS EDIT FORM ERROR:",
+            error
+        );
+
+        return res.status(500).send(
+            "Terjadi kesalahan saat membuka pengaturan jam kerja."
+        );
+
+    }
+
+}
+
+
+/*
+ * =====================================
+ * UPDATE BUSINESS HOURS
+ * =====================================
+ */
+
+function updateBusinessHours(req, res) {
+
+    try {
+
+        const calendar =
+            businessCalendarModel.getActiveCalendar();
+
+        if (!calendar) {
+            return res.status(404).send(
+                "Kalender layanan tidak ditemukan."
+            );
+        }
+
+        const hours = [];
+        const errors = [];
+
+        for (let hari = 1; hari <= 7; hari++) {
+
+            const enabled =
+                req.body?.[`hari_${hari}_aktif`] === "on";
+
+            if (!enabled) continue;
+
+            let starts = req.body?.[`jam_mulai_${hari}`] || [];
+            let ends = req.body?.[`jam_selesai_${hari}`] || [];
+
+            if (!Array.isArray(starts)) starts = [starts];
+            if (!Array.isArray(ends)) ends = [ends];
+
+            const dayHours = [];
+
+            for (let i = 0; i < Math.max(starts.length, ends.length); i++) {
+                const start = String(starts[i] || "").trim();
+                const end = String(ends[i] || "").trim();
+
+                if (!start && !end) continue;
+
+                if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(start) ||
+                    !/^([01]\d|2[0-3]):[0-5]\d$/.test(end)) {
+                    errors.push(`Jam kerja hari ${hari} tidak valid.`);
+                    continue;
+                }
+
+                if (start >= end) {
+                    errors.push(`Jam mulai harus lebih kecil dari jam selesai pada hari ${hari}.`);
+                    continue;
+                }
+
+                dayHours.push({
+                    hari,
+                    jamMulai: start,
+                    jamSelesai: end
+                });
+            }
+
+            if (dayHours.length === 0) {
+                errors.push(`Hari ${hari} diaktifkan tetapi belum memiliki jam kerja.`);
+                continue;
+            }
+
+            dayHours.sort((a, b) => a.jamMulai.localeCompare(b.jamMulai));
+
+            for (let i = 1; i < dayHours.length; i++) {
+                if (dayHours[i].jamMulai < dayHours[i - 1].jamSelesai) {
+                    errors.push(`Interval jam kerja hari ${hari} saling bertumpuk.`);
+                    break;
+                }
+            }
+
+            hours.push(...dayHours);
+        }
+
+        if (errors.length > 0) {
+            return res.status(400).send(errors.join("<br>"));
+        }
+
+        businessCalendarModel.updateBusinessHours(
+            calendar.id,
+            hours
+        );
+
+        return res.redirect(
+            "/admin/business-calendar?saved=hours"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "BUSINESS HOURS UPDATE ERROR:",
+            error
+        );
+
+        return res.status(500).send(
+            "Terjadi kesalahan saat menyimpan jam kerja."
+        );
 
     }
 
@@ -331,6 +483,10 @@ function createException(req, res) {
 module.exports = {
 
     index,
+
+    editBusinessHours,
+
+    updateBusinessHours,
 
     createExceptionForm,
 

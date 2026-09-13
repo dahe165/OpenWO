@@ -1110,6 +1110,8 @@
 
     <%- include("../components/welcome-card") %>
 
+    <%- include("../components/quick-action") %>
+
     <section class="tech-kpis">
 
         <article class="tech-kpi">
@@ -1197,81 +1199,13 @@
             </div>
         </article>
 
-    </section>    
-
-    <%- include("../components/quick-action") %>
-
-    <section class="tech-summary">
-
-        <div class="tech-summary-stats">
-
-            <div class="tech-summary-stat">
-                <span class="tech-summary-stat-label">Total</span>
-
-                <strong class="tech-summary-stat-value">
-                    <%= techTotal %>
-                </strong>
-
-                <small class="tech-summary-stat-note">
-                    Semua WO Anda
-                </small>
-            </div>
-
-
-            <div class="tech-summary-stat">
-                <span class="tech-summary-stat-label">WO Aktif</span>
-
-                <strong class="tech-summary-stat-value">
-                    <%= techActive %>
-                </strong>
-
-                <small class="tech-summary-stat-note">
-                    Ditugaskan + diproses
-                </small>
-            </div>
-
-
-            <div class="tech-summary-stat">
-                <span class="tech-summary-stat-label">
-                    Sedang Dikerjakan
-                </span>
-
-                <strong class="tech-summary-stat-value">
-                    <%= technicianSummary.diproses %>
-                </strong>
-
-                <small class="tech-summary-stat-note">
-                    Status Diproses
-                </small>
-            </div>
-
-
-            <div class="tech-summary-stat">
-                <span class="tech-summary-stat-label">Selesai</span>
-
-                <strong class="tech-summary-stat-value">
-                    <%= technicianSummary.selesai %>
-                </strong>
-
-                <small class="tech-summary-stat-note">
-                    Status Selesai
-                </small>
-            </div>
-
-        </div>
-
     </section>
-
 
     <section class="tech-feed-card">
 
         <div class="tech-feed-head">
 
             <h2>Work Order Terbaru</h2>
-
-            <a href="/workorder">
-                Lihat Semua →
-            </a>
 
         </div>
 

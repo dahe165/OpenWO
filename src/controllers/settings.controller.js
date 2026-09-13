@@ -1,15 +1,28 @@
 const settingsModel =
     require("../models/settings.model");
 
+const { getWorkflowSettings } =
+    require("../config/workorder.workflow");
+const {
+    normalizeMode,
+    getTimelineProgressColors,
+    setTimelineProgressColor
+} = require("../config/timeline.config");
+
 
 function index(req, res) {
+
+    const workflow = getWorkflowSettings();
 
     res.render(
         "settings/index",
         {
-            title: "Pengaturan",
-
-            layout: "layouts/app"
+            title: "Pengaturan Work Order",
+            layout: "layouts/app",
+            workflow,
+            timelineDisplayMode: normalizeMode(settingsModel.get("timeline_display_mode")),
+            timelineProgressColors: getTimelineProgressColors(),
+            saved: req.query.saved === "1"
         }
     );
 
@@ -46,6 +59,71 @@ function system(req, res) {
         }
     );
 
+}
+
+function workorder(req, res) {
+
+    const workflow = getWorkflowSettings();
+
+    res.render(
+        "settings/index",
+        {
+            title: "Pengaturan Work Order",
+            layout: "layouts/app",
+            workflow,
+            timelineDisplayMode: normalizeMode(settingsModel.get("timeline_display_mode")),
+            timelineProgressColors: getTimelineProgressColors(),
+            saved: req.query.saved === "1"
+        }
+    );
+
+}
+
+function updateWorkorder(req, res) {
+
+    const closing = req.body?.workflowClosing === "on";
+    let verification = req.body?.workflowVerification === "on";
+    let escalation = req.body?.workflowEscalation === "on";
+
+    // Dependency: jika Penutupan OFF, workflow berhenti di Selesai.
+    if (!closing) {
+        verification = false;
+        escalation = false;
+    }
+
+    // Dependency: Eskalasi tidak dapat aktif tanpa Verifikasi Asman.
+    if (!verification) {
+        escalation = false;
+    }
+
+    settingsModel.set("workflow_closing", closing ? "on" : "off");
+    settingsModel.set("workflow_verification", verification ? "on" : "off");
+    settingsModel.set("workflow_escalation", escalation ? "on" : "off");
+
+    const timelineDisplayMode =
+        normalizeMode(req.body?.timelineDisplayMode);
+
+    settingsModel.set(
+        "timeline_display_mode",
+        timelineDisplayMode
+    );
+
+    const timelineStages = [
+        "Dibuat",
+        "Diterima",
+        "Ditugaskan",
+        "Dikerjakan",
+        "Selesai"
+    ];
+
+    timelineStages.forEach(stage => {
+        setTimelineProgressColor(
+            stage,
+            req.body?.[`timelineColor${stage.replace(/\s+/g, "")}`]
+        );
+    });
+
+    res.redirect("/setting?section=workorder&saved=1");
 }
 
 function update(req, res) {
@@ -129,7 +207,11 @@ module.exports = {
 
     index,
 
+    workorder,
+
     system,
+
+    updateWorkorder,
 
     update
 

@@ -8,6 +8,20 @@
             <p>
                 Rekapitulasi Work Order berdasarkan periode
             </p>
+
+            <% if (report.scope && (report.scope.role === "asman" || report.scope.role === "teknisi")) { %>
+                <p class="report-scope-note">
+                    Scope: <strong>Seksi <%= report.scope.section || "pengguna" %></strong>
+                </p>
+            <% } else if (report.scope && report.scope.role === "manager") { %>
+                <p class="report-scope-note">
+                    Scope: <strong><%= report.scope.department || "Bagian pengguna" %><%= report.scope.section ? " · " + report.scope.section : " · Semua Seksi" %></strong>
+                </p>
+            <% } else if (report.scope && report.scope.role === "admin") { %>
+                <p class="report-scope-note">
+                    Filter: <strong><%= report.scope.department || "Semua Bagian" %><%= report.scope.section ? " · " + report.scope.section : " · Semua Seksi" %></strong>
+                </p>
+            <% } %>
         </div>
     </div>
 
@@ -21,6 +35,120 @@
         >
 
             <div class="report-filter-grid">
+
+                <%
+                    const reportRole =
+                        String(report?.scope?.role || "").toLowerCase();
+
+                    const canOrgFilter =
+                        reportRole === "admin" ||
+                        reportRole === "manager";
+
+                    const reportDepartments =
+                        report?.filterOptions?.departments || [];
+
+                    const reportSections =
+                        report?.filterOptions?.sections || [];
+
+                    const reportAllSections =
+                        report?.filterOptions?.allSections || reportSections;
+
+                    const selectedDepartmentId =
+                        report?.filters?.departmentId || "";
+
+                    const selectedSectionId =
+                        report?.filters?.sectionId || "";
+                %>
+
+                <% if (canOrgFilter) { %>
+
+                    <% if (reportRole === "admin") { %>
+                    <div class="report-field">
+
+                        <label for="department_id">
+                            Bagian
+                        </label>
+
+                        <select
+                            id="department_id"
+                            name="department_id"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Semua Bagian
+                            </option>
+
+                            <% reportDepartments.forEach(function (department) { %>
+                                <option
+                                    value="<%= department.id %>"
+                                    <%= Number(selectedDepartmentId) === Number(department.id) ? "selected" : "" %>
+                                >
+                                    <%= department.nama %>
+                                </option>
+                            <% }); %>
+
+                        </select>
+
+                    </div>
+                    <% } else { %>
+                    <div class="report-field">
+
+                        <label>
+                            Bagian
+                        </label>
+
+                        <div class="report-filter-locked">
+                            <strong><%= report.scope.department || "Bagian pengguna" %></strong>
+                            <input
+                                type="hidden"
+                                name="department_id"
+                                value="<%= selectedDepartmentId %>"
+                            >
+                        </div>
+
+                    </div>
+                    <% } %>
+
+                    <div class="report-field">
+
+                        <label for="section_id">
+                            Seksi
+                        </label>
+
+                        <select
+                            id="section_id"
+                            name="section_id"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Semua Seksi
+                            </option>
+
+                            <% reportSections.forEach(function (section) { %>
+                                <option
+                                    value="<%= section.id %>"
+                                    data-department-id="<%= section.department_id %>"
+                                    <%= Number(selectedSectionId) === Number(section.id) ? "selected" : "" %>
+                                >
+                                    <%= section.nama %>
+                                </option>
+                            <% }); %>
+
+                        </select>
+
+                        <small class="report-field-hint">
+                            <% if (reportRole === "manager") { %>
+                                Pilih Seksi di dalam Bagian Anda.
+                            <% } else { %>
+                                Pilih Bagian terlebih dahulu untuk menyaring daftar Seksi.
+                            <% } %>
+                        </small>
+
+                    </div>
+
+                <% } %>
 
                 <div class="report-field">
 
@@ -314,7 +442,7 @@
 
             <!-- REKAP WO -->
             <a
-                href="/report/workorders?month=<%= report.periode.bulan %>&year=<%= report.periode.tahun %>"
+                href="/report/workorders?month=<%= report.periode.bulan %>&year=<%= report.periode.tahun %><%= report.filters?.departmentId ? `&department_id=${report.filters.departmentId}` : "" %><%= report.filters?.sectionId ? `&section_id=${report.filters.sectionId}` : "" %>"
                 class="report-action report-action-rekap"
             >
 
@@ -343,7 +471,7 @@
 
             <!-- DIAGRAM -->
             <a
-                href="/report/chart"
+                href="/report/chart?month=<%= report.periode.bulan %>&year=<%= report.periode.tahun %><%= report.filters?.departmentId ? `&department_id=${report.filters.departmentId}` : "" %><%= report.filters?.sectionId ? `&section_id=${report.filters.sectionId}` : "" %>"
                 class="report-action report-action-chart"
             >
 
@@ -409,3 +537,66 @@
     </div>
 
 </div>
+<style>
+.report-filter-locked {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 13px;
+}
+.report-field-hint {
+    display: block;
+    margin-top: 5px;
+    color: #94a3b8;
+    font-size: 10px;
+    line-height: 1.4;
+}
+</style>
+
+<script>
+(function () {
+    const department = document.getElementById("department_id");
+    const section = document.getElementById("section_id");
+
+    if (!department || !section) return;
+
+    const allSections = <%- JSON.stringify(report.filterOptions?.allSections || []) %>;
+    const selectedSection = "<%= selectedSectionId %>";
+
+    function renderSections(currentOverride) {
+        const departmentId = department.value;
+        const current =
+            currentOverride !== undefined
+                ? currentOverride
+                : (section.value || selectedSection);
+
+        section.innerHTML = "<option value="">Semua Seksi</option>";
+
+        allSections
+            .filter(item => !departmentId || Number(item.department_id) === Number(departmentId))
+            .forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.id;
+                option.textContent = item.nama;
+                option.dataset.departmentId = item.department_id;
+                if (String(item.id) === String(current)) option.selected = true;
+                section.appendChild(option);
+            });
+
+        if (current && !Array.from(section.options).some(o => o.value === String(current))) {
+            section.value = "";
+        }
+    }
+
+    department.addEventListener("change", function () {
+        renderSections("");
+    });
+
+    renderSections();
+})();
+</script>

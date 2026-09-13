@@ -79,6 +79,20 @@
                 </strong>
             </p>
 
+            <% if (report.scope && (report.scope.role === "asman" || report.scope.role === "teknisi")) { %>
+                <p class="report-scope-note">
+                    Scope: <strong>Seksi <%= report.scope.section || "pengguna" %></strong>
+                </p>
+            <% } else if (report.scope && report.scope.role === "manager") { %>
+                <p class="report-scope-note">
+                    Scope: <strong><%= report.scope.department || "Bagian pengguna" %><%= report.scope.section ? " · " + report.scope.section : " · Semua Seksi" %></strong>
+                </p>
+            <% } else if (report.scope && report.scope.role === "admin") { %>
+                <p class="report-scope-note">
+                    Filter: <strong><%= report.scope.department || "Semua Bagian" %><%= report.scope.section ? " · " + report.scope.section : " · Semua Seksi" %></strong>
+                </p>
+            <% } %>
+
         </div>
 
 
@@ -118,7 +132,7 @@
         <div class="report-info-back">
 
             <a
-                href="/report?month=<%= bulan %>&year=<%= tahun %>"
+                href="/report?month=<%= bulan %>&year=<%= tahun %><%= report.filters?.departmentId ? `&department_id=${report.filters.departmentId}` : "" %><%= report.filters?.sectionId ? `&section_id=${report.filters.sectionId}` : "" %>"
                 class="report-back-button"
             >
 

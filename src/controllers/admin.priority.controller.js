@@ -92,7 +92,8 @@ function store(req, res) {
 
         const {
             nama,
-            urutan
+            urutan,
+            warna
         } = req.body;
 
 
@@ -111,9 +112,15 @@ function store(req, res) {
         }
 
 
+        const priorityColor =
+            /^#[0-9A-Fa-f]{6}$/.test(String(warna || ""))
+                ? warna
+                : "#64748b";
+
         priorityModel.createPriority(
             nama,
-            urutan
+            urutan,
+            priorityColor
         );
 
 
@@ -223,7 +230,8 @@ function update(req, res) {
 
         const {
             nama,
-            urutan
+            urutan,
+            warna
         } = req.body;
 
 
@@ -259,10 +267,16 @@ function update(req, res) {
         }
 
 
+        const priorityColor =
+            /^#[0-9A-Fa-f]{6}$/.test(String(warna || ""))
+                ? warna
+                : priority.warna || "#64748b";
+
         priorityModel.updatePriority(
             id,
             nama,
-            urutan
+            urutan,
+            priorityColor
         );
 
 

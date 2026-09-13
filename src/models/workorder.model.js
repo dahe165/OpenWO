@@ -3,7 +3,7 @@ const db = require("../config/database");
 const slaEventService =
     require("../services/sla-event.service");
 
-const { canTransition } =
+const { canTransition, getWorkflowSettings } =
     require("../config/workorder.workflow");
 
 
@@ -26,8 +26,10 @@ function mapWorkorder(row) {
             wt.created_at AS tanggal,
             wt.reason,
             u.nama AS user,
-            u.seksi AS seksi,
-            u.bagian AS bagian,
+            u.department_id AS department_id,
+            u.section_id AS section_id,
+            departments.nama AS department_nama,
+            sections.nama AS section_nama,
 
             CASE
                 WHEN u.role = 'pelapor'
@@ -45,6 +47,12 @@ function mapWorkorder(row) {
 
         LEFT JOIN users u
             ON u.id = wt.user_id
+
+        LEFT JOIN departments
+            ON departments.id = u.department_id
+
+        LEFT JOIN sections
+            ON sections.id = u.section_id
 
         WHERE wt.work_order_id = ?
 
@@ -68,6 +76,11 @@ function mapWorkorder(row) {
 
         prioritas: row.prioritas,
 
+        targetDepartmentId: row.target_department_id,
+        targetSectionId: row.target_section_id,
+        targetDepartment: row.target_department,
+        targetSection: row.target_section,
+
         status: row.status,
 
         resolutionDescription:
@@ -79,11 +92,17 @@ function mapWorkorder(row) {
         pelapor:
             row.pelapor_nama,
 
-        pelaporSeksi:
-            row.pelapor_seksi,
+        pelaporDepartmentId:
+            row.pelapor_department_id,
 
-        pelaporBagian:
-            row.pelapor_bagian,
+        pelaporSectionId:
+            row.pelapor_section_id,
+
+        pelaporDepartment:
+            row.pelapor_department,
+
+        pelaporSection:
+            row.pelapor_section,
 
         pelaporId:
             row.pelapor_id,
@@ -97,11 +116,17 @@ function mapWorkorder(row) {
         teknisi:
             row.teknisi_nama,
 
-        teknisiSeksi:
-            row.teknisi_seksi,
+        teknisiDepartmentId:
+            row.teknisi_department_id,
 
-        teknisiBagian:
-            row.teknisi_bagian,
+        teknisiSectionId:
+            row.teknisi_section_id,
+
+        teknisiDepartment:
+            row.teknisi_department,
+
+        teknisiSection:
+            row.teknisi_section,
 
         eskalasi:
             Boolean(row.eskalasi),
@@ -141,19 +166,27 @@ const baseQuery = `
         wo.kategori,
         wo.subkategori,
         wo.prioritas,
+        wo.target_department_id,
+        wo.target_section_id,
+        target_department.nama AS target_department,
+        target_section.nama AS target_section,
         wo.status,
         wo.resolution_description,
         wo.completion_photo,
         wo.pelapor_id,
         wo.created_by,
         pelapor.nama AS pelapor_nama,
-        pelapor.seksi AS pelapor_seksi,
-        pelapor.bagian AS pelapor_bagian,
+        pelapor.department_id AS pelapor_department_id,
+        pelapor.section_id AS pelapor_section_id,
+        pelapor_department.nama AS pelapor_department,
+        pelapor_section.nama AS pelapor_section,
 
         wo.teknisi_id,
         teknisi.nama AS teknisi_nama,
-        teknisi.seksi AS teknisi_seksi,
-        teknisi.bagian AS teknisi_bagian,
+        teknisi.department_id AS teknisi_department_id,
+        teknisi.section_id AS teknisi_section_id,
+        teknisi_department.nama AS teknisi_department,
+        teknisi_section.nama AS teknisi_section,
 
         wo.eskalasi,
         wo.eskalasi_level,
@@ -163,11 +196,29 @@ const baseQuery = `
 
     FROM work_orders wo
 
+    LEFT JOIN departments target_department
+        ON target_department.id = wo.target_department_id
+
+    LEFT JOIN sections target_section
+        ON target_section.id = wo.target_section_id
+
     LEFT JOIN users pelapor
         ON pelapor.id = wo.pelapor_id
 
+    LEFT JOIN departments pelapor_department
+        ON pelapor_department.id = pelapor.department_id
+
+    LEFT JOIN sections pelapor_section
+        ON pelapor_section.id = pelapor.section_id
+
     LEFT JOIN users teknisi
         ON teknisi.id = wo.teknisi_id
+
+    LEFT JOIN departments teknisi_department
+        ON teknisi_department.id = teknisi.department_id
+
+    LEFT JOIN sections teknisi_section
+        ON teknisi_section.id = teknisi.section_id
 `;
 
 
@@ -183,6 +234,40 @@ function getAll() {
         ${baseQuery}
         ORDER BY wo.id ASC
     `).all();
+
+    return rows.map(mapWorkorder);
+}
+
+function getForAsmanSection(sectionId) {
+
+    const rows = db.prepare(`
+        ${baseQuery}
+
+        WHERE wo.target_section_id = ?
+          AND EXISTS (
+              SELECT 1
+              FROM section_categories sc
+              INNER JOIN categories c
+                  ON c.id = sc.category_id
+              WHERE sc.section_id = wo.target_section_id
+                AND c.nama = wo.kategori
+          )
+        ORDER BY wo.created_at DESC
+    `).all(Number(sectionId));
+
+    return rows.map(mapWorkorder);
+}
+
+function getHistoryForAsmanSection(sectionId) {
+
+    const rows = db.prepare(`
+        ${baseQuery}
+
+        WHERE wo.status = 'Ditutup'
+          AND wo.target_section_id = ?
+
+        ORDER BY wo.updated_at DESC
+    `).all(Number(sectionId));
 
     return rows.map(mapWorkorder);
 }
@@ -212,9 +297,36 @@ function getByTechnicianId(technicianId) {
         ${baseQuery}
 
         WHERE wo.teknisi_id = ?
+          AND wo.target_section_id = (
+              SELECT u.section_id
+              FROM users u
+              WHERE u.id = ?
+                AND u.role = 'teknisi'
+          )
 
         ORDER BY wo.created_at DESC
-    `).all(technicianId);
+    `).all(technicianId, technicianId);
+
+    return rows.map(mapWorkorder);
+}
+
+
+/*
+ * =====================================
+ * GET FOR PELAPOR
+ * =====================================
+ */
+
+function getForPelapor(userId) {
+
+    const rows = db.prepare(`
+        ${baseQuery}
+
+        WHERE wo.pelapor_id = ?
+           OR wo.created_by = ?
+
+        ORDER BY wo.created_at DESC
+    `).all(Number(userId), Number(userId));
 
     return rows.map(mapWorkorder);
 }
@@ -223,7 +335,33 @@ function getByTechnicianId(technicianId) {
 /*
  * =====================================
  * GET FOR MANAGER
+ * Semua WO yang ditujukan ke Bagian Manager.
+ * Status tidak dibatasi agar Manager dapat
+ * melihat seluruh lifecycle WO di Bagiannya.
  * =====================================
+ */
+
+function getForManagerDepartment(departmentId) {
+
+    if (!departmentId) {
+        return [];
+    }
+
+    const rows = db.prepare(`
+        ${baseQuery}
+
+        WHERE wo.target_department_id = ?
+
+        ORDER BY wo.created_at DESC
+    `).all(Number(departmentId));
+
+    return rows.map(mapWorkorder);
+}
+
+
+/*
+ * Legacy/flow-specific Manager query.
+ * Dipertahankan untuk kebutuhan workflow verifikasi Manager.
  */
 
 function getForManager() {
@@ -246,6 +384,25 @@ function getForManager() {
  * =====================================
  */
 
+function isAsmanAuthorizedForWorkorder(workorderId, asmanId) {
+    return Boolean(db.prepare(`
+        SELECT 1
+        FROM work_orders wo
+        INNER JOIN users asman
+            ON asman.id = ?
+           AND asman.role = 'asman'
+        INNER JOIN section_categories sc
+            ON sc.section_id = wo.target_section_id
+        INNER JOIN categories c
+            ON c.id = sc.category_id
+           AND c.nama = wo.kategori
+        WHERE wo.id = ?
+          AND asman.section_id IS NOT NULL
+          AND wo.target_section_id = asman.section_id
+        LIMIT 1
+    `).get(Number(asmanId), Number(workorderId)));
+}
+
 function acceptByAsman(
     id,
     asmanId,
@@ -261,6 +418,13 @@ function acceptByAsman(
 
 
     if (!workorder) {
+
+        return null;
+
+    }
+
+
+    if (!isAsmanAuthorizedForWorkorder(id, asmanId)) {
 
         return null;
 
@@ -409,6 +573,13 @@ function assignByAsman(
     }
 
 
+    if (!isAsmanAuthorizedForWorkorder(id, asmanId)) {
+
+        return null;
+
+    }
+
+
     /*
      * Hanya WO Diterima
      * yang boleh ditugaskan.
@@ -436,7 +607,9 @@ function assignByAsman(
             SELECT
                 id,
                 nama,
-                role
+                role,
+                department_id,
+                section_id
             FROM users
             WHERE id = ?
               AND role = 'teknisi'
@@ -447,6 +620,14 @@ function assignByAsman(
 
         return null;
 
+    }
+
+    if (
+        Number(technician.section_id) !==
+        Number(workorder.targetSectionId)
+    ) {
+
+        return null;
     }
 
 
@@ -1110,11 +1291,18 @@ function completeWork(
      * =====================================
      */
 
+    const workflowSettings = getWorkflowSettings();
+
+    const finalStatus =
+        workflowSettings.closing && !workflowSettings.verification
+            ? "Ditutup"
+            : "Selesai";
+
     const transaction =
         db.transaction(() => {
 
             update.run(
-                "Selesai",
+                finalStatus,
                 resolutionDescription.trim(),
                 completionPhoto || null,
                 now,
@@ -1128,6 +1316,19 @@ function completeWork(
                 technicianId,
                 now
             );
+
+            // Jika Penutupan ON tetapi Verifikasi OFF,
+            // WO otomatis ditutup setelah teknisi selesai.
+            if (finalStatus === "Ditutup") {
+
+                insertTimeline.run(
+                    id,
+                    "Ditutup",
+                    technicianId,
+                    now
+                );
+
+            }
 
             /*
             * =====================================
@@ -1197,6 +1398,25 @@ function verifyByAsman(
         return null;
     }
 
+    if (!isAsmanAuthorizedForWorkorder(id, asmanId)) {
+        return null;
+    }
+
+
+    /*
+     * Verifikasi Asman harus aktif untuk WO yang
+     * baru selesai. WO yang sudah masuk tahap
+     * verifikasi tetap dapat diselesaikan agar
+     * perubahan setting tidak menggantungkan WO lama.
+     */
+    const workflowSettings = getWorkflowSettings();
+
+    if (
+        workorder.status === "Selesai" &&
+        (!workflowSettings.closing || !workflowSettings.verification)
+    ) {
+        return null;
+    }
 
     /*
      * Harus Selesai
@@ -1391,6 +1611,24 @@ function escalateByAsman(
 
     }
 
+    if (!isAsmanAuthorizedForWorkorder(id, asmanId)) {
+        return null;
+    }
+
+
+    /*
+     * Eskalasi hanya tersedia jika Penutupan,
+     * Verifikasi Asman, dan Eskalasi aktif.
+     */
+    const workflowSettings = getWorkflowSettings();
+
+    if (
+        !workflowSettings.closing ||
+        !workflowSettings.verification ||
+        !workflowSettings.escalation
+    ) {
+        return null;
+    }
 
     /*
      * Hanya WO Selesai
@@ -1763,6 +2001,56 @@ function create(data) {
 
     /*
      * =====================================
+     * VALIDASI TUJUAN & KATEGORI
+     * =====================================
+     */
+
+    const targetSectionId = Number(data.targetSectionId);
+    const targetDepartmentId = Number(data.targetDepartmentId);
+
+    if (!targetSectionId || !targetDepartmentId) {
+        throw new Error("Tujuan Work Order tidak valid.");
+    }
+
+    const targetSection = db.prepare(`
+        SELECT id, department_id, aktif
+        FROM sections
+        WHERE id = ?
+    `).get(targetSectionId);
+
+    if (
+        !targetSection ||
+        !targetSection.aktif ||
+        Number(targetSection.department_id) !== targetDepartmentId
+    ) {
+        throw new Error("Bagian dan Seksi tujuan tidak valid.");
+    }
+
+    const category = db.prepare(`
+        SELECT id, nama, aktif
+        FROM categories
+        WHERE nama = ?
+    `).get(data.kategori);
+
+    if (!category || !category.aktif) {
+        throw new Error("Kategori Work Order tidak valid.");
+    }
+
+    const categoryInSection = db.prepare(`
+        SELECT 1
+        FROM section_categories
+        WHERE section_id = ?
+          AND category_id = ?
+        LIMIT 1
+    `).get(targetSectionId, Number(category.id));
+
+    if (!categoryInSection) {
+        throw new Error("Kategori tersebut tidak tersedia pada Seksi tujuan.");
+    }
+
+
+    /*
+     * =====================================
      * GENERATE ID
      * =====================================
      */
@@ -1820,6 +2108,8 @@ function create(data) {
                 kategori,
                 subkategori,
                 prioritas,
+                target_department_id,
+                target_section_id,
                 status,
                 pelapor_id,
                 created_by,
@@ -1833,6 +2123,8 @@ function create(data) {
 
             VALUES (
 
+                ?,
+                ?,
                 ?,
                 ?,
                 ?,
@@ -1910,6 +2202,10 @@ function create(data) {
 
                 data.prioritas ||
                     null,
+
+                Number(data.targetDepartmentId),
+
+                Number(data.targetSectionId),
 
                 "Menunggu",
 
@@ -2120,15 +2416,25 @@ module.exports = {
 
     getAll,
 
+    getForAsmanSection,
+
+    getHistoryForAsmanSection,
+
     getHistory,
 
     getByTechnicianId,
 
+    getForPelapor,
+
     getStatistics,
+
+    getForManagerDepartment,
 
     getForManager,
 
     getById,
+
+    isAsmanAuthorizedForWorkorder,
 
     acceptByAsman,
 

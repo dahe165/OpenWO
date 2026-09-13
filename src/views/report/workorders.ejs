@@ -22,7 +22,7 @@
         <div class="report-workorders-header-actions">
 
             <a
-                href="/report?month=<%= report.periode.bulan %>&year=<%= report.periode.tahun %>"
+                href="/report?month=<%= report.periode.bulan %>&year=<%= report.periode.tahun %><%= report.filters?.departmentId ? `&department_id=${report.filters.departmentId}` : "" %><%= report.filters?.sectionId ? `&section_id=${report.filters.sectionId}` : "" %>"
                 class="report-secondary-button"
             >
                 ← Kembali
@@ -104,6 +104,16 @@
                 <p>
                     Daftar Work Order yang dibuat pada periode terpilih.
                 </p>
+
+                <% if (report.scope && (report.scope.role === "asman" || report.scope.role === "teknisi")) { %>
+                    <p class="report-scope-note">
+                        Scope: <strong><%= report.scope.section || "Seksi pengguna" %></strong>
+                    </p>
+                <% } else if (report.scope && report.scope.role === "manager") { %>
+                    <p class="report-scope-note">
+                        Scope: <strong><%= report.scope.department || "Bagian pengguna" %></strong>
+                    </p>
+                <% } %>
 
             </div>
 

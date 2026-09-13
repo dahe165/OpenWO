@@ -20,6 +20,9 @@
     --app-border: #e5e7eb;
 
     --sidebar-width: 250px;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#dc2626;
 
 }
 
@@ -1422,14 +1425,29 @@ body {
 
 }
 
-.wo-summary .wo-title .wo-priority{
+.wo-summary .wo-title .wo-priority {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     margin-left: 5px;
-    margin-bottom: 15px;
-    font-size: 9px!important;
-    font-weight: 600;
-    color: #6b7280;
+    padding: 0px 5px 2px 5px;
+    border: 1px solid color-mix(in srgb, var(--priority-color) 28%, white);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--priority-color) 10%, white);
+    color: var(--priority-color);
+    font-size: 9px !important;
+    font-weight: 700;
     white-space: nowrap;
 }
+
+.wo-summary .wo-title .wo-priority-dot {
+    width: 5px;
+    height: 5px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--priority-color);
+}
+
 
 /* =========================================
    BUSINESS CALENDAR
@@ -1939,7 +1957,7 @@ body {
 .timeline-waiting-form {
     position: absolute;
     left: 80%;
-    top: 37px;
+    top: 3px;
     transform: translateX(-50%);
     z-index: 5;
     margin: 0;
@@ -1970,4 +1988,22 @@ body {
 
 .timeline-waiting-button:hover {
     transform: scale(1.08);
+}
+
+@media (max-width: 900px) {
+
+    .timeline-waiting-form {
+        position: absolute;
+        left: 80%;
+        top: 0px;
+        transform: translateX(-50%);
+        z-index: 5;
+        margin: 0;
+    }
+    .timeline-waiting-button {
+        width: 15px;
+        height: 15px;
+        padding: 0;
+    }
+
 }

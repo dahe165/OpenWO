@@ -1,0 +1,107 @@
+<style>
+    .asset-form-page{max-width:820px;margin:0 auto}.asset-form-head{margin-bottom:20px}.asset-form-head h1{margin:0;color:#111827;font-size:1.55rem}.asset-form-head p{margin:6px 0 0;color:#6b7280;font-size:.85rem}.asset-form{padding:22px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 3px 14px rgba(15,23,42,.045)}.asset-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.asset-field{display:flex;flex-direction:column;gap:6px}.asset-field.full{grid-column:1/-1}.asset-field label{color:#334155;font-size:11px;font-weight:800}.asset-field input,.asset-field select,.asset-field textarea{width:100%;box-sizing:border-box;border:1px solid #dbe3ef;border-radius:9px;background:#fff;color:#1e293b;padding:10px 11px;font:inherit;font-size:12px;outline:0}.asset-field textarea{min-height:88px;resize:vertical}.asset-field input:focus,.asset-field select:focus,.asset-field textarea:focus{border-color:#93c5fd;box-shadow:0 0 0 3px rgba(37,99,235,.08)}.asset-help{color:#94a3b8;font-size:10px}.asset-error{margin-bottom:15px;padding:10px 12px;border-radius:9px;background:#fef2f2;color:#b91c1c;font-size:11px}.asset-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px;padding-top:16px;border-top:1px solid #eef2f7}.asset-btn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 14px;border:0;border-radius:9px;text-decoration:none;font-size:11px;font-weight:800;cursor:pointer}.asset-cancel{background:#f1f5f9;color:#475569}.asset-save{background:#2563eb;color:#fff}.asset-save:hover{background:#1d4ed8}@media(max-width:650px){.asset-grid{grid-template-columns:1fr}.asset-field.full{grid-column:auto}.asset-form{padding:16px}.asset-actions{flex-direction:column}.asset-btn{width:100%}}
+</style>
+
+<div class="asset-form-page">
+    <div class="asset-form-head">
+        <h1>Edit Asset</h1>
+        <p>Perbarui identitas dan informasi Asset.</p>
+    </div>
+
+    <form class="asset-form" method="POST" action="/admin/assets/<%= asset.id %>">
+        <% if (error) { %><div class="asset-error"><%= error %></div><% } %>
+
+        <div class="asset-grid">
+            <div class="asset-field">
+                <label>Kode Asset *</label>
+                <input name="kode" value="<%= form.kode || '' %>" required placeholder="Contoh: AP-LT2-003">
+            </div>
+            <div class="asset-field">
+                <label>Nama Asset *</label>
+                <input name="nama" value="<%= form.nama || '' %>" required placeholder="Contoh: Access Point Lantai 2">
+            </div>
+            <div class="asset-field">
+                <label>Jenis Asset</label>
+                <input name="jenis" value="<%= form.jenis || '' %>" placeholder="Contoh: Network">
+            </div>
+            <div class="asset-field">
+                <label>Merk</label>
+                <input name="merk" value="<%= form.merk || '' %>" placeholder="Contoh: Ubiquiti">
+            </div>
+            <div class="asset-field">
+                <label>Model</label>
+                <input name="model" value="<%= form.model || '' %>" placeholder="Contoh: UAP-AC-LITE">
+            </div>
+            <div class="asset-field">
+                <label>Serial Number</label>
+                <input name="serial_number" value="<%= form.serial_number || '' %>">
+            </div>
+            <div class="asset-field">
+                <label>Bagian *</label>
+                <select name="department_id" id="departmentId" required>
+                    <option value="">Pilih Bagian</option>
+                    <% departments.forEach(dept => { %>
+                        <option value="<%= dept.id %>" <%= Number(form.department_id) === dept.id ? 'selected' : '' %>><%= dept.kode %> — <%= dept.nama %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="asset-field">
+                <label>Seksi *</label>
+                <select name="section_id" id="sectionId" required>
+                    <option value="">Pilih Seksi</option>
+                    <% sections.forEach(section => { %>
+                        <option value="<%= section.id %>" data-department="<%= section.department_id %>" <%= Number(form.section_id) === section.id ? 'selected' : '' %>><%= section.kode %> — <%= section.nama %></option>
+                    <% }) %>
+                </select>
+                <span class="asset-help">Seksi mengikuti Bagian yang dipilih.</span>
+            </div>
+            <div class="asset-field">
+                <label>Lokasi</label>
+                <input name="lokasi" value="<%= form.lokasi || '' %>" placeholder="Contoh: Lantai 2">
+            </div>
+            <div class="asset-field">
+                <label>Status *</label>
+                <select name="status" required>
+                    <% statuses.forEach(status => { %>
+                        <option value="<%= status %>" <%= (form.status || 'Aktif') === status ? 'selected' : '' %>><%= status %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="asset-field full">
+                <label>Keterangan</label>
+                <textarea name="keterangan" placeholder="Keterangan tambahan..."><%= form.keterangan || '' %></textarea>
+            </div>
+        </div>
+
+        <div class="asset-actions">
+            <a href="/admin/assets" class="asset-btn asset-cancel">Batal</a>
+            <button type="submit" class="asset-btn asset-save">Simpan Perubahan</button>
+        </div>
+    </form>
+</div>
+
+<script>
+(function(){
+    const dept = document.getElementById("departmentId");
+    const section = document.getElementById("sectionId");
+    if (!dept || !section) return;
+
+    function filterSections(){
+        const selectedDept = dept.value;
+        const current = section.value;
+        let currentStillValid = false;
+
+        Array.from(section.options).forEach((option, index) => {
+            if (index === 0) return;
+            const visible = !selectedDept || option.dataset.department === selectedDept;
+            option.hidden = !visible;
+            if (visible && option.value === current) currentStillValid = true;
+        });
+
+        if (!currentStillValid) section.value = "";
+    }
+
+    dept.addEventListener("change", filterSections);
+    filterSections();
+})();
+</script>

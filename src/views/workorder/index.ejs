@@ -1,7 +1,7 @@
 <style>
 .wo-header-main {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
     flex: 1;
     min-width: 0;
@@ -163,21 +163,21 @@
                             wo.judul.toLowerCase().includes("internet") ||
                             wo.judul.toLowerCase().includes("wifi")
                         ) {
-                            woIcon = "📡❌";
+                            woIcon = "🌐";
                         }
 
                         if (
                             wo.judul.toLowerCase().includes("lan") ||
                             wo.judul.toLowerCase().includes("jaringan")
                         ) {
-                            woIcon = "🌐";
+                            woIcon = "🛜";
                         }
 
                         if (
                             wo.judul.toLowerCase().includes("komputer") ||
                             wo.judul.toLowerCase().includes("pc")
                         ) {
-                            woIcon = "🖥️⚠️";
+                            woIcon = "🖥️";
                         }
 
                         if (
@@ -199,8 +199,14 @@
 
                             <% if (wo.id !== activeId && wo.prioritas) { %>
 
-                                <span class="wo-priority">
-                                    · <%= wo.prioritas %>
+                                <% const priorityColor = (priorityColors && priorityColors[wo.prioritas]) || "#64748b"; %>
+
+                                <span
+                                    class="wo-priority"
+                                    style="--priority-color:<%= priorityColor %>;"
+                                >
+                                    <span class="wo-priority-dot"></span>
+                                    <%= wo.prioritas %>
                                 </span>
 
                             <% } %>
@@ -274,6 +280,7 @@
 
                     <% if (
                         wo.id === activeId &&
+                        timelineDisplayMode !== "compact" &&
                         Number(wo.createdBy) !== Number(wo.pelaporId)
                     ) { %>
 
@@ -288,19 +295,19 @@
                             </strong>
 
                             <% if (
-                                wo.pelaporSeksi ||
-                                wo.pelaporBagian
-                            ) { %>
+                                wo.pelaporSection ||
+                                wo.pelaporDepartment
+                            ) { %>                            
 
                                 <small class="wo-person-org">
 
-                                    <% if (wo.pelaporSeksi) { %>
-                                        <%= wo.pelaporSeksi %>
+                                    <% if (wo.pelaporSection) { %>
+                                        <%= wo.pelaporSection %>
                                     <% } %>
 
                                     <% if (
-                                        wo.pelaporSeksi &&
-                                        wo.pelaporBagian
+                                        wo.pelaporSection &&
+                                        wo.pelaporDepartment
                                     ) { %>
 
                                         <span class="wo-org-separator">
@@ -309,8 +316,8 @@
 
                                     <% } %>
 
-                                    <% if (wo.pelaporBagian) { %>
-                                        <%= wo.pelaporBagian %>
+                                    <% if (wo.pelaporDepartment) { %>
+                                        <%= wo.pelaporDepartment %>
                                     <% } %>
 
                                 </small>
@@ -336,12 +343,22 @@
                             "Selesai"
                         ];
 
-                        const verificationStages = [
-                            "Verifikasi Asman",
-                            "Menunggu Verifikasi Manager",
-                            "Verifikasi Manager",
-                            "Ditutup"
-                        ];
+                        const verificationStages = [];
+
+                        if (workflow?.closing && workflow?.verification) {
+                            verificationStages.push("Verifikasi Asman");
+
+                            if (workflow?.escalation) {
+                                verificationStages.push(
+                                    "Menunggu Verifikasi Manager",
+                                    "Verifikasi Manager"
+                                );
+                            }
+
+                            verificationStages.push("Ditutup");
+                        } else if (workflow?.closing && !workflow?.verification) {
+                            verificationStages.push("Ditutup");
+                        }
 
                         function getEvent(stage) {
                             return timelineEvents.find(
@@ -374,13 +391,43 @@
                     
                     <div class="wo-timeline-section">
 
+                        <% if (timelineDisplayMode === "compact") { %>
+                            <div class="timeline-context-group">
+                                <div class="timeline-context timeline-reporter-context">
+                                    <span class="timeline-context-label">Pelapor</span>
+                                    <strong><%= wo.pelapor || "-" %></strong>
+                                    <% if (wo.pelaporSection || wo.pelaporDepartment) { %>
+                                        <span class="timeline-context-org">
+                                            <% if (wo.pelaporSection) { %><%= wo.pelaporSection %><% } %>
+                                            <% if (wo.pelaporSection && wo.pelaporDepartment) { %>
+                                                <span class="timeline-context-separator">•</span>
+                                            <% } %>
+                                            <% if (wo.pelaporDepartment) { %><%= wo.pelaporDepartment %><% } %>
+                                        </span>
+                                    <% } %>
+                                </div>
+
+                                <% if (wo.targetSection || wo.targetDepartment) { %>
+                                    <div class="timeline-context timeline-target-context">
+                                        <span class="timeline-context-label">Tujuan WO</span>
+                                        <strong>
+                                            <%= wo.targetSection || "-" %>
+                                            <% if (wo.targetDepartment) { %>
+                                                <span class="timeline-context-separator">•</span>
+                                                <%= wo.targetDepartment %>
+                                            <% } %>
+                                        </strong>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% } %>
+
                         <div class="timeline-heading">
-                            <span class="timeline-heading-icon">⚙️</span>
+                            <span class="timeline-heading-icon">📌</span>
                             <span>Timeline</span>
                         </div>
 
-
-                        <div class="timeline-main">
+                        <div class="timeline-main timeline-main-<%= timelineDisplayMode %>">
 
                             <% mainStages.forEach((stage) => {
 
@@ -389,11 +436,7 @@
 
                             %>
 
-                                <div class="timeline-main-step <%= stepClass %>">
-
-                                    <div class="timeline-step-label">
-                                        <%= stage %>
-                                    </div>
+                                <div class="timeline-main-step <%= stepClass %> timeline-mode-<%= timelineDisplayMode %>" style="--timeline-stage-color: <%= timelineProgressColors?.[stage] || '#64748b' %>;">
 
                                     <div class="timeline-dot">
 
@@ -405,52 +448,74 @@
 
                                     </div>
 
+                                    <div class="timeline-step-label">
+                                        <%= stage %>
+                                    </div>
+
                                     <% if (event) { %>
 
                                         <div class="timeline-info">
 
-                                            <strong>
-                                                <%= event.user %>
-                                            </strong>
+                                            <% if (timelineDisplayMode === "compact") { %>
 
-                                            <small>
-                                                <%= event.role %>
-                                            </small>
+                                                <small class="timeline-date">
+                                                    <%= new Date(event.tanggal).toLocaleDateString(
+                                                        "id-ID",
+                                                        { day: "2-digit", month: "short", year: "numeric" }
+                                                    ) %>
+                                                </small>
 
-                                            <% if (event.seksi || event.bagian) { %>
+                                                <small class="timeline-time">
+                                                    <%= new Date(event.tanggal).toLocaleTimeString(
+                                                        "id-ID",
+                                                        { hour: "2-digit", minute: "2-digit", hour12: false }
+                                                    ) %>
+                                                </small>
 
-                                                <small class="timeline-org">
+                                                <div class="timeline-person-block">
+                                                    <strong><%= event.user %></strong>
+                                                    <small><%= event.role %></small>
+                                                </div>
 
-                                                    <% if (event.seksi) { %>
-                                                        <%= event.seksi %>
-                                                    <% } %>
+                                            <% } else { %>
 
-                                                    <% if (event.seksi && event.bagian) { %>
-                                                        <span class="timeline-org-separator">•</span>
-                                                    <% } %>
+                                                <strong>
+                                                    <%= event.user %>
+                                                </strong>
 
-                                                    <% if (event.bagian) { %>
-                                                        <%= event.bagian %>
-                                                    <% } %>
+                                                <small>
+                                                    <%= event.role %>
+                                                </small>
 
+                                                <% if (event.section_nama || event.department_nama) { %>
+                                                    <small class="timeline-org">
+                                                        <% if (event.section_nama) { %>
+                                                            <%= event.section_nama %>
+                                                        <% } %>
+                                                        <% if (event.section_nama && event.department_nama) { %>
+                                                            <span class="timeline-org-separator">•</span>
+                                                        <% } %>
+                                                        <% if (event.department_nama) { %>
+                                                            <%= event.department_nama %>
+                                                        <% } %>
+                                                    </small>
+                                                <% } %>
+
+                                                <small class="timeline-date">
+                                                    <%= new Date(event.tanggal).toLocaleDateString(
+                                                        "id-ID",
+                                                        { day: "2-digit", month: "short", year: "numeric" }
+                                                    ) %>
+                                                </small>
+
+                                                <small class="timeline-time">
+                                                    <%= new Date(event.tanggal).toLocaleTimeString(
+                                                        "id-ID",
+                                                        { hour: "2-digit", minute: "2-digit", hour12: false }
+                                                    ) %>
                                                 </small>
 
                                             <% } %>
-
-                                            <small>
-                                                <%= new Date(
-                                                    event.tanggal
-                                                ).toLocaleString(
-                                                    "id-ID",
-                                                    {
-                                                        day: "2-digit",
-                                                        month: "short",
-                                                        year: "numeric",
-                                                        hour: "2-digit",
-                                                        minute: "2-digit"
-                                                    }
-                                                ) %>
-                                            </small>
 
                                         </div>
 
@@ -491,6 +556,7 @@
                         <!-- VERIFIKASI -->
                         <!-- ================================= -->
 
+                        <% if (workflow?.closing) { %>
                         <div class="verification-flow">
 
                             <div class="verification-line"></div>
@@ -560,21 +626,18 @@
                                                 </div>
 
 
-                                                <small>
-
-                                                    <%= new Date(
-                                                        event.tanggal
-                                                    ).toLocaleString(
+                                                <small class="verification-date">
+                                                    <%= new Date(event.tanggal).toLocaleDateString(
                                                         "id-ID",
-                                                        {
-                                                            day: "2-digit",
-                                                            month: "short",
-                                                            year: "numeric",
-                                                            hour: "2-digit",
-                                                            minute: "2-digit"
-                                                        }
+                                                        { day: "2-digit", month: "short", year: "numeric" }
                                                     ) %>
+                                                </small>
 
+                                                <small class="verification-time">
+                                                    <%= new Date(event.tanggal).toLocaleTimeString(
+                                                        "id-ID",
+                                                        { hour: "2-digit", minute: "2-digit", hour12: false }
+                                                    ) %>
                                                 </small>
 
                                             <% } else { %>
@@ -594,6 +657,7 @@
                             </div>
 
                         </div>
+                        <% } %>
 
                     </div>                    
 
@@ -625,40 +689,25 @@
 
                     <div class="completion-result">
 
-                        <div class="completion-result-header">
+                        <div class="completion-result-main">
 
                             <span class="completion-result-icon">
                                 📝
                             </span>
 
-                            <div>
+                            <div class="completion-result-content">
 
-                                <strong>
-                                    Hasil Penyelesaian
-                                </strong>
+                                <div class="completion-result-header">
 
-                                <small>
-                                    Laporan pekerjaan teknisi
-                                </small>
+                                    <strong>
+                                        Hasil Penyelesaian
+                                    </strong>
 
-                            </div>
+                                    <small>
+                                        Laporan pekerjaan teknisi
+                                    </small>
 
-                        </div>
-
-
-                        <!-- ================================= -->
-                        <!-- HASIL & FOTO -->
-                        <!-- ================================= -->
-
-                        <div class="completion-result-grid">
-
-
-                            <!-- DESKRIPSI -->
-                            <div class="completion-result-block">
-
-                                <span class="result-label">
-                                    📑 Deskripsi Penyelesaian
-                                </span>
+                                </div>
 
                                 <div class="completion-result-description">
 
@@ -680,44 +729,21 @@
 
                             </div>
 
+                        </div>
 
-                            <!-- FOTO -->
-                            <div class="completion-result-block">
+                        <% if (wo.completionPhoto) { %>
 
-                                <span class="result-label">
-                                    📷 Bukti Pekerjaan
-                                </span>
+                            <div class="completion-result-photo-wrap">
 
-                                <div class="completion-result-photo">
-
-                                    <% if (wo.completionPhoto) { %>
-
-                                        <img
-                                            src="<%= wo.completionPhoto %>"
-                                            alt="Foto penyelesaian"
-                                            class="completion-photo-thumb"
-                                        >
-
-                                    <% } else { %>
-
-                                        <div class="photo-empty">
-
-                                            <span>📷</span>
-
-                                            <small>
-                                                Belum ada foto penyelesaian.
-                                            </small>
-
-                                        </div>
-
-                                    <% } %>
-
-                                </div>
+                                <img
+                                    src="<%= wo.completionPhoto %>"
+                                    alt="Bukti pekerjaan"
+                                    class="completion-photo-thumb"
+                                >
 
                             </div>
 
-
-                        </div>
+                        <% } %>
 
                     </div>
 
@@ -747,22 +773,22 @@
 
 
                         <% if (
-                            wo.pelaporSeksi ||
-                            wo.pelaporBagian
+                            wo.pelaporSection ||
+                            wo.pelaporDepartment
                         ) { %>
 
                             <small class="wo-person-org">
 
-                                <% if (wo.pelaporSeksi) { %>
+                                <% if (wo.pelaporSection) { %>
 
-                                    <%= wo.pelaporSeksi %>
+                                    <%= wo.pelaporSection %>
 
                                 <% } %>
 
 
                                 <% if (
-                                    wo.pelaporSeksi &&
-                                    wo.pelaporBagian
+                                    wo.pelaporSection &&
+                                    wo.pelaporDepartment
                                 ) { %>
 
                                     <span class="wo-org-separator">
@@ -772,9 +798,9 @@
                                 <% } %>
 
 
-                                <% if (wo.pelaporBagian) { %>
+                                <% if (wo.pelaporDepartment) { %>
 
-                                    <%= wo.pelaporBagian %>
+                                    <%= wo.pelaporDepartment %>
 
                                 <% } %>
 
@@ -801,22 +827,22 @@
 
 
                         <% if (
-                            wo.teknisiSeksi ||
-                            wo.teknisiBagian
+                            wo.teknisiSection ||
+                            wo.teknisiDepartment
                         ) { %>
 
                             <small class="wo-person-org">
 
-                                <% if (wo.teknisiSeksi) { %>
+                                <% if (wo.teknisiSection) { %>
 
-                                    <%= wo.teknisiSeksi %>
+                                    <%= wo.teknisiSection %>
 
                                 <% } %>
 
 
                                 <% if (
-                                    wo.teknisiSeksi &&
-                                    wo.teknisiBagian
+                                    wo.teknisiSection &&
+                                    wo.teknisiDepartment
                                 ) { %>
 
                                     <span class="wo-org-separator">
@@ -826,9 +852,9 @@
                                 <% } %>
 
 
-                                <% if (wo.teknisiBagian) { %>
+                                <% if (wo.teknisiDepartment) { %>
 
-                                    <%= wo.teknisiBagian %>
+                                    <%= wo.teknisiDepartment %>
 
                                 <% } %>
 
@@ -913,6 +939,7 @@
 
                     <% if (
                         role === "teknisi" &&
+                        Number(wo.teknisiId) === Number(currentUserId) &&
                         wo.status === "Ditugaskan"
                     ) { %>
 
@@ -933,55 +960,9 @@
 
                     <% if (
                         role === "teknisi" &&
+                        Number(wo.teknisiId) === Number(currentUserId) &&
                         wo.status === "Diproses"
                     ) { %>
-
-                        <form
-                            method="POST"
-                            action="/workorder/<%= wo.id %>/waiting"
-                            class="waiting-form"
-                        >
-
-                            <button
-                                type="submit"
-                                class="btn-action btn-waiting"
-                            >
-                                ⏸ Waiting
-                            </button>
-
-                            <select
-                                name="reason"
-                                class="waiting-reason"
-                                required
-                            >
-
-                                <option value="">
-                                    Pilih alasan menunggu...
-                                </option>
-
-                                <option value="Menunggu Barang">
-                                    📦 Menunggu Barang
-                                </option>
-
-                                <option value="Menunggu User">
-                                    👤 Menunggu User
-                                </option>
-
-                                <option value="Menunggu Vendor">
-                                    🏢 Menunggu Vendor
-                                </option>
-
-                                <option value="Menunggu Keputusan">
-                                    👔 Menunggu Keputusan
-                                </option>
-
-                                <option value="Lainnya">
-                                    📝 Lainnya
-                                </option>
-
-                            </select>                          
-
-                        </form>
 
                         <% if (
                             wo.id === activeId &&
@@ -989,6 +970,7 @@
                         ) { %>
 
                             <form
+                                id="completion-form-<%= wo.id %>"
                                 method="POST"
                                 action="/workorder/<%= wo.id %>/complete"
                                 class="completion-form"
@@ -1052,36 +1034,91 @@
 
                                 </div>
 
+                            </form>
 
-                                <div class="completion-actions">
+                        <% } %>
 
-                                    <button
-                                        type="submit"
-                                        class="btn-action btn-complete"
-                                    >
-                                        ✓ Selesaikan Work Order
-                                    </button>
+                        <div class="technician-action-bar">
 
-                                </div>
+                            <form
+                                method="POST"
+                                action="/workorder/<%= wo.id %>/waiting"
+                                class="waiting-form"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn-action btn-waiting"
+                                >
+                                    ⏸ Waiting
+                                </button>
+
+                                <select
+                                    name="reason"
+                                    class="waiting-reason"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Pilih alasan menunggu...
+                                    </option>
+
+                                    <option value="Menunggu Barang">
+                                        📦 Menunggu Barang
+                                    </option>
+
+                                    <option value="Menunggu User">
+                                        👤 Menunggu User
+                                    </option>
+
+                                    <option value="Menunggu Vendor">
+                                        🏢 Menunggu Vendor
+                                    </option>
+
+                                    <option value="Menunggu Keputusan">
+                                        👔 Menunggu Keputusan
+                                    </option>
+
+                                    <option value="Lainnya">
+                                        📝 Lainnya
+                                    </option>
+
+                                </select>
 
                             </form>
 
-                        <% } else { %>
+                            <% if (
+                                wo.id === activeId &&
+                                completeMode
+                            ) { %>
 
-                            <button
-                                type="button"
-                                class="btn-action btn-complete btn-open-completion"
-                                data-id="<%= wo.id %>"
-                            >
-                                ✓ Selesaikan
-                            </button>
+                                <button
+                                    type="submit"
+                                    form="completion-form-<%= wo.id %>"
+                                    class="btn-action btn-complete technician-complete-action"
+                                >
+                                    ✓ Selesaikan Work Order
+                                </button>
 
-                        <% } %>
+                            <% } else { %>
+
+                                <button
+                                    type="button"
+                                    class="btn-action btn-complete btn-open-completion technician-complete-action"
+                                    data-id="<%= wo.id %>"
+                                >
+                                    ✓ Selesaikan
+                                </button>
+
+                            <% } %>
+
+                        </div>
 
                     <% } %>
 
                     <% if (
                         role === "teknisi" &&
+                        Number(wo.teknisiId) === Number(currentUserId) &&
                         wo.status === "Waiting"
                     ) { %>
 
@@ -1103,7 +1140,9 @@
 
                     <% if (
                         wo.status === "Selesai" &&
-                        role === "asman"
+                        role === "asman" &&
+                        workflow?.closing &&
+                        workflow?.verification
                     ) { %>
 
                         <div class="asman-verification-action">
@@ -1126,16 +1165,20 @@
                                     </form>
 
 
+                                    <% if (workflow?.escalation) { %>
                                     <button
                                         type="submit"
                                         form="<%= 'escalate-' + wo.id %>"
-                                        class="btn-action btn-escalate-primary">
+                                        class="btn-action btn-escalate-primary"
+                                        style="display:none;">
                                         
                                         ⚠ Eskalasi ke Manager
                                     </button>
+                                    <% } %>
 
                                 </div>
 
+                                <% if (workflow?.escalation) { %>
                                 <label class="escalation-toggle">
 
                                     <input
@@ -1149,10 +1192,12 @@
                                     </span>
 
                                 </label>
+                                <% } %>
 
                             </div>
 
 
+                            <% if (workflow?.escalation) { %>
                             <form
                                 id="<%= 'escalate-' + wo.id %>"
                                 method="POST"
@@ -1166,6 +1211,7 @@
                                     required
                                 ></textarea>
                             </form>
+                            <% } %>
 
                         </div>
 

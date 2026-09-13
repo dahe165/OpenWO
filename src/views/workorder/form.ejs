@@ -22,8 +22,12 @@
                 required
             >
 
+                <option value="<%= currentUserId %>">
+                    Saya sendiri — <%= currentUserName %>
+                </option>
+
                 <option value="">
-                    Pilih Pelapor
+                    Pilih pengguna lain...
                 </option>
 
                 <% users.forEach(function(user) { %>
@@ -32,13 +36,13 @@
                         value="<%= user.id %>"
                     >
                         <%= user.nama %>
-                        <% if (user.seksi || user.bagian) { %>
+                        <% if (user.section_nama || user.department_nama) { %>
                             —
-                            <%= user.seksi || "" %>
-                            <% if (user.seksi && user.bagian) { %>
+                            <%= user.section_nama || "" %>
+                            <% if (user.section_nama && user.department_nama) { %>
                                 •
                             <% } %>
-                            <%= user.bagian || "" %>
+                            <%= user.department_nama || "" %>
                         <% } %>
                     </option>
 
@@ -49,6 +53,53 @@
         </div>
 
     <% } %>
+
+
+    <!-- =====================================
+         TUJUAN WORK ORDER
+         ===================================== -->
+
+    <div class="wo-form-row">
+
+        <div class="wo-form-field">
+            <label for="targetDepartmentId" class="form-label">
+                Bagian Tujuan
+            </label>
+            <select id="targetDepartmentId" name="targetDepartmentId" class="form-select" required>
+                <option value="">Pilih Bagian Tujuan</option>
+                <% departments.forEach(function(department) { %>
+                    <option value="<%= department.id %>"><%= department.nama %></option>
+                <% }); %>
+            </select>
+        </div>
+
+        <div class="wo-form-field">
+            <label for="targetSectionId" class="form-label">
+                Seksi Tujuan
+            </label>
+            <select id="targetSectionId" name="targetSectionId" class="form-select" required disabled>
+                <option value="">Pilih Seksi Tujuan</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div id="targetScopeHint" class="wo-routing-hint">
+        <span>🎯</span>
+        <small>Pilih Seksi Tujuan untuk menentukan scope pekerjaan.</small>
+    </div>
+
+    <style>
+        .wo-routing-hint {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: -10px;
+            margin-bottom: 18px;
+            color: #64748b;
+            font-size: 11px;
+        }
+    </style>
 
 
     <!-- =====================================
@@ -88,6 +139,7 @@
                 name="kategori"
                 class="form-select"
                 required
+                disabled
             >
 
                 <option value="">
@@ -164,6 +216,7 @@
 
                 <option
                     value="<%= priority.nama %>"
+                    data-color="<%= priority.warna || '#64748b' %>"
                 >
                     <%= priority.nama %>
                 </option>
@@ -173,6 +226,54 @@
         </select>
 
     </div>
+
+    <div class="priority-select-color" id="priorityColorHint">
+        <span></span>
+        <small>Pilih prioritas</small>
+    </div>
+
+    <style>
+        .priority-select-color {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: -10px;
+            margin-bottom: 18px;
+            color: #64748b;
+            font-size: 11px;
+        }
+        .priority-select-color span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+        }
+    </style>
+
+    <script>
+    (function () {
+        const select = document.getElementById("prioritas");
+        const hint = document.getElementById("priorityColorHint");
+        if (!select || !hint) return;
+        const dot = hint.querySelector("span");
+        const label = hint.querySelector("small");
+        function updatePriorityColor() {
+            const option = select.options[select.selectedIndex];
+            const color = option?.dataset?.color;
+            if (color) {
+                dot.style.background = color;
+                label.textContent = option.textContent.trim();
+                label.style.color = color;
+            } else {
+                dot.style.background = "#cbd5e1";
+                label.textContent = "Pilih prioritas";
+                label.style.color = "#64748b";
+            }
+        }
+        select.addEventListener("change", updatePriorityColor);
+        updatePriorityColor();
+    })();
+    </script>
 
     <!-- =====================================
          DESKRIPSI

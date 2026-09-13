@@ -86,16 +86,24 @@ function getAll() {
     return db
         .prepare(`
             SELECT
-                id,
-                nama,
-                username,
-                role,
-                seksi,
-                bagian,
-                department_id,
-                section_id
+                users.id,
+                users.nama,
+                users.username,
+                users.role,
+                users.seksi,
+                users.bagian,
+                users.department_id,
+                users.section_id,
+                departments.kode AS department_kode,
+                departments.nama AS department_nama,
+                sections.kode AS section_kode,
+                sections.nama AS section_nama
             FROM users
-            ORDER BY id
+            LEFT JOIN departments
+                ON departments.id = users.department_id
+            LEFT JOIN sections
+                ON sections.id = users.section_id
+            ORDER BY users.id
         `)
         .all();
 
@@ -236,17 +244,25 @@ function findByUsername(
     return db
         .prepare(`
             SELECT
-                id,
-                nama,
-                username,
-                password_hash,
-                role,
-                seksi,
-                bagian,
-                department_id,
-                section_id
+                users.id,
+                users.nama,
+                users.username,
+                users.password_hash,
+                users.role,
+                users.seksi,
+                users.bagian,
+                users.department_id,
+                users.section_id,
+                departments.kode AS department_kode,
+                departments.nama AS department_nama,
+                sections.kode AS section_kode,
+                sections.nama AS section_nama
             FROM users
-            WHERE username = ?
+            LEFT JOIN departments
+                ON departments.id = users.department_id
+            LEFT JOIN sections
+                ON sections.id = users.section_id
+            WHERE users.username = ?
         `)
         .get(
             username
@@ -262,16 +278,24 @@ function findById(
     return db
         .prepare(`
             SELECT
-                id,
-                nama,
-                username,
-                role,
-                seksi,
-                bagian,
-                department_id,
-                section_id
+                users.id,
+                users.nama,
+                users.username,
+                users.role,
+                users.seksi,
+                users.bagian,
+                users.department_id,
+                users.section_id,
+                departments.kode AS department_kode,
+                departments.nama AS department_nama,
+                sections.kode AS section_kode,
+                sections.nama AS section_nama
             FROM users
-            WHERE id = ?
+            LEFT JOIN departments
+                ON departments.id = users.department_id
+            LEFT JOIN sections
+                ON sections.id = users.section_id
+            WHERE users.id = ?
         `)
         .get(
             id
@@ -331,17 +355,25 @@ function getTechnicians() {
     return db
         .prepare(`
             SELECT
-                id,
-                nama,
-                username,
-                role,
-                seksi,
-                bagian,
-                department_id,
-                section_id
+                users.id,
+                users.nama,
+                users.username,
+                users.role,
+                users.seksi,
+                users.bagian,
+                users.department_id,
+                users.section_id,
+                departments.kode AS department_kode,
+                departments.nama AS department_nama,
+                sections.kode AS section_kode,
+                sections.nama AS section_nama
             FROM users
-            WHERE role = 'teknisi'
-            ORDER BY nama
+            LEFT JOIN departments
+                ON departments.id = users.department_id
+            LEFT JOIN sections
+                ON sections.id = users.section_id
+            WHERE users.role = 'teknisi'
+            ORDER BY users.nama
         `)
         .all();
 

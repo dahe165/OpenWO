@@ -180,6 +180,135 @@ if (!hasPriority) {
 
 /*
  * =====================================
+ * MIGRASI — TUJUAN WORK ORDER
+ * =====================================
+ *
+ * Target WO dipisahkan dari Pelapor.
+ * Pelapor boleh berasal dari Bagian/Seksi
+ * mana pun, sedangkan target menentukan
+ * Seksi yang bertanggung jawab.
+ *
+ */
+
+const hasTargetDepartmentId =
+    workOrderColumns.some(
+        column =>
+            column.name ===
+            "target_department_id"
+    );
+
+if (!hasTargetDepartmentId) {
+
+    db.exec(`
+        ALTER TABLE work_orders
+        ADD COLUMN target_department_id INTEGER
+        REFERENCES departments(id);
+    `);
+
+    console.log(
+        "DATABASE MIGRATION: kolom target_department_id berhasil ditambahkan."
+    );
+
+}
+
+const hasTargetSectionId =
+    workOrderColumns.some(
+        column =>
+            column.name ===
+            "target_section_id"
+    );
+
+if (!hasTargetSectionId) {
+
+    db.exec(`
+        ALTER TABLE work_orders
+        ADD COLUMN target_section_id INTEGER
+        REFERENCES sections(id);
+    `);
+
+    console.log(
+        "DATABASE MIGRATION: kolom target_section_id berhasil ditambahkan."
+    );
+
+}
+
+db.exec(`
+    CREATE INDEX IF NOT EXISTS
+    idx_work_orders_target_section_id
+    ON work_orders(target_section_id);
+`);
+
+/*
+ * Backfill aman untuk WO lama:
+ * jika sudah memiliki teknisi dan teknisi
+ * memiliki Seksi, gunakan Seksi teknisi
+ * sebagai target historis.
+ *
+ * WO lama yang belum memiliki teknisi tetap
+ * NULL karena tujuan aslinya tidak dapat
+ * diketahui secara aman dari data existing.
+ */
+
+db.exec(`
+    UPDATE work_orders
+    SET
+        target_section_id = (
+            SELECT users.section_id
+            FROM users
+            WHERE users.id = work_orders.teknisi_id
+        ),
+        target_department_id = (
+            SELECT users.department_id
+            FROM users
+            WHERE users.id = work_orders.teknisi_id
+        )
+    WHERE target_section_id IS NULL
+      AND teknisi_id IS NOT NULL;
+`);
+
+/*
+ * Backfill tambahan yang tetap aman:
+ * jika kategori WO lama hanya terhubung ke
+ * satu Seksi, gunakan Seksi tersebut sebagai
+ * target. Kategori yang terhubung ke beberapa
+ * Seksi tidak ditebak.
+ */
+
+db.exec(`
+    UPDATE work_orders
+    SET
+        target_section_id = (
+            SELECT sc.section_id
+            FROM section_categories sc
+            INNER JOIN categories c
+                ON c.id = sc.category_id
+            WHERE c.nama = work_orders.kategori
+            GROUP BY sc.section_id
+            HAVING COUNT(*) = 1
+        ),
+        target_department_id = (
+            SELECT sections.department_id
+            FROM section_categories sc
+            INNER JOIN categories c
+                ON c.id = sc.category_id
+            INNER JOIN sections
+                ON sections.id = sc.section_id
+            WHERE c.nama = work_orders.kategori
+            GROUP BY sc.section_id, sections.department_id
+            HAVING COUNT(*) = 1
+        )
+    WHERE target_section_id IS NULL
+      AND (
+          SELECT COUNT(*)
+          FROM section_categories sc
+          INNER JOIN categories c
+              ON c.id = sc.category_id
+          WHERE c.nama = work_orders.kategori
+      ) = 1;
+`);
+
+/*
+ * =====================================
  * Tabel Timeline
  * =====================================
  */

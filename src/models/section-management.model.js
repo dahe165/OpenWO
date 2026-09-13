@@ -25,16 +25,22 @@ function getSectionById(sectionId) {
 function getAsmansBySection(sectionId) {
     return db.prepare(`
         SELECT
-            id,
-            nama,
-            username,
-            role,
-            department_id,
-            section_id
+            users.id,
+            users.nama,
+            users.username,
+            users.role,
+            users.department_id,
+            users.section_id,
+            departments.nama AS department_nama,
+            sections.nama AS section_nama
         FROM users
-        WHERE role = 'asman'
-          AND section_id = ?
-        ORDER BY nama ASC, id ASC
+        LEFT JOIN departments
+            ON departments.id = users.department_id
+        LEFT JOIN sections
+            ON sections.id = users.section_id
+        WHERE users.role = 'asman'
+          AND users.section_id = ?
+        ORDER BY users.nama ASC, users.id ASC
     `).all(Number(sectionId));
 }
 
@@ -46,16 +52,22 @@ function getAsmansBySection(sectionId) {
 function getTechniciansBySection(sectionId) {
     return db.prepare(`
         SELECT
-            id,
-            nama,
-            username,
-            role,
-            department_id,
-            section_id
+            users.id,
+            users.nama,
+            users.username,
+            users.role,
+            users.department_id,
+            users.section_id,
+            departments.nama AS department_nama,
+            sections.nama AS section_nama
         FROM users
-        WHERE role = 'teknisi'
-          AND section_id = ?
-        ORDER BY nama ASC, id ASC
+        LEFT JOIN departments
+            ON departments.id = users.department_id
+        LEFT JOIN sections
+            ON sections.id = users.section_id
+        WHERE users.role = 'teknisi'
+          AND users.section_id = ?
+        ORDER BY users.nama ASC, users.id ASC
     `).all(Number(sectionId));
 }
 
@@ -71,23 +83,29 @@ function getTechniciansBySection(sectionId) {
 function getAvailableAsmans(departmentId, sectionId) {
     return db.prepare(`
         SELECT
-            id,
-            nama,
-            username,
-            role,
-            department_id,
-            section_id
+            users.id,
+            users.nama,
+            users.username,
+            users.role,
+            users.department_id,
+            users.section_id,
+            departments.nama AS department_nama,
+            sections.nama AS section_nama
         FROM users
-        WHERE role = 'asman'
+        LEFT JOIN departments
+            ON departments.id = users.department_id
+        LEFT JOIN sections
+            ON sections.id = users.section_id
+        WHERE users.role = 'asman'
           AND (
-                department_id = ?
-                OR department_id IS NULL
+                users.department_id = ?
+                OR users.department_id IS NULL
               )
           AND (
-                section_id = ?
-                OR section_id IS NULL
+                users.section_id = ?
+                OR users.section_id IS NULL
               )
-        ORDER BY nama ASC, id ASC
+        ORDER BY users.nama ASC, users.id ASC
     `).all(
         Number(departmentId),
         Number(sectionId)
@@ -109,23 +127,29 @@ function getAvailableAsmans(departmentId, sectionId) {
 function getAvailableTechnicians(departmentId, sectionId) {
     return db.prepare(`
         SELECT
-            id,
-            nama,
-            username,
-            role,
-            department_id,
-            section_id
+            users.id,
+            users.nama,
+            users.username,
+            users.role,
+            users.department_id,
+            users.section_id,
+            departments.nama AS department_nama,
+            sections.nama AS section_nama
         FROM users
-        WHERE role = 'teknisi'
+        LEFT JOIN departments
+            ON departments.id = users.department_id
+        LEFT JOIN sections
+            ON sections.id = users.section_id
+        WHERE users.role = 'teknisi'
           AND (
-                department_id = ?
-                OR department_id IS NULL
+                users.department_id = ?
+                OR users.department_id IS NULL
               )
           AND (
-                section_id = ?
-                OR section_id IS NULL
+                users.section_id = ?
+                OR users.section_id IS NULL
               )
-        ORDER BY nama ASC, id ASC
+        ORDER BY users.nama ASC, users.id ASC
     `).all(
         Number(departmentId),
         Number(sectionId)

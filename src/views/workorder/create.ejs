@@ -34,118 +34,118 @@
 <script>
 (function () {
 
-    /*
-     * =====================================
-     * MASTER DATA
-     * =====================================
-     *
-     * Data kategori dan subkategori
-     * berasal dari database melalui controller.
-     */
+    const targetSections =
+        <%- JSON.stringify(targetSections || []) %>;
 
     const categories =
         <%- JSON.stringify(categories || []) %>;
 
+    const departmentSelect =
+        document.getElementById("targetDepartmentId");
+
+    const sectionSelect =
+        document.getElementById("targetSectionId");
 
     const kategori =
         document.getElementById("kategori");
 
-
     const subkategori =
         document.getElementById("subkategori");
 
+    const hint =
+        document.getElementById("targetScopeHint");
 
-    if (!kategori || !subkategori) {
+    if (!departmentSelect || !sectionSelect || !kategori || !subkategori) {
         return;
     }
 
+    function resetCategories(message) {
+        kategori.innerHTML = '<option value="">Pilih Kategori</option>';
+        kategori.disabled = true;
+        subkategori.innerHTML = '<option value="">Pilih Sub Kategori</option>';
+        subkategori.disabled = true;
+        if (hint) hint.querySelector("small").textContent = message;
+    }
 
-    kategori.addEventListener(
-        "change",
-        function () {
+    function loadSections() {
+        const departmentId = Number(departmentSelect.value);
 
-            const selected =
-                this.value;
+        sectionSelect.innerHTML = '<option value="">Pilih Seksi Tujuan</option>';
+        sectionSelect.disabled = true;
+        resetCategories("Pilih Seksi Tujuan untuk menentukan scope pekerjaan.");
 
+        if (!departmentId) return;
 
-            /*
-             * Reset subkategori
-             */
+        targetSections
+            .filter(section => Number(section.department_id) === departmentId)
+            .forEach(section => {
+                const option = document.createElement("option");
+                option.value = section.id;
+                option.textContent = section.nama;
+                sectionSelect.appendChild(option);
+            });
 
-            subkategori.innerHTML =
-                '<option value="">Pilih Sub Kategori</option>';
+        sectionSelect.disabled = sectionSelect.options.length <= 1;
+    }
 
+    function loadCategories() {
+        const sectionId = Number(sectionSelect.value);
+        kategori.innerHTML = '<option value="">Pilih Kategori</option>';
+        kategori.disabled = true;
+        subkategori.innerHTML = '<option value="">Pilih Sub Kategori</option>';
+        subkategori.disabled = true;
 
-            subkategori.disabled = true;
-
-
-            if (!selected) {
-                return;
-            }
-
-
-            /*
-             * Cari kategori berdasarkan nama.
-             */
-
-            const category =
-                categories.find(
-                    function (item) {
-                        return item.nama === selected;
-                    }
-                );
-
-
-            if (
-                !category ||
-                !Array.isArray(
-                    category.subcategories
-                )
-            ) {
-                return;
-            }
-
-
-            /*
-             * Masukkan subkategori aktif.
-             */
-
-            category.subcategories.forEach(
-                function (item) {
-
-                    const option =
-                        document.createElement(
-                            "option"
-                        );
-
-                    option.value =
-                        item.nama;
-
-                    option.textContent =
-                        item.nama;
-
-                    subkategori.appendChild(
-                        option
-                    );
-
-                }
-            );
-
-
-            /*
-             * Aktifkan dropdown
-             * jika tersedia subkategori.
-             */
-
-            if (
-                category.subcategories.length > 0
-            ) {
-                subkategori.disabled =
-                    false;
-            }
-
+        const section = targetSections.find(item => Number(item.id) === sectionId);
+        if (!section) {
+            if (hint) hint.querySelector("small").textContent = "Pilih Seksi Tujuan untuk menentukan scope pekerjaan.";
+            return;
         }
-    );
+
+        const allowed = new Set((section.categoryIds || []).map(Number));
+
+        categories
+            .filter(category => allowed.has(Number(category.id)))
+            .forEach(category => {
+                const option = document.createElement("option");
+                option.value = category.nama;
+                option.textContent = category.nama;
+                kategori.appendChild(option);
+            });
+
+        kategori.disabled = kategori.options.length <= 1;
+
+        if (hint) {
+            hint.querySelector("small").textContent =
+                kategori.disabled
+                    ? "Seksi ini belum memiliki Kategori."
+                    : "Kategori yang tampil hanya yang menjadi scope Seksi tujuan.";
+        }
+    }
+
+    function loadSubcategories() {
+        const selected = kategori.value;
+        subkategori.innerHTML = '<option value="">Pilih Sub Kategori</option>';
+        subkategori.disabled = true;
+        if (!selected) return;
+
+        const category = categories.find(item => item.nama === selected);
+        if (!category || !Array.isArray(category.subcategories)) return;
+
+        category.subcategories.forEach(item => {
+            const option = document.createElement("option");
+            option.value = item.nama;
+            option.textContent = item.nama;
+            subkategori.appendChild(option);
+        });
+
+        subkategori.disabled = category.subcategories.length === 0;
+    }
+
+    departmentSelect.addEventListener("change", loadSections);
+    sectionSelect.addEventListener("change", loadCategories);
+    kategori.addEventListener("change", loadSubcategories);
+
+    resetCategories("Pilih Seksi Tujuan untuk menentukan scope pekerjaan.");
 
 })();
 </script>

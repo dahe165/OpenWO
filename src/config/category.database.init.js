@@ -19,6 +19,7 @@ db.exec(`
 
         urutan INTEGER NOT NULL DEFAULT 0,
 
+
         created_at TEXT
             DEFAULT CURRENT_TIMESTAMP,
 
@@ -372,6 +373,8 @@ db.exec(`
 
         urutan INTEGER NOT NULL DEFAULT 0,
 
+        warna TEXT NOT NULL DEFAULT '#64748b',
+
         created_at TEXT
             DEFAULT CURRENT_TIMESTAMP,
 
@@ -380,6 +383,47 @@ db.exec(`
 
     );
 `);
+
+
+/*
+ * =====================================
+ * Migrasi Warna Prioritas
+ * =====================================
+ *
+ * Aman untuk database lama yang sudah memiliki
+ * tabel priorities tanpa kolom warna.
+ *
+ */
+
+const priorityColumns =
+    db.prepare(`PRAGMA table_info(priorities)`).all();
+
+if (!priorityColumns.some(column => column.name === "warna")) {
+
+    db.exec(`
+        ALTER TABLE priorities
+        ADD COLUMN warna TEXT NOT NULL DEFAULT '#64748b'
+    `);
+
+    const setPriorityColor =
+        db.prepare(`
+            UPDATE priorities
+            SET warna = ?
+            WHERE LOWER(nama) = LOWER(?)
+        `);
+
+    [
+        ["#dc2626", "Emergency"],
+        ["#ea580c", "Critical"],
+        ["#d97706", "Urgent"],
+        ["#2563eb", "High"],
+        ["#16a34a", "Normal"],
+        ["#64748b", "Low"]
+    ].forEach(([warna, nama]) =>
+        setPriorityColor.run(warna, nama)
+    );
+
+}
 
 
 /*
@@ -393,37 +437,42 @@ const insertPriority =
         INSERT OR IGNORE INTO priorities (
             nama,
             aktif,
-            urutan
+            urutan,
+            warna
         )
-        VALUES (?, ?, ?)
+        VALUES (?, ?, ?, ?)
     `);
 
 
 insertPriority.run(
     "Critical",
     1,
-    1
+    1,
+    "#ea580c"
 );
 
 
 insertPriority.run(
     "High",
     1,
-    2
+    2,
+    "#2563eb"
 );
 
 
 insertPriority.run(
     "Normal",
     1,
-    3
+    3,
+    "#16a34a"
 );
 
 
 insertPriority.run(
     "Low",
     1,
-    4
+    4,
+    "#64748b"
 );
 
 

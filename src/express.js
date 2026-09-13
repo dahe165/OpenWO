@@ -9,6 +9,7 @@ const session = require("express-session");
 const {loadUser} = require("./middleware/user.middleware");
 
 const settingsModel = require("./models/settings.model");
+const { getTimelineDisplayMode } = require("./config/timeline.config");
 
 const expressApp = express();
 
@@ -69,6 +70,9 @@ expressApp.use((req, res, next) => {
     res.locals.appLogo =
         settingsModel.get("app_logo")
         || "";
+
+    res.locals.timelineDisplayMode =
+        getTimelineDisplayMode();
 
     next();
 

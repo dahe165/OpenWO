@@ -45,7 +45,9 @@ function index(req, res) {
     const report =
         reportService.getMonthlyReport(
             year,
-            month
+            month,
+            req.user,
+            req.query
         );
 
 

@@ -234,6 +234,50 @@
 
 
             <!-- =========================================
+                 WARNA
+                 ========================================= -->
+
+            <div class="priority-form-group">
+
+                <label
+                    for="warna"
+                    class="priority-form-label"
+                >
+                    Warna Prioritas
+                </label>
+
+                <div class="priority-color-editor">
+                    <input
+                        type="color"
+                        id="warna"
+                        name="warna"
+                        class="priority-color-input"
+                        value="<%= priority?.warna || '#64748b' %>"
+                    >
+                    <input
+                        type="text"
+                        id="warnaHex"
+                        class="priority-form-input priority-color-hex"
+                        value="<%= priority?.warna || '#64748b' %>"
+                        maxlength="7"
+                        pattern="#[0-9A-Fa-f]{6}"
+                        aria-label="Kode warna HEX"
+                    >
+                    <span
+                        id="warnaPreview"
+                        class="priority-color-preview"
+                        style="background:<%= priority?.warna || '#64748b' %>;"
+                    ></span>
+                </div>
+
+                <div class="priority-form-help">
+                    Pilih warna yang akan digunakan pada Work Order.
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
                  ACTION
                  ========================================= -->
 
@@ -262,3 +306,61 @@
     </div>
 
 </div>
+<style>
+.priority-color-editor {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.priority-color-input {
+    width: 48px;
+    height: 42px;
+    padding: 3px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.priority-color-hex {
+    max-width: 150px;
+}
+
+.priority-color-preview {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 1px #d1d5db;
+}
+</style>
+
+<script>
+(function () {
+    const color = document.getElementById("warna");
+    const hex = document.getElementById("warnaHex");
+    const preview = document.getElementById("warnaPreview");
+    if (!color || !hex) return;
+
+    function syncFromColor() {
+        hex.value = color.value;
+        if (preview) preview.style.background = color.value;
+    }
+
+    color.addEventListener("input", syncFromColor);
+
+    hex.addEventListener("input", function () {
+        if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) {
+            color.value = hex.value;
+            if (preview) preview.style.background = hex.value;
+        }
+    });
+
+    hex.addEventListener("blur", function () {
+        if (!/^#[0-9A-Fa-f]{6}$/.test(hex.value)) {
+            syncFromColor();
+        }
+    });
+})();
+</script>

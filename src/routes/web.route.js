@@ -62,6 +62,9 @@ const sectionController =
 const sectionManagementController =
     require("../controllers/admin.section-management.controller");
 
+const assetController =
+    require("../controllers/admin.asset.controller");
+
 
 // =====================================================
 // MIDDLEWARE
@@ -138,6 +141,8 @@ router.get(
     requireRole(
         "pelapor",
         "teknisi",
+        "asman",
+        "manager",
         "admin"
     ),
     workorderController.create
@@ -152,6 +157,8 @@ router.post(
     requireRole(
         "pelapor",
         "teknisi",
+        "asman",
+        "manager",
         "admin"
     ),
     workorderController.store
@@ -365,11 +372,17 @@ router.post(
                         role:
                             user.role,
 
-                        seksi:
-                            user.seksi,
+                        department_id:
+                            user.department_id,
 
-                        bagian:
-                            user.bagian
+                        section_id:
+                            user.section_id,
+
+                        departmentName:
+                            user.department_nama,
+
+                        sectionName:
+                            user.section_nama
 
                     };
 
@@ -830,6 +843,28 @@ router.post(
 // =====================================================
 
 router.get(
+    "/admin/business-calendar/hours/edit",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    businessCalendarController.editBusinessHours
+);
+
+
+router.post(
+    "/admin/business-calendar/hours",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    businessCalendarController.updateBusinessHours
+);
+
+
+router.get(
     "/admin/business-calendar",
     requireLogin,
     requireRole(
@@ -899,6 +934,16 @@ router.post(
         "appLogo"
     ),
     settingsController.update
+);
+
+router.post(
+    "/setting/workorder",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    settingsController.updateWorkorder
 );
 
 
@@ -1118,6 +1163,70 @@ router.post(
         "superuser"
     ),
     sectionManagementController.update
+);
+
+// =====================================================
+// ADMIN - ASSET MANAGEMENT v0.0
+// =====================================================
+
+router.get(
+    "/admin/assets",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    assetController.index
+);
+
+router.get(
+    "/admin/assets/create",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    assetController.create
+);
+
+router.post(
+    "/admin/assets",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    assetController.store
+);
+
+router.get(
+    "/admin/assets/:id/edit",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    assetController.edit
+);
+
+router.post(
+    "/admin/assets/:id",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    assetController.update
+);
+
+router.get(
+    "/admin/assets/:id",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    assetController.detail
 );
 
 // =====================================================

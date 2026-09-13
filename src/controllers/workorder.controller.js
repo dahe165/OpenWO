@@ -2,6 +2,12 @@ const { getIO } = require("../socket");
 
 const workorderModel = require("../models/workorder.model");
 
+const { getWorkflowSettings } =
+    require("../config/workorder.workflow");
+
+const { getTimelineProgressColors } =
+    require("../config/timeline.config");
+
 const categoryModel = require("../models/category.model");
 
 const priorityModel = require("../models/priority.model");
@@ -10,6 +16,12 @@ const userModel = require("../models/user.model");
 
 const sectionManagementModel =
     require("../models/section-management.model");
+
+const departmentModel =
+    require("../models/department.model");
+
+const sectionModel =
+    require("../models/section.model");
 
 const { formatRelativeTime } = require("../utils/time.util");
 
@@ -27,7 +39,9 @@ function create(req, res) {
 
     const canCreateForOther =
         role === "teknisi" ||
-        role === "admin";
+        role === "admin" ||
+        role === "asman" ||
+        role === "manager";
 
     const categories =
     categoryModel.getActiveCategories()
@@ -44,6 +58,26 @@ function create(req, res) {
             };
 
         });
+
+    const departments =
+        departmentModel.getActive();
+
+    const sections =
+        sectionModel.getActive();
+
+    /*
+     * Routing map: Seksi tujuan -> kategori
+     * yang memang menjadi scope Seksi tersebut.
+     */
+    const targetSections =
+        sections.map(section => ({
+            ...section,
+            categoryIds:
+                sectionManagementModel
+                    .getCategoryIdsBySection(
+                        section.id
+                    )
+        }));
 
     const priorities =
     priorityModel.getActivePriorities();
@@ -62,11 +96,7 @@ function create(req, res) {
     if (canCreateForOther) {
 
         users =
-            userModel.getAll()
-                .filter(
-                    user =>
-                        user.role === "pelapor"
-                );
+            userModel.getAll();
 
     }
 
@@ -91,7 +121,15 @@ function create(req, res) {
 
             canCreateForOther,
 
+            currentUserId: req.user?.id,
+
+            currentUserName: req.user?.nama,
+
             categories,
+
+            departments,
+
+            targetSections,
 
             priorities
 
@@ -114,6 +152,8 @@ function store(req, res) {
         kategori,
         subkategori,
         prioritas,
+        targetDepartmentId: submittedTargetDepartmentId,
+        targetSectionId: submittedTargetSectionId,
         pelaporId: submittedPelaporId
     } = req.body;
 
@@ -170,20 +210,17 @@ function store(req, res) {
 
     else if (
         currentRole === "teknisi" ||
-        currentRole === "admin"
+        currentRole === "admin" ||
+        currentRole === "asman" ||
+        currentRole === "manager"
     ) {
 
+        // Default: user yang sedang login melapor untuk dirinya sendiri.
+        // Jika memilih pengguna lain di form, gunakan pengguna tersebut
+        // sebagai pelapor.
         pelaporId =
-            Number(submittedPelaporId);
-
-
-        if (!pelaporId) {
-
-            return res.status(400).send(
-                "Pelapor Work Order wajib dipilih."
-            );
-
-        }
+            Number(submittedPelaporId) ||
+            currentUserId;
 
     }
 
@@ -222,6 +259,29 @@ function store(req, res) {
 
     }
 
+    /*
+     * =====================================
+     * ORGANISASI PELAPOR
+     * =====================================
+     *
+     * Sumber organisasi Work Order adalah:
+     * users.department_id + users.section_id.
+     * Field legacy users.seksi / users.bagian
+     * tidak digunakan untuk menentukan organisasi.
+     *
+     */
+
+    if (
+        pelapor.department_id === null ||
+        pelapor.section_id === null
+    ) {
+
+        return res.status(400).send(
+            "Pelapor belum memiliki Bagian dan Seksi pada Master Organisasi."
+        );
+
+    }
+
 
     /*
      * =====================================
@@ -230,13 +290,115 @@ function store(req, res) {
      * =====================================
      */
 
+    // Pelapor bukan role khusus. Semua user yang valid dapat menjadi
+    // pelapor; role hanya menentukan hak/kemampuan di dalam OpenWO.
+    // Dengan demikian Manager/Asman/Teknisi/Admin juga dapat melapor
+    // untuk dirinya sendiri maupun membuatkan WO untuk user lain.
+
+
+    /*
+     * =====================================
+     * TUJUAN WORK ORDER
+     * =====================================
+     *
+     * Target ditentukan oleh Seksi tujuan,
+     * bukan oleh organisasi Pelapor.
+     * Bagian tujuan diturunkan dari Seksi
+     * dan hanya dipakai sebagai tampilan/form.
+     *
+     */
+
+    const targetSectionId =
+        Number(submittedTargetSectionId);
+
+    if (!targetSectionId) {
+
+        return res.status(400).send(
+            "Seksi tujuan Work Order wajib dipilih."
+        );
+
+    }
+
+    const targetSection =
+        sectionModel.getById(
+            targetSectionId
+        );
+
+    if (!targetSection || !targetSection.aktif) {
+
+        return res.status(400).send(
+            "Seksi tujuan tidak valid atau tidak aktif."
+        );
+
+    }
+
+    const targetDepartmentId =
+        Number(targetSection.department_id);
+
+    if (!targetDepartmentId) {
+
+        return res.status(400).send(
+            "Seksi tujuan belum memiliki Bagian."
+        );
+
+    }
+
     if (
-        currentRole !== "pelapor" &&
-        pelapor.role !== "pelapor"
+        submittedTargetDepartmentId &&
+        Number(submittedTargetDepartmentId) !==
+            targetDepartmentId
     ) {
 
         return res.status(400).send(
-            "User yang dipilih bukan Pelapor."
+            "Bagian dan Seksi tujuan tidak sesuai."
+        );
+
+    }
+
+    const targetCategoryIds =
+        sectionManagementModel
+            .getCategoryIdsBySection(
+                targetSectionId
+            );
+
+    const category =
+        categoryModel.getCategoryByName(
+            kategori
+        );
+
+    if (!category || !category.aktif) {
+
+        return res.status(400).send(
+            "Kategori Work Order tidak valid atau tidak aktif."
+        );
+
+    }
+
+    if (
+        !targetCategoryIds.includes(
+            Number(category.id)
+        )
+    ) {
+
+        return res.status(400).send(
+            "Kategori tersebut tidak tersedia pada Seksi tujuan."
+        );
+
+    }
+
+    const validSubcategories =
+        categoryModel.getActiveSubcategories(
+            category.id
+        );
+
+    if (
+        !validSubcategories.some(
+            item => item.nama === subkategori
+        )
+    ) {
+
+        return res.status(400).send(
+            "Sub Kategori tidak sesuai dengan Kategori yang dipilih."
         );
 
     }
@@ -277,6 +439,10 @@ function store(req, res) {
             subkategori,
 
             prioritas,
+
+            targetDepartmentId,
+
+            targetSectionId,
 
             pelaporId,
 
@@ -398,13 +564,46 @@ function index(req, res) {
     // AMBIL DATA SESUAI ROLE
     // ==========================================
 
+    const currentUser =
+        userModel.findById(
+            Number(req.user?.id)
+        );
+
     if (req.user?.role === "manager") {
 
         workorders =
-            workorderModel.getForManager();
+            currentUser?.department_id
+                ? workorderModel.getForManagerDepartment(
+                    currentUser.department_id
+                )
+                : [];
+
+    } else if (req.user?.role === "asman") {
+
+        workorders =
+            currentUser?.section_id
+                ? workorderModel.getForAsmanSection(
+                    currentUser.section_id
+                )
+                : [];
+
+    } else if (req.user?.role === "teknisi") {
+
+        workorders =
+            workorderModel.getByTechnicianId(
+                Number(req.user.id)
+            );
+
+    } else if (req.user?.role === "pelapor") {
+
+        workorders =
+            workorderModel.getForPelapor(
+                Number(req.user.id)
+            );
 
     } else {
 
+        // Admin tetap memiliki visibilitas penuh.
         workorders =
             workorderModel.getAll();
 
@@ -431,12 +630,51 @@ function index(req, res) {
 
     if (activeId) {
 
+        let activeSource = [];
+
+        if (req.user?.role === "manager") {
+
+            activeSource =
+                currentUser?.department_id
+                    ? workorderModel.getForManagerDepartment(
+                        currentUser.department_id
+                    )
+                    : [];
+
+        } else if (req.user?.role === "asman") {
+
+            activeSource =
+                currentUser?.section_id
+                    ? workorderModel.getForAsmanSection(
+                        currentUser.section_id
+                    )
+                    : [];
+
+        } else if (req.user?.role === "teknisi") {
+
+            activeSource =
+                workorderModel.getByTechnicianId(
+                    Number(req.user.id)
+                );
+
+        } else if (req.user?.role === "pelapor") {
+
+            activeSource =
+                workorderModel.getForPelapor(
+                    Number(req.user.id)
+                );
+
+        } else {
+
+            activeSource =
+                workorderModel.getAll();
+
+        }
+
         activeWO =
-            workorderModel
-                .getAll()
-                .find(
-                    wo => wo.id === activeId
-                ) || null;
+            activeSource.find(
+                wo => wo.id === activeId
+            ) || null;
 
     }
 
@@ -617,6 +855,20 @@ function index(req, res) {
 
 
     // ==========================================
+    // PRIORITY COLORS
+    // ==========================================
+
+    const priorityColors =
+        Object.fromEntries(
+            priorityModel
+                .getAllPriorities()
+                .map(priority => [
+                    priority.nama,
+                    priority.warna || "#64748b"
+                ])
+        );
+
+    // ==========================================
     // RENDER
     // ==========================================
 
@@ -635,7 +887,16 @@ function index(req, res) {
             role:
                 req.user?.role,
 
+            currentUserId:
+                Number(req.user?.id),
+
             technicians,
+
+            priorityColors,
+
+            workflow: getWorkflowSettings(),
+
+            timelineProgressColors: getTimelineProgressColors(),
 
             search,
             status,
@@ -1140,8 +1401,28 @@ function verifyManager(req, res) {
 
 function history(req, res) {
 
-    const workorders =
-        workorderModel.getHistory();
+    let workorders;
+
+    if (req.user?.role === "asman") {
+
+        const asman =
+            userModel.findById(
+                Number(req.user.id)
+            );
+
+        workorders =
+            asman?.section_id
+                ? workorderModel.getHistoryForAsmanSection(
+                    asman.section_id
+                )
+                : [];
+
+    } else {
+
+        workorders =
+            workorderModel.getHistory();
+
+    }
 
     res.render(
         "workorder/history",
@@ -1176,6 +1457,45 @@ function detail(req, res) {
             "Work Order tidak ditemukan."
         );
 
+    }
+
+    const detailUser =
+        userModel.findById(
+            Number(req.user?.id)
+        );
+
+    if (req.user?.role === "asman" &&
+        !workorderModel.isAsmanAuthorizedForWorkorder(id, req.user.id)) {
+
+        return res.status(403).send(
+            "Work Order bukan bagian dari Seksi Anda."
+        );
+    }
+
+    if (req.user?.role === "teknisi" &&
+        (Number(workorder.teknisiId) !== Number(req.user.id) ||
+         Number(workorder.targetSectionId) !== Number(detailUser?.section_id))) {
+
+        return res.status(403).send(
+            "Work Order bukan tugas Teknisi Anda."
+        );
+    }
+
+    if (req.user?.role === "manager" &&
+        Number(workorder.targetDepartmentId) !== Number(detailUser?.department_id)) {
+
+        return res.status(403).send(
+            "Work Order bukan bagian dari Bagian Anda."
+        );
+    }
+
+    if (req.user?.role === "pelapor" &&
+        Number(workorder.pelaporId) !== Number(req.user.id) &&
+        Number(workorder.createdBy) !== Number(req.user.id)) {
+
+        return res.status(403).send(
+            "Work Order bukan milik Anda."
+        );
     }
 
     res.render(

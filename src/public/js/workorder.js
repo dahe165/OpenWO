@@ -390,7 +390,7 @@ function focusCard(card) {
 
     if (!card) return;
 
-    const headerOffset = 90;
+    const headerOffset = -100;
 
     const top =
         card.getBoundingClientRect().top +

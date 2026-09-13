@@ -98,12 +98,20 @@
             <%= workorder.pelapor || "-" %>
         </p>
 
+        <p>
+            <strong>Tujuan:</strong>
+            <%= workorder.targetSection || "-" %>
+            <% if (workorder.targetDepartment) { %>
+                • <%= workorder.targetDepartment %>
+            <% } %>
+        </p>
+
     </div>
 
 </div>
 
 
-<div class="wo-timeline">
+<div class="wo-timeline timeline-display-<%= timelineDisplayMode %>">
 
     <h2>
         Timeline Work Order
@@ -153,22 +161,35 @@
                             <%= item.user || "-" %>
                         </span>
 
+                        <% if (timelineDisplayMode === "detail" && (item.section_nama || item.department_nama)) { %>
+                            <span>
+                                —
+                            </span>
+
+                            <span class="timeline-meta-org">
+                                <%= item.section_nama || "" %>
+                                <% if (item.section_nama && item.department_nama) { %>
+                                    <span> • </span>
+                                <% } %>
+                                <%= item.department_nama || "" %>
+                            </span>
+                        <% } %>
+
                         <span>
                             —
                         </span>
 
-                        <span>
-                            <%= new Date(
-                                item.tanggal
-                            ).toLocaleString(
+                        <span class="timeline-meta-date">
+                            <%= new Date(item.tanggal).toLocaleDateString(
                                 "id-ID",
-                                {
-                                    day: "2-digit",
-                                    month: "short",
-                                    year: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit"
-                                }
+                                { day: "2-digit", month: "short", year: "numeric" }
+                            ) %>
+                        </span>
+
+                        <span class="timeline-meta-time">
+                            <%= new Date(item.tanggal).toLocaleTimeString(
+                                "id-ID",
+                                { hour: "2-digit", minute: "2-digit", hour12: false }
                             ) %>
                         </span>
 

@@ -37,6 +37,7 @@ function getAllPriorities() {
             nama,
             aktif,
             urutan,
+            warna,
             created_at,
             updated_at
         FROM priorities
@@ -66,7 +67,8 @@ function getActivePriorities() {
             id,
             nama,
             aktif,
-            urutan
+            urutan,
+            warna
         FROM priorities
         WHERE aktif = 1
         ORDER BY
@@ -91,6 +93,7 @@ function getPriorityById(id) {
             nama,
             aktif,
             urutan,
+            warna,
             created_at,
             updated_at
         FROM priorities
@@ -114,6 +117,7 @@ function getPriorityByName(nama) {
             nama,
             aktif,
             urutan,
+            warna,
             created_at,
             updated_at
         FROM priorities
@@ -131,7 +135,8 @@ function getPriorityByName(nama) {
 
 function createPriority(
     nama,
-    urutan = 0
+    urutan = 0,
+    warna = "#64748b"
 ) {
 
     const result =
@@ -139,12 +144,14 @@ function createPriority(
             INSERT INTO priorities (
                 nama,
                 aktif,
-                urutan
+                urutan,
+                warna
             )
-            VALUES (?, 1, ?)
+            VALUES (?, 1, ?, ?)
         `).run(
             nama.trim(),
-            Number(urutan) || 0
+            Number(urutan) || 0,
+            warna
         );
 
 
@@ -164,7 +171,8 @@ function createPriority(
 function updatePriority(
     id,
     nama,
-    urutan
+    urutan,
+    warna = "#64748b"
 ) {
 
     db.prepare(`
@@ -173,12 +181,14 @@ function updatePriority(
         SET
             nama = ?,
             urutan = ?,
+            warna = ?,
             updated_at = CURRENT_TIMESTAMP
 
         WHERE id = ?
     `).run(
         nama.trim(),
         Number(urutan) || 0,
+        warna,
         id
     );
 

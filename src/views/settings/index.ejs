@@ -1,5 +1,9 @@
 <div class="wo-settings-page">
 
+    <% if (saved) { %>
+        <div class="wo-saved">✓ Pengaturan Work Order berhasil disimpan.</div>
+    <% } %>
+
     <div class="wo-settings-header">
         <a href="/setting" class="wo-settings-back">
             ← Kembali ke Pengaturan
@@ -21,9 +25,9 @@
             <strong>Konfigurasi bertahap</strong>
             <p>
                 Halaman ini menjadi pusat pengaturan Work Order.
-                Nilai yang tampil mengikuti workflow OpenWO saat ini;
-                perubahan perilaku akan diaktifkan bertahap agar workflow
-                yang sudah berjalan tetap aman.
+                Pengaturan di bawah menentukan tahapan setelah WO
+                berstatus Selesai. Perubahan hanya mengatur workflow
+                pascapenyelesaian dan tidak mengubah batas SLA.
             </p>
         </div>
     </div>
@@ -59,76 +63,170 @@
     </div>
 
 
-    <div class="wo-settings-section">
-        <div class="wo-section-heading">
+    <form method="POST" action="/setting/workorder" id="workflowSettingsForm">
+
+        <div class="wo-settings-section">
+            <div class="wo-section-heading">
+                <div>
+                    <h2>Workflow Setelah Selesai</h2>
+                    <p>Atur apakah WO berhenti di Selesai, diverifikasi, atau dapat ditutup.</p>
+                </div>
+            </div>
+
+            <div class="wo-settings-list">
+
+                <div class="wo-setting-row">
+                    <div>
+                        <h3>Penutupan WO</h3>
+                        <p>Jika OFF, WO berhenti di status <strong>Selesai</strong> dan tidak pernah menjadi Ditutup.</p>
+                    </div>
+                    <label class="setting-switch">
+                        <input type="checkbox" name="workflowClosing" <%= workflow.closing ? 'checked' : '' %>>
+                        <span class="setting-slider"></span>
+                        <span class="setting-state"><%= workflow.closing ? 'ON' : 'OFF' %></span>
+                    </label>
+                </div>
+
+                <div class="wo-setting-row">
+                    <div>
+                        <h3>Verifikasi Asman</h3>
+                        <p>Jika aktif, WO yang Selesai menampilkan tombol Verifikasi Asman sebelum dapat ditutup.</p>
+                    </div>
+                    <label class="setting-switch">
+                        <input type="checkbox" name="workflowVerification" id="workflowVerification" <%= workflow.verification ? 'checked' : '' %>>
+                        <span class="setting-slider"></span>
+                        <span class="setting-state"><%= workflow.verification ? 'ON' : 'OFF' %></span>
+                    </label>
+                </div>
+
+                <div class="wo-setting-row">
+                    <div>
+                        <h3>Eskalasi ke Manager</h3>
+                        <p>Asman dapat memilih mode Eskalasi dari sisi tombol Verifikasi Asman. Eskalasi tidak tersedia tanpa Verifikasi Asman.</p>
+                    </div>
+                    <label class="setting-switch <%= !workflow.verification || !workflow.closing ? 'disabled' : '' %>">
+                        <input type="checkbox" name="workflowEscalation" id="workflowEscalation" <%= workflow.escalation ? 'checked' : '' %> <%= !workflow.verification || !workflow.closing ? 'disabled' : '' %>>
+                        <span class="setting-slider"></span>
+                        <span class="setting-state"><%= workflow.escalation ? 'ON' : 'OFF' %></span>
+                    </label>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="wo-workflow-preview">
+            <div class="preview-title">Alur yang aktif</div>
+            <div id="workflowPreview"></div>
+        </div>
+
+        <div class="wo-settings-section">
+            <div class="wo-section-heading">
+                <div>
+                    <h2>Tampilan Timeline</h2>
+                    <p>Atur gaya tampilan Timeline Work Order secara global untuk seluruh pengguna.</p>
+                </div>
+            </div>
+
+            <div class="wo-settings-note timeline-setting-note">
+                <span>🌐</span>
+                <div>
+                    <strong>Berlaku global</strong>
+                    <p>Perubahan ini memengaruhi tampilan Timeline untuk semua pengguna OpenWO. Data dan riwayat Timeline tetap sama.</p>
+                </div>
+            </div>
+
+            <div class="timeline-display-options">
+
+                <label class="timeline-display-option <%= timelineDisplayMode === 'detail' ? 'selected' : '' %>">
+                    <input
+                        type="radio"
+                        name="timelineDisplayMode"
+                        value="detail"
+                        <%= timelineDisplayMode === 'detail' ? 'checked' : '' %>
+                    >
+                    <span class="timeline-display-radio"></span>
+                    <span class="timeline-display-content">
+                        <strong>Detail per Aktivitas</strong>
+                        <small>Bagian dan Seksi ditampilkan pada setiap event Timeline.</small>
+                        <span class="timeline-display-example">Nama · Role · Bagian · Seksi · Tanggal · Jam</span>
+                    </span>
+                </label>
+
+                <label class="timeline-display-option <%= timelineDisplayMode === 'compact' ? 'selected' : '' %>">
+                    <input
+                        type="radio"
+                        name="timelineDisplayMode"
+                        value="compact"
+                        <%= timelineDisplayMode === 'compact' ? 'checked' : '' %>
+                    >
+                    <span class="timeline-display-radio"></span>
+                    <span class="timeline-display-content">
+                        <strong>Ringkas / Context Once</strong>
+                        <small>Bagian dan Seksi ditampilkan sebagai konteks WO dan tidak diulang pada setiap event.</small>
+                        <span class="timeline-display-example">Konteks WO · Nama · Role · Tanggal · Jam</span>
+                    </span>
+                </label>
+
+            </div>
+
+            <div class="timeline-color-settings">
+                <div class="timeline-color-heading">
+                    <div>
+                        <strong>Warna Progress Timeline</strong>
+                        <small>Atur warna setiap aksi secara global. Warna diterapkan pada indikator, teks status, dan blok pelaku pada mode Context Once.</small>
+                    </div>
+                </div>
+
+                <div class="timeline-color-grid">
+                    <% [
+                        ["Dibuat", "timelineColorDibuat"],
+                        ["Diterima", "timelineColorDiterima"],
+                        ["Ditugaskan", "timelineColorDitugaskan"],
+                        ["Dikerjakan", "timelineColorDikerjakan"],
+                        ["Selesai", "timelineColorSelesai"]
+                    ].forEach(([stage, inputName]) => { %>
+                        <div class="timeline-color-item" data-stage-color-item>
+                            <div class="timeline-color-label-row">
+                                <span class="timeline-color-stage"><%= stage %></span>
+                                <span class="timeline-color-preview" data-color-preview></span>
+                            </div>
+                            <div class="timeline-color-controls">
+                                <input
+                                    type="color"
+                                    name="<%= inputName %>"
+                                    value="<%= timelineProgressColors[stage] %>"
+                                    data-color-picker
+                                    aria-label="Warna <%= stage %>"
+                                >
+                                <input
+                                    type="text"
+                                    value="<%= timelineProgressColors[stage] %>"
+                                    data-color-hex
+                                    maxlength="7"
+                                    spellcheck="false"
+                                    aria-label="Kode warna <%= stage %>"
+                                >
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <div class="timeline-color-note">
+                    <span>💡</span>
+                    <span>Indikator yang belum tercapai tetap menggunakan warna netral. Warna konfigurasi digunakan saat aksi sudah dilakukan atau sedang aktif.</span>
+                </div>
+            </div>
+        </div>        
+
+        <div class="wo-settings-savebar">
             <div>
-                <h2>Workflow</h2>
-                <p>Tahapan verifikasi yang menjaga kualitas penyelesaian WO.</p>
+                <strong>Perubahan Workflow</strong>
+                <p>Pengaturan berlaku untuk proses berikutnya setelah konfigurasi disimpan.</p>
             </div>
+            <button type="submit" class="wo-save-button">Simpan Pengaturan</button>
         </div>
 
-        <div class="wo-settings-list">
-
-            <div class="wo-setting-row">
-                <div>
-                    <h3>Verifikasi Asman</h3>
-                    <p>
-                        WO yang selesai dikerjakan diverifikasi oleh Asman
-                        sebelum ditutup atau diteruskan.
-                    </p>
-                </div>
-                <span class="wo-value wo-value-on">Aktif</span>
-            </div>
-
-            <div class="wo-setting-row">
-                <div>
-                    <h3>Verifikasi Manager</h3>
-                    <p>
-                        Berlaku untuk WO yang telah diputuskan Asman
-                        untuk dieskalasi ke Manager.
-                    </p>
-                </div>
-                <span class="wo-value wo-value-on">Aktif</span>
-            </div>
-
-        </div>
-    </div>
-
-
-    <div class="wo-settings-section">
-        <div class="wo-section-heading">
-            <div>
-                <h2>Eskalasi</h2>
-                <p>Penanganan WO yang membutuhkan keputusan lebih lanjut.</p>
-            </div>
-        </div>
-
-        <div class="wo-settings-list">
-
-            <div class="wo-setting-row">
-                <div>
-                    <h3>Eskalasi oleh Asman</h3>
-                    <p>
-                        Asman menentukan apakah WO perlu diteruskan
-                        ke Manager setelah memeriksa hasil pekerjaan.
-                    </p>
-                </div>
-                <span class="wo-value wo-value-on">Aktif</span>
-            </div>
-
-            <div class="wo-setting-row">
-                <div>
-                    <h3>Alasan eskalasi</h3>
-                    <p>
-                        Alasan wajib dicatat agar keputusan eskalasi
-                        memiliki konteks dan jejak pada timeline.
-                    </p>
-                </div>
-                <span class="wo-value wo-value-on">Wajib</span>
-            </div>
-
-        </div>
-    </div>
+    </form>
 
 
     <div class="wo-settings-section">
@@ -172,11 +270,10 @@
         <div>
             <strong>Catatan desain</strong>
             <p>
-                Pengaturan ini sengaja belum diberi tombol simpan.
-                Kita tidak akan membuat opsi konfigurasi yang belum
-                benar-benar dibaca oleh workflow. Setelah struktur
-                pengaturan disepakati, setiap opsi akan dihubungkan
-                ke konfigurasi sistem satu per satu.
+                Verifikasi Asman adalah titik keputusan. Saat toggle
+                Eskalasi di WO diaktifkan, form eskalasi muncul dan tombol
+                Verifikasi Asman digantikan oleh tombol Eskalasi ke Manager.
+                SLA tetap berhenti saat WO mencapai Selesai.
             </p>
         </div>
     </div>
@@ -362,4 +459,516 @@
         min-width: 0;
     }
 }
+
+.setting-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.setting-switch input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.setting-slider {
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    background: #cbd5e1;
+    position: relative;
+    transition: .18s ease;
+}
+
+.setting-slider::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    top: 3px;
+    left: 3px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(15,23,42,.18);
+    transition: .18s ease;
+}
+
+.setting-switch input:checked + .setting-slider {
+    background: #2563eb;
+}
+
+.setting-switch input:checked + .setting-slider::after {
+    transform: translateX(18px);
+}
+
+.setting-state {
+    min-width: 24px;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.setting-switch input:checked ~ .setting-state {
+    color: #2563eb;
+}
+
+.setting-switch.disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+.wo-workflow-preview {
+    margin: 0 0 16px;
+    padding: 16px 18px;
+    border: 1px solid #dbeafe;
+    border-radius: 16px;
+    background: #f8fbff;
+}
+
+.preview-title {
+    margin-bottom: 10px;
+    color: #1e3a8a;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.preview-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 2px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.preview-step {
+    min-width: 105px;
+    padding: 10px 14px;
+    border-radius: 11px;
+    text-align: center;
+    line-height: 1.35;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.05);
+    transition: all 0.2s ease;
+}
+
+/* Selesai */
+.preview-step:nth-child(1) {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #166534;
+}
+
+/* Verifikasi Asman */
+.preview-step:nth-child(3) {
+    background: #fef3c7;
+    border-color: #fbbf24;
+    color: #92400e;
+}
+
+/* Menunggu Verifikasi Manager */
+.preview-step:nth-child(5) {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+/* Verifikasi Manager */
+.preview-step:nth-child(7) {
+    background: #fecaca;
+    border-color: #f87171;
+    color: #991b1b;
+}
+
+/* Ditutup */
+.preview-step:nth-child(9) {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+.preview-arrow {
+    color: #64748b;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.wo-settings-savebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.wo-settings-savebar strong {
+    display: block;
+    color: #334155;
+    font-size: 12px;
+}
+
+.wo-settings-savebar p {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 10px;
+}
+
+.wo-save-button {
+    border: 0;
+    border-radius: 9px;
+    padding: 9px 14px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.wo-save-button:hover { background: #1d4ed8; }
+
+.timeline-setting-note {
+    margin: 0 0 14px;
+}
+
+.timeline-display-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.timeline-display-option {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.timeline-display-option:hover {
+    border-color: #bfdbfe;
+}
+
+.timeline-display-option.selected {
+    border-color: #93c5fd;
+    background: #f8fbff;
+    box-shadow: 0 0 0 2px #dbeafe;
+}
+
+.timeline-display-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.timeline-display-radio {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    margin-top: 1px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    position: relative;
+}
+
+.timeline-display-option.selected .timeline-display-radio {
+    border-color: #2563eb;
+}
+
+.timeline-display-option.selected .timeline-display-radio::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    left: 3px;
+    top: 3px;
+    border-radius: 50%;
+    background: #2563eb;
+}
+
+.timeline-display-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.timeline-display-content strong {
+    color: #1e293b;
+    font-size: 13px;
+}
+
+.timeline-display-content small {
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.timeline-display-example {
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.timeline-color-settings {
+    margin-top: 16px;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+.timeline-color-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.timeline-color-heading strong {
+    display: block;
+    color: #1e293b;
+    font-size: 13px;
+}
+
+.timeline-color-heading small {
+    display: block;
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.timeline-color-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.timeline-color-item {
+    padding: 11px;
+    border: 1px solid #e2e8f0;
+    border-radius: 11px;
+    background: #fff;
+}
+
+.timeline-color-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 9px;
+}
+
+.timeline-color-stage {
+    color: #334155;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.timeline-color-preview {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--preview-color);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--preview-color) 20%, white);
+}
+
+.timeline-color-controls {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 7px;
+    align-items: center;
+}
+
+.timeline-color-controls input[type="color"] {
+    width: 34px;
+    height: 30px;
+    padding: 2px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.timeline-color-controls input[type="text"] {
+    width: 100%;
+    min-width: 0;
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    color: #475569;
+    background: #fff;
+    font: inherit;
+    font-size: 10px;
+}
+
+.timeline-color-controls input[type="text"]:focus {
+    outline: none;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 2px #dbeafe;
+}
+
+.timeline-color-note {
+    display: flex;
+    gap: 7px;
+    margin-top: 10px;
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+@media (max-width: 1050px) {
+    .timeline-color-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .timeline-color-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.wo-saved {
+    margin-bottom: 16px;
+    padding: 10px 13px;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    background: #f0fdf4;
+    color: #166534;
+    font-size: 11px;
+}
+
+@media (max-width: 650px) {
+    .wo-settings-savebar { align-items: flex-start; flex-direction: column; }
+    .wo-save-button { width: 100%; }
+    .timeline-display-options { grid-template-columns: 1fr; }
+}
+
 </style>
+
+<script>
+(function () {
+    const closing = document.querySelector('input[name="workflowClosing"]');
+    const verification = document.getElementById('workflowVerification');
+    const escalation = document.getElementById('workflowEscalation');
+    const escalationLabel = escalation?.closest('.setting-switch');
+    const preview = document.getElementById('workflowPreview');
+
+    function update() {
+        if (!closing || !verification || !escalation || !preview) return;
+
+        if (!closing.checked) {
+            verification.checked = false;
+            verification.disabled = true;
+            escalation.checked = false;
+            escalation.disabled = true;
+        } else {
+            verification.disabled = false;
+            escalation.disabled = !verification.checked;
+            if (!verification.checked) escalation.checked = false;
+        }
+
+        if (escalationLabel) {
+            escalationLabel.classList.toggle('disabled', escalation.disabled);
+        }
+
+        document.querySelectorAll('.setting-switch').forEach(label => {
+            const input = label.querySelector('input');
+            const state = label.querySelector('.setting-state');
+            if (input && state) state.textContent = input.checked ? 'ON' : 'OFF';
+        });
+
+        const steps = ['Selesai'];
+        if (closing.checked) {
+            if (verification.checked) {
+                steps.push('Verifikasi Asman');
+                if (escalation.checked) {
+                    steps.push('Menunggu Verifikasi Manager', 'Verifikasi Manager');
+                }
+            }
+            steps.push('Ditutup');
+        }
+
+        preview.innerHTML = '<div class="preview-flow">' + steps.map((step, i) =>
+            (i ? '<span class="preview-arrow">→</span>' : '') +
+            '<span class="preview-step">' + step + '</span>'
+        ).join('') + '</div>';
+    }
+
+    closing?.addEventListener('change', update);
+    verification?.addEventListener('change', update);
+    escalation?.addEventListener('change', update);
+
+    // Timeline display mode: make the entire option card interactive
+    // and update the selected state immediately without waiting for save.
+    document.querySelectorAll('input[name="timelineDisplayMode"]').forEach(input => {
+        input.addEventListener('change', () => {
+            document.querySelectorAll('.timeline-display-option').forEach(option => {
+                const optionInput = option.querySelector('input[name="timelineDisplayMode"]');
+                option.classList.toggle('selected', !!optionInput?.checked);
+            });
+        });
+    });
+
+    // Timeline stage colors: sync color picker <-> hex input and preview.
+    document.querySelectorAll('[data-stage-color-item]').forEach(item => {
+        const picker = item.querySelector('[data-color-picker]');
+        const hex = item.querySelector('[data-color-hex]');
+        const preview = item.querySelector('[data-color-preview]');
+
+        const validHex = value => /^#[0-9a-fA-F]{6}$/.test(value);
+
+        const refreshPreview = value => {
+            if (validHex(value)) {
+                item.style.setProperty('--preview-color', value);
+            }
+        };
+
+        picker?.addEventListener('input', () => {
+            if (!picker.value) return;
+            hex.value = picker.value.toLowerCase();
+            refreshPreview(hex.value);
+        });
+
+        hex?.addEventListener('input', () => {
+            const value = hex.value.trim();
+            if (validHex(value)) {
+                picker.value = value;
+                refreshPreview(value);
+            }
+        });
+
+        hex?.addEventListener('blur', () => {
+            const value = hex.value.trim();
+            if (!validHex(value)) {
+                hex.value = picker.value.toLowerCase();
+            } else {
+                hex.value = value.toLowerCase();
+                picker.value = hex.value;
+            }
+            refreshPreview(hex.value);
+        });
+
+        refreshPreview(picker?.value || '#64748b');
+    });
+
+    update();
+})();
+</script>
