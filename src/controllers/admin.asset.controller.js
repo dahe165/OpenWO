@@ -104,18 +104,25 @@ function validateAndBuild(req) {
 }
 
 function index(req, res) {
+    res.render("admin/assets/index", {
+        title: "Asset Management",
+        layout: "layouts/app"
+    });
+}
+
+function list(req, res) {
     try {
         const assets = assetModel.getAll();
 
-        res.render("admin/assets/index", {
-            title: "Asset Management",
+        res.render("admin/assets/list", {
+            title: "Hardware — Asset Management",
             layout: "layouts/app",
             assets,
             statuses: ASSET_STATUSES
         });
     } catch (error) {
-        console.error("ADMIN ASSET INDEX ERROR:", error);
-        res.status(500).send("Gagal memuat Asset Management.");
+        console.error("ADMIN ASSET LIST ERROR:", error);
+        res.status(500).send("Gagal memuat daftar Asset.");
     }
 }
 
@@ -148,7 +155,7 @@ function store(req, res) {
 
     try {
         assetModel.create(result.data);
-        return res.redirect("/admin/assets");
+        return res.redirect("/admin/assets/list");
     } catch (error) {
         console.error("ADMIN ASSET STORE ERROR:", error);
 
@@ -247,6 +254,7 @@ function detail(req, res) {
 
 module.exports = {
     index,
+    list,
     create,
     store,
     edit,

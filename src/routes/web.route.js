@@ -1180,6 +1180,16 @@ router.get(
 );
 
 router.get(
+    "/admin/assets/list",
+    requireLogin,
+    requireRole(
+        "admin",
+        "superuser"
+    ),
+    assetController.list
+);
+
+router.get(
     "/admin/assets/create",
     requireLogin,
     requireRole(

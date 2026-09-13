@@ -82,6 +82,7 @@
                             <% reportDepartments.forEach(function (department) { %>
                                 <option
                                     value="<%= department.id %>"
+                                    data-department-id="<%= department.id %>"
                                     <%= Number(selectedDepartmentId) === Number(department.id) ? "selected" : "" %>
                                 >
                                     <%= department.nama %>
@@ -565,30 +566,65 @@
 
     if (!department || !section) return;
 
+    /*
+     * Gunakan seluruh Seksi aktif sebagai dataset client-side.
+     * Seksi selalu dikelompokkan berdasarkan department_id sehingga
+     * pilihan Bagian dan Seksi tidak pernah bercampur.
+     */
     const allSections = <%- JSON.stringify(report.filterOptions?.allSections || []) %>;
     const selectedSection = "<%= selectedSectionId %>";
 
+    const sectionsByDepartment = allSections.reduce(function (groups, item) {
+        const key = String(item.department_id);
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(item);
+        return groups;
+    }, {});
+
+    function getDepartmentId() {
+        const selected = department.options[department.selectedIndex];
+        return selected?.dataset?.departmentId || department.value || "";
+    }
+
     function renderSections(currentOverride) {
-        const departmentId = department.value;
+        const departmentId = getDepartmentId();
         const current =
             currentOverride !== undefined
-                ? currentOverride
-                : (section.value || selectedSection);
+                ? String(currentOverride)
+                : String(section.value || selectedSection || "");
 
-        section.innerHTML = "<option value="">Semua Seksi</option>";
+        section.innerHTML = "";
 
-        allSections
-            .filter(item => !departmentId || Number(item.department_id) === Number(departmentId))
-            .forEach(item => {
-                const option = document.createElement("option");
-                option.value = item.id;
-                option.textContent = item.nama;
-                option.dataset.departmentId = item.department_id;
-                if (String(item.id) === String(current)) option.selected = true;
-                section.appendChild(option);
-            });
+        const allOption = document.createElement("option");
+        allOption.value = "";
+        allOption.textContent = "Semua Seksi";
+        section.appendChild(allOption);
 
-        if (current && !Array.from(section.options).some(o => o.value === String(current))) {
+        let sections = [];
+
+        if (departmentId) {
+            sections = sectionsByDepartment[String(departmentId)] || [];
+        } else {
+            sections = allSections;
+        }
+
+        sections.forEach(function (item) {
+            const option = document.createElement("option");
+            option.value = item.id;
+            option.textContent = item.nama;
+            option.dataset.departmentId = item.department_id;
+
+            if (String(item.id) === current) {
+                option.selected = true;
+            }
+
+            section.appendChild(option);
+        });
+
+        /* Jika Seksi sebelumnya bukan anak Bagian baru, reset. */
+        if (current && !Array.from(section.options).some(function (option) {
+            return option.value === current;
+        })) {
             section.value = "";
         }
     }
